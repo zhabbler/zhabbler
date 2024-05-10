@@ -24,7 +24,7 @@ class Emails
 			host: $GLOBALS['config']['smtp']['host'],
 			username: $GLOBALS['config']['smtp']['username'],
 			password: $GLOBALS['config']['smtp']['password'],
-			encryption: "ssl"
+			encryption: "ssl",
 		);
 		$mailer->send($mail);
 	}
@@ -32,13 +32,13 @@ class Emails
 	public function createEmail(int $type, int $for, array $params = []): void
 	{
 		$code = (new Strings())->random_string(72);
-		$this->database->query("INSERT INTO emails", [
+		$GLOBALS['db']->query("INSERT INTO emails", [
 			"emailType" => $type,
 			"emailCode" => $code,
 			"emailFor" => $for
 		]);
 		if($type == 0){
-			$user = (new User())->get_user_by_id($for);
+			$user = $GLOBALS['db']->fetch("SELECT * FROM users WHERE userID = ?", $for);
 			$params += ["user" => $user, "code" => $code];
 			$this->send($_SERVER['DOCUMENT_ROOT']."/Emails/email_verification.latte", $user->email, $params);
 		}

@@ -30,7 +30,7 @@ class Personalization
 
 	public function add_personalization_config(string $token, bool $needsToUpdate, string $accent_color, string $background_color, string $background_url = ''): void
 	{
-		$user = (new User())->get_user_by_token($token);
+		$user = $GLOBALS['db']->fetch("SELECT * FROM users WHERE token = ?", $token);
 		if($GLOBALS['db']->query("SELECT * FROM personalization WHERE personalizationTo = ?", $user->userID)->getRowCount() == 0){
 			$GLOBALS['db']->query("INSERT INTO personalization", [
 				"personalizationTo" => $user->userID,
