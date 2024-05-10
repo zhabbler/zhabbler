@@ -70,6 +70,15 @@
                             </button>
                             {/if}
                             {/if}
+                            {if $profile->askQuestions == 1}
+                            <button class="button" style="z-index:10;" onclick="zhabbler.askQuestion({$profile->nickname});">
+                                <div class="button_title">
+                                    <span>
+                                        {$language['ask_me_a_question']}
+                                    </span>
+                                </div>
+                            </button>
+                            {/if}
                             <button class="button button_outline button_only_icon" onclick="zhabbler.openIM({$profile->nickname});">
                                 <div class="button_icon">
                                     <i class='bx bx-message-square-add' ></i>
