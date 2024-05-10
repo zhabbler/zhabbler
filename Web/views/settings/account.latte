@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/css/main.css">
+    <link rel="shortcut icon" href="/static/images/icon.png" type="image/png">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <title>Жабблер</title>
+</head>
+<body>
+    <div id="app">
+        <div class="popup popup_do_not_close" id="JS_Loader">
+            <div class="loader loader_cpa"><div class="loader_part loader_part_1"></div><div class="loader_part loader_part_2"></div><div class="loader_part loader_part_3"></div></div>
+        </div>
+        <style>
+            .nav_options .nav_options_tab[href="/settings/account"]{
+                background-color: rgba(255, 255, 255, .2)!important;
+                text-decoration: none;
+            }
+        </style>
+        {include '../includes/navbar_top.latte'}
+        <div class="container">
+            {include '../includes/navbar.latte'}
+            <main class="main">
+                <div class="settings_main">
+                    <div class="settings_main_title">
+                        <span>{$language['account_settings']}</span>
+                    </div>
+                    <div class="settings_main_subtitle">
+                        <span>{$language['email']}</span>
+                    </div>
+                    <form method="post" data-reload="1" action="/api/User/change_email">
+                        <section class="settings_section">
+                            <div class="settings_section_title">
+                                <span>Email</span>
+                            </div>
+                            <div class="settings_section_content">
+                                <input type="text" class="input" name="email" placeholder="email@example.com" value="{$user->email}">
+                            </div>
+                        </section>
+                        <section class="settings_section">
+                            <div class="settings_section_title">
+                                <span>{$language['password']}</span>
+                            </div>
+                            <div class="settings_section_content">
+                                <input type="password" class="input" name="password" placeholder="**********">
+                            </div>
+                        </section>
+                        <section class="settings_section">
+                            <div class="settings_section_title"></div>
+                            <div class="settings_section_content">
+                                <button class="button" type="submit">{$language['save']}</button>
+                            </div>
+                        </section>
+                    </form>
+                    <div class="settings_main_subtitle">
+                        <span>{$language['password']}</span>
+                    </div>
+                    <form method="post" data-reload="2" data-location="/" action="/api/User/change_password">
+                        <section class="settings_section">
+                            <div class="settings_section_title">
+                                <span>{$language['current_password']}</span>
+                            </div>
+                            <div class="settings_section_content">
+                                <input type="password" class="input" name="password" placeholder="**********">
+                            </div>
+                        </section>
+                        <section class="settings_section">
+                            <div class="settings_section_title">
+                                <span>{$language['new_password']}</span>
+                            </div>
+                            <div class="settings_section_content">
+                                <input type="password" class="input" name="new_password" placeholder="**********">
+                            </div>
+                        </section>
+                        <section class="settings_section">
+                            <div class="settings_section_title"></div>
+                            <div class="settings_section_content">
+                                <button class="button" type="submit">{$language['save']}</button>
+                            </div>
+                        </section>
+                    </form>
+                    <div class="settings_main_subtitle">
+                        <span>{$language['sessions']}</span>
+                    </div>
+                    <div>
+                        <div id="Sessions" style="display:none">
+                            {foreach (new Web\Models\Sessions())->get_sessions($user->token) as $session}
+                                <section class="settings_section">
+                                    <div class="settings_section_title"><button class="button red_button" type="submit" onclick="zhabbler.removeSession({$session->sessionIdent});">{$language['logout']}</button></div>
+                                    <div class="settings_section_content">
+                                        <div>
+                                            <div style="margin-bottom:5px;">
+                                                <b>{$session->sessionUA}</b>
+                                            </div>
+                                            <div>
+                                                <span>IP: {$session->sessionIP}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </section>
+                            {/foreach}
+                        </div>
+                        <div class="dFaIcjSc" style="margin-top:16px;">
+                            <button class="button" style="margin-right:10px;" onclick="$('#Sessions').toggle();">{$language['show_hide_sessions']}</button>
+                            <button class="button red_button" onclick="zhabbler.removeSessions();">{$language['logout_from_all_sessions']}</button>
+                        </div>
+                    </div>
+                </div>
+            </main>
+            {include '../includes/nav_options_settings.latte'}
+        </div>
+        <preloader src="/static/js/settings.js"></preloader>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js" integrity="sha512-57oZ/vW8ANMjR/KQ6Be9v/+/h6bq9/l3f0Oc7vn6qMqyhvPd1cvKBRWWpzu0QoneImqr2SkmO4MSqU+RpHom3Q==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="/static/js/main.js"></script>
+</body>
+</html>

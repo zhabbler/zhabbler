@@ -1,0 +1,171 @@
+{if !isset($user) or (new Web\Models\Personalization())->get_personalization_config($user->userID)->personalizationNavbarStyle != 1}
+<nav class="navbar">
+    <li class="navbar_logotype">
+        {$language['zhabbler']}
+    </li>
+    <li class="navbar_element" href="/">
+        <div class="navbar_element_icon">
+            <i class="bx bxs-home"></i>
+        </div>
+        <div class="navbar_element_title">
+            <span>
+                {$language['home']}
+            </span>
+        </div>
+    </li>
+    {if !isset($_COOKIE['zhabbler_session'])}
+    <li class="navbar_element" href="/login">
+        <div class="navbar_element_icon">
+            <i class='bx bxs-user'></i>
+        </div>
+        <div class="navbar_element_title">
+            <span>
+                {$language['account']}
+            </span>
+        </div>
+    </li>
+    {/if}
+    {if isset($_COOKIE['zhabbler_session'])}
+    <li class="navbar_element" href="/dashboard/explore">
+        <div class="navbar_element_icon">
+            <i class="bx bxs-compass"></i>
+        </div>
+        <div class="navbar_element_title">
+            <span>
+                {$language['explore']}
+            </span>
+        </div>
+    </li>
+    <li class="navbar_element" onclick="zhabbler.activityBubble();">
+        <div class="navbar_element_icon">
+            <i class='bx bxs-bolt'></i>
+        </div>
+        <div class="navbar_element_title">
+            <span>
+                {$language['activity']}
+                {if (new Web\Models\Notifications())->notificationUnreadedCount($user->token) > 0}
+                    (<span id="ActivityCounter">{(new Web\Models\Notifications())->notificationUnreadedCount($user->token)}</span>)
+                {/if}
+            </span>
+        </div>
+    </li>
+    <li class="navbar_element" id="msgsbtn_navb" onclick="messagesBubble();">
+        <div class="navbar_element_icon">
+            <i class='bx bxs-message-square-dots'></i>
+        </div>
+        <div class="navbar_element_title">
+            <span>
+                {$language['messages']}
+                {if (new Web\Models\Messages())->get_count_of_unread_messages($user->token) > 0}
+                    (<span id="MsgsCounter">{(new Web\Models\Messages())->get_count_of_unread_messages($user->token)}</span>)
+                {/if}
+            </span>
+        </div>
+    </li>
+    <li class="navbar_element" href="/inbox">
+        <div class="navbar_element_icon">
+            <i class='bx bxs-envelope' ></i>
+        </div>
+        <div class="navbar_element_title">
+            <span>
+                {$language['inbox']}
+                {if (new Web\Models\Inbox())->getUnreadCountOfMsgs($user->token) > 0}
+                    (<span>{(new Web\Models\Inbox())->getUnreadCountOfMsgs($user->token)}</span>)
+                {/if}
+            </span>
+        </div>
+    </li>
+    <li class="navbar_element" onclick="zhabbler.showExtended();">
+        <div class="navbar_element_icon">
+            <i class='bx bxs-user'></i>
+        </div>
+        <div class="navbar_element_title">
+            <span>
+                {$language['account']}
+            </span>
+        </div>
+    </li>
+    <div class="navbar_extended">
+        <li class="navbar_element" href="/profile/{$user->nickname}/liked">
+            <div class="navbar_element_icon">
+                <i class='bx bxs-heart'></i>
+            </div>
+            <div class="navbar_element_title">
+                <span>
+                    {$language['likes']}
+                </span>
+            </div>
+        </li>
+        <li class="navbar_element" href="/profile/{$user->nickname}/following">
+            <div class="navbar_element_icon">
+                <i class='bx bxs-group'></i>
+            </div>
+            <div class="navbar_element_title">
+                <span>
+                    {$language['following']}
+                </span>
+            </div>
+        </li>
+        <li class="navbar_element" onclick="zhabbler.destroySession();">
+            <div class="navbar_element_icon">
+                <i class='bx bxs-log-out'></i>
+            </div>
+            <div class="navbar_element_title">
+                <span>
+                    {$language['logout']}
+                </span>
+            </div>
+        </li>
+        <li class="navbar_element navbar_element_profile" href="/profile/{$user->nickname}">
+            <div class="navbar_element_profile_image">
+                <img src="{$user->profileImage}">
+            </div>
+            <div>
+                <div>
+                    <span class="navbar_element_title">
+                        {$user->name|noescape}
+                    </span>
+                </div>  
+                <div>
+                    <span>
+                        @{$user->nickname}
+                    </span>
+                </div>
+            </div>
+        </li>
+    </div>
+    <li class="navbar_element" href="/settings/account">
+        <div class="navbar_element_icon">
+            <i class='bx bxs-cog' ></i>
+        </div>
+        <div class="navbar_element_title">
+            <span>
+                {$language['settings']}
+            </span>
+        </div>
+    </li>
+    {if $user->admin == 1}
+    <li class="navbar_element" onclick="window.location.href = '/admin/users'">
+        <div class="navbar_element_icon">
+            <i class='bx bxs-wrench' ></i>
+        </div>
+        <div class="navbar_element_title">
+            <span>
+                Admin panel
+            </span>
+        </div>
+    </li>
+    {/if}
+    <button class="button button_WritePost" onclick="zhabbler.writePost();">
+        <div class="button_icon">
+            <i class='bx bxs-pencil'></i>
+        </div>
+        <div class="button_title">
+            <span>
+                {$language['write']}
+            </span>
+        </div>
+    </button>
+    {/if}
+</nav>
+{/if}

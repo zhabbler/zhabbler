@@ -1,0 +1,12 @@
+ru:
+	name: "Русский"
+	flag: "🇷🇺"
+	code: "ru"
+en:
+	name: "English"
+	flag: "🇺🇸"
+	code: "en"
+ua:
+	name: "Українська"
+	flag: "🇺🇦"
+	code: "ua"

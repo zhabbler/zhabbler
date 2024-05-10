@@ -1,0 +1,63 @@
+<section class="nav_options">
+    <form method="get" action="/search" data-reload="3" class="nav_options_searchbar">
+        <input type="text" name="q" autocomplete="off" value="{(isset($_GET['q'])) ? $_GET['q'] : ''}" placeholder="{$language['search_zhabbler']}">
+    </form>
+    {if count((new Web\Models\User())->random_profiles()) != 0}
+    <div class="nav_options_whoToFollow">
+        <div>
+            <h1 class="h1tp">
+                {$language['check_out_these_profile']}
+            </h1>
+        </div>
+        <div>
+            {foreach (new Web\Models\User())->random_profiles() as $profile}
+            <div class="nav_options_whoToFollow_profile" onclick="goToPage('/profile/' + {$profile->nickname});">
+                <div class="nav_options_whoToFollow_profile_picture">
+                    <img src="{$profile->profileImage}" alt="Изображение">
+                </div>
+                <div class="nav_options_whoToFollow_profile_information">
+                    <div>
+                        <span>
+                            <b>
+                                {$profile->nickname}
+                            </b>
+                        </span>
+                    </div>
+                    <div>
+                        <span>
+                            {$profile->name}
+                        </span>
+                    </div>
+                </div>
+                <div class="nav_option_whoToFollow_profile_follow">
+                    <a href="javascript:void();">
+                        {$language['follow']}
+                    </a>
+                </div>
+            </div>
+            {/foreach}
+        </div>
+    </div>
+    {/if}
+    <footer>
+        <div class="copl">
+            <span>
+                {$language['zhabbler']} (beta test) © {date("Y")}<br>
+            </span>
+        </div>
+        <div>
+            <a class="footer-elem" href="/help/about">
+                {$language['what_is_zhabbler']}
+            </a>
+            <a class="footer-elem" href="/help/rules">
+                {$language['rules']}
+            </a>
+            <a class="footer-elem" href="https://github.com/zhabbler">
+                GitHub
+            </a>
+            <a class="footer-elem" href="javascript:void(zhabbler.chooseLanguage());">
+                {$language['info']['flag']} ({$language['info']['name']})
+            </a>
+        </div>
+    </footer>
+</section>

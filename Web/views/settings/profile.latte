@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/css/main.css">
+    <link rel="shortcut icon" href="/static/images/icon.png" type="image/png">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <title>Жабблер</title>
+</head>
+<body>
+    <div id="app">
+        <div class="popup popup_do_not_close" id="JS_Loader">
+            <div class="loader loader_cpa"><div class="loader_part loader_part_1"></div><div class="loader_part loader_part_2"></div><div class="loader_part loader_part_3"></div></div>
+        </div>
+        <style>
+            .nav_options .nav_options_tab[href="/settings/profile"]{
+                background-color: rgba(255, 255, 255, .2)!important;
+                text-decoration: none;
+            }
+        </style>
+        {include '../includes/navbar_top.latte'}
+        <div class="container">
+            {include '../includes/navbar.latte'}
+            <main class="main">
+                <div class="settings_main">
+                    <div class="title_fade">
+                        <div>
+                            <span>{$user->nickname}</span>
+                        </div>
+                        <div class="title_fade_buttons">
+                            <button class="button button_gray" id="CancelBtn" style="display: none;" onclick="goToPage(document.location);">
+                                {$language['cancel']}
+                            </button>
+                            <button class="button button_gray" id="CustomizeBtn" onclick="settings.customize_btn();">
+                                {$language['customize']}
+                            </button>
+                            <button class="button" id="SaveSettingsBtn" onclick="settings.save_changes();" style="display:none;margin-left:10px;">
+                                {$language['save']}
+                            </button>
+                        </div>
+                    </div>
+                    <div class="profile_main_pics">
+                        <div class="profile_main_pics_cover" style="background-image: url('{$user->profileCover}');">
+                            <label class="settings_profile_uploader_images_btn" style="display:none;">
+                                <input type="file" name="cover" onchange="settings.change_profile_cover(this);" accept="image/*" hidden>
+                                <i class="bx bxs-pencil"></i>
+                            </label>
+                        </div>
+                        <div class="profile_main_pics_pfp">
+                            <label class="settings_profile_uploader_images_btn" style="display:none;">
+                                <input type="file" name="avatar" onchange="settings.change_profile_image(this);" accept="image/*" hidden>
+                                <i class="bx bxs-pencil"></i>
+                            </label>
+                            <img src="{$user->profileImage}">
+                        </div>
+                    </div>
+                    <div class="profile_main_info profile_main_info_editable">
+                        <div>
+                            <input type="text" class="h2_input" value="{$user->name|noescape}" readonly>
+                        </div>
+                        <div>
+                            <input type="text" class="nickname_input" value="{$user->nickname}" readonly>
+                        </div>
+                        <div>
+                            <textarea type="text" class="biography_input" placeholder="{$language['no_biography']}" readonly>{$user->biography}</textarea>
+                        </div>
+                    </div>
+                    <div>
+                        <section class="settings_section">
+                            <div class="settings_section_title">
+                                <span>{$language['likes']}</span>
+                            </div>
+                            <div class="settings_section_content">
+                                <input type="checkbox" id="liked_io" value="1" {($user->hideLiked != 1 ? "checked" : "")}>
+                                <span>{$language['likes_about_conf_settings']}</span>
+                            </div>
+                        </section>
+                        <section class="settings_section">
+                            <div class="settings_section_title">
+                                <span>{$language['following_tab']}</span>
+                            </div>
+                            <div class="settings_section_content">
+                                <input type="checkbox" id="following_io" value="1" {($user->hideFollowing != 1 ? "checked" : "")}>
+                                <span>{$language['following_about_conf_settings']}</span>
+                            </div>
+                        </section>
+                        <section class="settings_section">
+                            <div class="settings_section_title">
+                                <span>{$language['questions']}</span>
+                            </div>
+                            <div class="settings_section_content">
+                                <input type="checkbox" id="questions_io" value="1" {($user->askQuestions == 1 ? "checked" : "")}>
+                                <span>{$language['questions_about_conf_settings']}</span>
+                            </div>
+                        </section>
+                        <section class="settings_section">
+                            <div class="settings_section_title">
+                                <span>{$language['do_not_disturb']}</span>
+                            </div>
+                            <div class="settings_section_content">
+                                <input type="checkbox" id="do_not_disturb_io" value="1" {(isset($_COOKIE['zhabbler_do_not_disturb']) && $_COOKIE['zhabbler_do_not_disturb'] == 1 ? "checked" : "")}>
+                                <span>{$language['do_not_disturb_about_conf_settings']}</span>
+                            </div>
+                        </section>
+                    </div>
+                </div>
+            </main>
+            {include '../includes/nav_options_settings.latte'}
+        </div>
+        <preloader src="/static/js/settings.js"></preloader>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js" integrity="sha512-57oZ/vW8ANMjR/KQ6Be9v/+/h6bq9/l3f0Oc7vn6qMqyhvPd1cvKBRWWpzu0QoneImqr2SkmO4MSqU+RpHom3Q==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="/static/js/main.js"></script>
+</body>
+</html>

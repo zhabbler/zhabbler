@@ -1,0 +1,36 @@
+<form class="post" id="PopupContainer">
+    <div class="postAuthor" id="currentUserPostAuthor">
+        <a href="/profile/{$user->nickname}" class="postAuthorProfileImage">
+            <img src="{$user->profileImage}" alt="Изображение">
+        </a>
+        <a href="/profile/{$user->nickname}" class="postAuthorPointsToAuthor">
+            {$user->nickname}
+        </a>
+    </div>
+    <div class="postAuthor" id="anonymousPostAuthor" style="display: none">
+        <a href="#" class="postAuthorProfileImage">
+            <img src="/static/images/anon_avatar.png" alt="Изображение">
+        </a>
+        <a href="#" class="postAuthorPointsToAuthor">
+            {$language['anonymous']}
+        </a>
+    </div>
+    <div id="pC_sS">
+        <textarea id="question" class="popupContentPseudoInput" placeholder="{$language['go_ahead_put_smth']}"></textarea>
+    </div>
+    <div class="pA_pQ">
+        <div class="checkbox_label">
+            <input type="checkbox" id="anonymous" value="1">
+            <span>{$language['ask_anonymously']}</span>
+        </div>
+    </div>
+    <div class="postActions">
+        <button class="button button_gray" onclick="$('.popup:first').remove();" type="button">
+            {$language['close']}
+        </button>
+        <button class="button" style="margin-left:auto;" type="button" onclick="ask({$to->nickname});">
+            {$language['ask']}
+        </button>
+    </div>
+</form>
+<script src="/static/js/ask.js"></script>

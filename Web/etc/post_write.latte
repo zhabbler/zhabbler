@@ -1,0 +1,223 @@
+<div id="ContextMenuTextConfig" style="display: none;">
+    <div class="context_menu">
+        <button class="context_menu_element" onclick='document.execCommand("bold",false,null);'>
+            <b>{$language['bold']}</b>
+        </button>
+        <button class="context_menu_element" onclick='document.execCommand("italic",false,null);'>
+            <i>{$language['italic']}</i>
+        </button>
+        <button class="context_menu_element" onclick='document.execCommand("underline",false,null);'>
+            <u>{$language['underline']}</u>
+        </button>
+        <button class="context_menu_element" id="createLink">
+            {$language['add_url_link']}
+        </button>
+        <button class="context_menu_element" onclick="document.execCommand('unlink', false, null);">
+            {$language['remove_url_link']}
+        </button>
+        <button class="context_menu_element" onclick="$('#ContextMenuTextConfig .colors').fadeToggle(200);">
+            {$language['text_color']}
+        </button>
+    </div>
+    <div class="colors" style="display: none;">
+        <div>
+            <button class="color" style="background-color: #000000;"></button>
+            <button class="color" style="background-color: #ff4242;"></button>
+            <button class="color" style="background-color: #ff8800;"></button>
+            <button class="color" style="background-color: #fff700;"></button>
+        </div>
+        <div>
+            <button class="color" style="background-color: #009f00;"></button>
+            <button class="color" style="background-color: #009dff;"></button>
+            <button class="color" style="background-color: #0026ff;"></button>
+            <button class="color" style="background-color: #9900ff;"></button>
+        </div>
+    </div>
+</div>
+<form class="post" id="PopupContainer">
+    <div class="postAuthor">
+        <a href="/profile/{$user->nickname}" class="postAuthorProfileImage">
+            <img src="{$user->profileImage}" alt="Изображение">
+            {if isset($reposted)}
+            <div class="postAuthorProfileImageReposted">
+                <i class='bx bx-repost'></i>
+            </div>
+            {/if}
+        </a>
+        <a href="/profile/{$user->nickname}" class="postAuthorPointsToAuthor">
+            {$user->nickname}
+        </a>
+        {if isset($reposted)}
+            <span class="postAuthorPointsToRepostGray">
+                {$language['reposted']}
+            </span>
+        {/if}
+        <div class="postAuthorMoreActions">
+            <div class="postAuthorMoreActionsBtn" id="DropdownListener" data-dropdown="#dropdown_edit_post_settings">
+                <i class='bx bxs-cog'></i>
+            </div>
+            <div class="dropdown" id="dropdown_edit_post_settings" style="display: none;">
+                <section class="dropdown_section">
+                    <div class="dropdown_section_part">
+                        <b>
+                            {$language['custom_post_id']}
+                        </b>
+                    </div>
+                    <div class="dropdown_section_part">
+                        <input type="text" name="post_id" placeholder="verycoolpost">
+                    </div>
+                </section>
+                <section class="dropdown_section">
+                    <div class="dropdown_section_part">
+                        <b>
+                            {$language['who_can_do_reposts']}
+                        </b>
+                    </div>
+                    <div class="dropdown_section_part">
+                        <select name="who_can_repost">
+                            <option value="0">
+                                {$language['all']}
+                            </option>
+                            <option value="1">
+                                {$language['nobody']}
+                            </option>
+                        </select>
+                    </div>
+                </section>
+                <section class="dropdown_section">
+                    <div class="dropdown_section_part">
+                        <b>
+                            {$language['who_can_write_comments']}
+                        </b>
+                    </div>
+                    <div class="dropdown_section_part">
+                        <select name="who_can_comment">
+                            <option value="0">
+                                {$language['all']}
+                            </option>
+                            <option value="1">
+                                {$language['nobody']}
+                            </option>
+                        </select>
+                    </div>
+                </section>
+                <section class="dropdown_section">
+                    <div class="dropdown_section_part">
+                        <b>
+                            {$language['post_content_contains']}
+                        </b>
+                    </div>
+                    <div class="dropdown_section_part">
+                        <select name="post_contains">
+                            <option value="0">
+                                {$language['nothing_like_that']}
+                            </option>
+                            <option value="1">
+                                {$language['spoilers']}
+                            </option>
+                        </select>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+    {if isset($reposted)}
+    <div>
+        <div class="postAuthor postAuthorReposted">
+            <a href="/profile/{$reposted->nickname}" class="postAuthorProfileImage">
+                <img src="{$reposted->profileImage}" alt="Изображение">
+            </a>
+            <a href="/profile/{$reposted->nickname}" class="postAuthorPointsToAuthor">
+                {$reposted->nickname}
+            </a>
+        </div>
+        <div class="postContent" id="realPostContent">
+           {strip_tags($reposted->zhabContent, "<p><h1><h2><h3><h4><h5><h6><img><b><i><u><a><span>")|noescape}
+        </div>
+        <div class="postAuthor postAuthorReposted">
+            <a href="/profile/{$user->nickname}" class="postAuthorProfileImage">
+                <img src="{$user->profileImage}" alt="Изображение">
+                <div class="postAuthorProfileImageReposted">
+                    <i class='bx bx-repost'></i>
+                </div>
+            </a>
+            <a href="/profile/{$user->nickname}" class="postAuthorPointsToAuthor">
+                {$user->nickname}
+            </a>
+        </div>
+    </div>
+    {/if}
+    {if isset($question)}
+    <div class="postQuestion">
+        <div class="postQuestionItself">
+            <div class="postQuestionItselfAuthor">
+                <span>
+                    {$question->nickname} {$language['asked']}
+                </span>
+            </div>
+            <div>
+                <span>
+                    {$question->question|noescape}
+                </span>
+            </div>
+        </div>
+        <div class="postQuestionProfilePicture">
+            <img src="{$question->profileImage}">
+        </div>
+    </div>
+    {/if}
+    <div id="pC_sS">
+        <div class="postContent" data-text="*звук сверчков*" contenteditable="true">
+            <h1 data-text="{$language['heading']}" contenteditable="true"></h1>
+            <p data-text="{$language['go_ahead_put_smth']}" contenteditable="true"></p>
+        </div>
+    </div>
+    <div class="tools_P" contenteditable="false">
+        <div class="tools_P_tool" onclick="zhabbler.insertIntoEditorContent('p', {$language['go_ahead_put_smth']});">
+            <i class='bx bx-text' style="color:#0080ff;"></i>
+        </div>
+        <div class="tools_P_tool">
+            <div id="DropdownListener" data-dropdown="#dropdown_headings">
+                <i class='bx bx-heading' style="color:#ff8800;"></i>
+            </div>
+            <div class="dropdown dropdown_closing" id="dropdown_headings" style="display: none;">
+                <div class="dropdown_element" onclick="zhabbler.insertIntoEditorContent('h1', {$language['heading']});">
+                    <h1>{$language['heading']}</h1>
+                </div>
+                <div class="dropdown_element" onclick="zhabbler.insertIntoEditorContent('h2', {$language['heading']} + ' 2');">
+                    <h2>{$language['heading']} 2</h2>
+                </div>
+                <div class="dropdown_element" onclick="zhabbler.insertIntoEditorContent('h3', {$language['heading']} + ' 3');">
+                    <h3>{$language['heading']} 3</h3>
+                </div>
+                <div class="dropdown_element" onclick="zhabbler.insertIntoEditorContent('h4', {$language['heading']} + ' 4');">
+                    <h4>{$language['heading']} 4</h4>
+                </div>
+                <div class="dropdown_element" onclick="zhabbler.insertIntoEditorContent('h5', {$language['heading']} + ' 5');">
+                    <h5>{$language['heading']} 5</h5>
+                </div>
+                <div class="dropdown_element" onclick="zhabbler.insertIntoEditorContent('h6', {$language['heading']} + ' 6');">
+                    <h6>{$language['heading']} 6</h6>
+                </div>
+            </div>
+        </div>
+        <div class="tools_P_tool" onclick="zhabbler.insertIntoEditorContent('p', {$language['something_somebody_else_said_here']}, `class='content_quote'`);">
+            <i class='bx bxs-quote-alt-left' style="color:#ff8c00;"></i>
+        </div>
+        <div class="tools_P_tool" onclick="zhabbler.insertIntoEditorContent('p', {$language['frog_croak_croak']}, `class='content_dialogue'`);">
+            <i class='bx bxs-conversation' style="color:#009dff;"></i>
+        </div>
+        <div class="tools_P_tool" onclick="zhabbler.addPhotoSelection();">
+            <i class='bx bxs-image-alt' style="color:#ff4242;"></i>
+        </div>
+    </div>
+    <div class="postActions">
+        <button class="button button_gray" onclick="closeEditor();" type="button">
+            {$language['close']}
+        </button>
+        <button class="button" style="margin-left:auto;" type="button" onclick="publish({$repostedID}, {$questionID});">
+            {$language['publish']}
+        </button>
+    </div>
+</form>
+<script src="/static/js/text_editor.js"></script>

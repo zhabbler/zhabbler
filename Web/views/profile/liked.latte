@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/css/main.css">
+    <link rel="shortcut icon" href="/static/images/icon.png" type="image/png">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <title>Жабблер</title>
+</head>
+<body>
+    <div id="app">
+        <div class="popup popup_do_not_close" id="JS_Loader">
+            <div class="loader loader_cpa"><div class="loader_part loader_part_1"></div><div class="loader_part loader_part_2"></div><div class="loader_part loader_part_3"></div></div>
+        </div>
+        {include '../includes/navbar_top.latte'}
+        <div class="container">
+            {include '../includes/navbar.latte'}
+            <main class="main">
+                <div class="profile_main">
+                    <div class="profile_main_container">
+                        <div class="profile_main_pics">
+                            <div class="profile_main_pics_cover" style="background-image: url('{$profile->profileCover}');"></div>
+                            <div class="profile_main_pics_pfp">
+                                <img src="{$profile->profileImage}">
+                            </div>
+                        </div>
+                        <div class="profile_main_info">
+                            <div class="dFaIcjSc">
+                                <h2>{$profile->name|noescape}</h2>
+                                {if $profile->verifed == 1}<i class='bx bxs-badge-check verifed_icon'></i>{/if}
+                            </div>
+                            <div>
+                                <a href="/profile/{$profile->nickname}">@{$profile->nickname}</a>
+                            </div>
+                            {if (new Web\Models\Follow())->get_followers_count($profile->nickname) != 0}
+                            <div style="color:#666;">
+                                <span>{(new Web\Models\Follow())->get_followers_count($profile->nickname)} {$language['followers']}</span>
+                            </div>
+                            {/if}
+                            <div>
+                                <span>{$profile->biography|breakLines}</span>
+                            </div>
+                        </div>
+                        <div class="profile_btns">
+                            {if $profile->userID == $user->userID}
+                            <button class="button" onclick="goToPage('/settings/profile');">
+                                <div class="button_title">
+                                    <span>
+                                        {$language['profile_settings']}
+                                    </span>
+                                </div>
+                            </button>
+                            {else}
+                            {if (new Web\Models\Follow())->check_follow_existence($user->token, $profile->userID)}
+                            <button class="button" id="FollowBtn" data-id="{$profile->userID}">
+                                <div class="button_title">
+                                    <span>
+                                        {$language['following']}
+                                    </span>
+                                </div>
+                            </button>
+                            {else}
+                            <button class="button" id="FollowBtn" data-id="{$profile->userID}">
+                                <div class="button_title">
+                                    <span>
+                                        {$language['follow']}
+                                    </span>
+                                </div>
+                            </button>
+                            {/if}
+                            {/if}
+                            <button class="button button_outline button_only_icon" onclick="zhabbler.openIM({$profile->nickname});">
+                                <div class="button_icon">
+                                    <i class='bx bx-message-square-add' ></i>
+                                </div>
+                            </button>
+                            {if $profile->userID != $user->userID}
+                            <div>
+                                <button class="button button_outline button_only_icon" id="DropdownListener" data-dropdown="#dropdown_usr">
+                                    <div class="button_icon">
+                                        <i class='bx bx-dots-horizontal-rounded' ></i>
+                                    </div>
+                                </button>
+                                <div class="dropdown" id="dropdown_usr" style="display: none;">
+                                    <div class="dropdown_element dropdown_element_red" onclick="zhabbler.report({$profile->nickname});">
+                                        <b>
+                                            {$language['report']}
+                                        </b>
+                                    </div>
+                                </div>
+                            </div>
+                            {/if}
+                        </div>
+                        <div class="profile_tabs">
+                            <a class="profile_tab" href="/profile/{$profile->nickname}">
+                                {$language['posts']}
+                            </a>
+                            {if $user->userID == $profile->userID || $profile->hideLiked != 1}
+                            <a class="profile_tab profile_tab_active" href="/profile/{$profile->nickname}/liked">
+                                {if $profile->hideLiked == 1}
+                                <i class='bx bxs-lock-alt'></i>
+                                {/if}
+                                {$language['likes']}
+                            </a>
+                            {/if}
+                            {if $user->userID == $profile->userID || $profile->hideFollowing != 1}
+                            <a class="profile_tab" href="/profile/{$profile->nickname}/following">
+                                {if $profile->hideFollowing == 1}
+                                <i class='bx bxs-lock-alt'></i>
+                                {/if}
+                                {$language['following_tab']}
+                            </a>
+                            {/if}
+                        </div>
+                        {if $user->userID == $profile->userID && $profile->hideLiked == 1}
+                        <div class="profile_warn_co">
+                            <i class='bx bx-info-circle'></i>
+                            {$language["your_liked_posts_cannot_see"]}
+                        </div>
+                        {/if}
+                        <div id="PostsLiked">
+                            <div class="loader loader_black">
+                                <div class="loader_part loader_part_1"></div>
+                                <div class="loader_part loader_part_2"></div>
+                                <div class="loader_part loader_part_3"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+            {include '../includes/nav_options.latte'}
+        </div>
+        <preloader>var nickname = "{$profile->nickname}";</preloader>
+        <preloader src="/static/js/profile_liked.js"></preloader>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js" integrity="sha512-57oZ/vW8ANMjR/KQ6Be9v/+/h6bq9/l3f0Oc7vn6qMqyhvPd1cvKBRWWpzu0QoneImqr2SkmO4MSqU+RpHom3Q==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="/static/js/main.js"></script>
+</body>
+</html>

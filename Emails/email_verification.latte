@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Zhabbler Email Notify</title>
+    <style>
+        table, td, div, h1, p {
+            font-family: Arial, Helvetica, sans-serif;
+            color: #000;
+        }
+        a{
+            color: #0099ff;
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body style="margin:0;padding:0;color:#000;">
+    <table role="presentation" style="background:#eee;width:100%;min-width:750px;padding:1em 0;">
+        <tr>
+            <td align="center" style="padding:0;">
+                <table role="presentation" style="width:600px;background-color:#13b552;padding:20px;">
+                    <tr>
+                        <td>
+                            <img src="{$config['application']['base_url']}etc/logotype.png" width="200" alt="жабблер">
+                        </td>
+                    </tr>
+                </table>
+                <table role="presentation" style="width:600px;background-color:#fff;padding:0 20px;">
+                    <tr>
+                        <td>
+                            <h1>
+                                Hello {$user->nickname}!
+                            </h1>
+                        </td>
+                    </tr>
+                </table>
+                <table role="presentation" style="width:600px;background-color:#fff;padding:0 20px;">
+                    <tr>
+                        <td>
+                            <span>
+                                There's only a little bit left and you'll be able to use Zhabbler! Just press the button.
+                            </span>
+                        </td>
+                    </tr>
+                </table>
+                <table role="presentation" style="width:600px;background-color:#fff;padding:0 20px;">
+                    <tr>
+                        <td>
+                            <br><br>
+                            <a href="{$config['application']['base_url']}verification/{$code}" style="text-decoration:none;background-color: #13b552;color: #fff;border: 0;cursor: pointer;padding: 10px;font-size: 16px;font-weight: 600;border-radius: 3px;">
+                                Confirm email
+                            </a>
+                            <br><br><br>
+                        </td>
+                    </tr>
+                </table>
+                <table style="width:600px;color:#666;background-color:#eee;padding:0 20px;">
+                    <tr>
+                        <td>
+                            <span>
+                                    If you have not done anything on <a href="{$config['application']['base_url']}">{$config['application']['base_url']}</a> simply ignore or delete this email.
+                            </span>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>

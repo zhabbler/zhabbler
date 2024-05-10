@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        *{
+            font-family: "Helvetica Neue","HelveticaNeue",Helvetica,Arial,sans-serif;
+        }
+        body{
+            background-color:#13b552;
+            background-size:400px;
+            margin:0;
+            color:#fff;
+            padding:0;
+        }
+        section{
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            height:100vh;
+        }
+        .error-title{
+            display:flex;
+            align-items:center;
+            margin-bottom:10px;
+            font-size:24px;
+            font-weight:bold;
+        }
+    </style>
+    <title>Жабблер</title>
+</head>
+<body>
+    <section>
+        <div>
+        <div class="error-title">
+            Something went wrong...
+        </div>
+        <div>
+            <p>
+                Do not panic! Everything's will be fine.
+            </p>
+            <p>
+                <b>If you're an user</b>, try going to this website again later.
+            </p>
+            <p>
+                <b>If you're an administator</b>, please fix these problems:
+            </p>
+            <ul>
+                <?php
+                foreach($errors as $error){
+                    echo "<li>$error</li>";
+                }
+                ?>
+            </ul>
+        </div>
+        </div>
+    </section>
+</body>
+</html>

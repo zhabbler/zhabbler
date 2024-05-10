@@ -1,0 +1,82 @@
+<section class="nav_options">
+    <form method="get" action="/search" data-reload="3" class="nav_options_searchbar" style="margin-bottom:15px;">
+        <input type="text" name="q" autocomplete="off" value="{(isset($_GET['q'])) ? $_GET['q'] : ''}" placeholder="{$language['search_zhabbler']}">
+    </form>
+    <a href="/settings/account" class="nav_options_tab">
+        <div>
+            <div>
+                <span>
+                    {$language['account']}
+                </span>
+            </div>
+            <div>
+                <small>
+                    {$language['about_settings_account']}
+                </small>
+            </div>
+        </div>
+    </a>
+    <a href="/settings/profile" class="nav_options_tab">
+        <div>
+            <div>
+                <span>
+                    {$language['profile']}
+                </span>
+            </div>
+            <div>
+                <small>
+                    {$language['about_settings_profile']}
+                </small>
+            </div>
+        </div>
+    </a>
+    <a href="/settings/dashboard" class="nav_options_tab">
+        <div>
+            <div>
+                <span>
+                    {$language['dashboard']}
+                </span>
+            </div>
+            <div>
+                <small>
+                    {$language['about_settings_dashboard']}
+                </small>
+            </div>
+        </div>
+    </a>
+    <a href="/destroy_account" class="nav_options_tab nav_options_tab_danger">
+        <div>
+            <div>
+                <span>
+                    {$language['delete_profile']}
+                </span>
+            </div>
+            <div>
+                <small>
+                    {$language['about_settings_delete_profile']}
+                </small>
+            </div>
+        </div>
+    </a>
+    <footer>
+        <div class="copl">
+            <span>
+                {$language['zhabbler']} (beta test) © {date("Y")}<br>
+            </span>
+        </div>
+        <div>
+            <a class="footer-elem" href="/help/about">
+                {$language['what_is_zhabbler']}
+            </a>
+            <a class="footer-elem" href="/help/rules">
+                {$language['rules']}
+            </a>
+            <a class="footer-elem" href="https://github.com/zhabbler">
+                GitHub
+            </a>
+            <a class="footer-elem" href="javascript:void(zhabbler.chooseLanguage());">
+                {$language['info']['flag']} ({$language['info']['name']})
+            </a>
+        </div>
+    </footer>
+</section>

@@ -1,0 +1,30 @@
+<div class="messages_b_user_info" data-hide="{$profile->nickname}">
+    <div class="messages_b_user_info_pfp">
+        <img src="{$profile->profileImage}" alt="Изображение">
+    </div>
+    <div>
+        <span>
+            {$profile->nickname}
+        </span>
+    </div>
+    <div class="messages_b_close" data-close="{$profile->nickname}">
+        <i class="bx bx-x"></i>
+    </div>
+</div>
+<div class="messages_b_msgs_box">
+    <div class="loader loader_black "><div class="loader_part loader_part_1"></div><div class="loader_part loader_part_2"></div><div class="loader_part loader_part_3"></div></div>
+</div>
+<div class="messages_b_write_msg">
+    <div class="messages_b_write_msg_textarea">
+        <textarea type="text" maxlength="256" onkeydown="imsendenter({$profile->nickname}, event);" placeholder="{$language['message']}..."></textarea>
+    </div>
+    <div class="messages_b_write_msg_btns">
+        <div>
+            <label class="messages_b_write_msg_btn" style="padding: 0 5px;">
+                <input type="file" accept="image/*" hidden="" onchange="imsendimage(this, {$profile->nickname})">
+                <i class='bx bx-image-alt' ></i>
+            </label>
+        </div>
+        <button class="messages_b_write_msg_btn messages_b_write_msg_btn_send" onclick="imsend({$profile->nickname});"><i class="bx bx-send"></i></button>
+    </div>
+</div>

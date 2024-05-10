@@ -1,0 +1,132 @@
+{(isset($user) ? (isset($profile) ? (new Web\Models\Personalization())->loadup($profile->userID) : (new Web\Models\Personalization())->loadup($user->userID)) : "")|noescape}
+{if isset($user) && (new Web\Models\Personalization())->get_personalization_config($user->userID)->personalizationNavbarStyle == 1}
+<style>
+    .tabs, .nav_options{
+        top:56px;
+    }
+    .nav_options{
+        height: calc(100vh - 56px);
+    }
+    .main{
+        min-height: calc(100vh - 56px);
+    }
+    .nav_options .nav_options_searchbar{
+        display: none;
+    }
+</style>
+<preloader>
+    $(".nav_options .nav_options_searchbar").remove();
+</preloader>
+<nav class="navbar_top">
+    <div class="navbar_top_container">
+        <div>
+            <a href="/dashboard" class="navbar_top_logotype">{$language['zhabbler']}</a>
+        </div>
+        <form method="get" action="/search" data-reload="3" class="nav_options_searchbar">
+            <input type="text" name="q" autocomplete="off" value="{(isset($_GET['q'])) ? $_GET['q'] : ''}" placeholder="{$language['search_zhabbler']}">
+        </form>
+        <div class="navbar_top_container_elements_icons">
+            <a href="/dashboard" class="navbar_top_container_element">
+                <i class="bx bxs-home"></i>
+            </a>
+            <a href="/dashboard/explore" class="navbar_top_container_element">
+                <i class="bx bxs-compass"></i>
+            </a>
+            <a href="/inbox" class="navbar_top_container_element">
+                {if (new Web\Models\Inbox())->getUnreadCountOfMsgs($user->token) > 0}
+                    <div class="navbar_top_container_element_counter">{(new Web\Models\Inbox())->getUnreadCountOfMsgs($user->token)}</div>
+                {/if}
+                <i class="bx bxs-envelope"></i>
+            </a>
+            <div class="navbar_top_container_element_bubble_contains" id="NVT_FM">
+                <a onclick="messagesBubble();" class="navbar_top_container_element">
+                    {if (new Web\Models\Messages())->get_count_of_unread_messages($user->token) > 0}
+                        <div class="navbar_top_container_element_counter">{(new Web\Models\Messages())->get_count_of_unread_messages($user->token)}</div>
+                    {/if}
+                    <i class="bx bxs-message-square-dots"></i>
+                </a>
+            </div>
+            <div class="navbar_top_container_element_bubble_contains" id="NVT_FA">
+                <a class="navbar_top_container_element" onclick="zhabbler.activityBubble();">
+                    {if (new Web\Models\Notifications())->notificationUnreadedCount($user->token) > 0}
+                        <div class="navbar_top_container_element_counter">{(new Web\Models\Notifications())->notificationUnreadedCount($user->token)}</div>
+                    {/if}
+                    <i class="bx bxs-bolt"></i>
+                </a>
+            </div>
+            <div class="navbar_top_container_element_bubble_contains" id="NVT_US">
+                <a class="navbar_top_container_element" onclick="zhabbler.profileBubble();">
+                    <i class="bx bxs-user"></i>
+                </a>
+                <div class="navbar_element_bubble" id="NVT_US_BBL" style="height: auto;display: none;">
+                    <div class="navbar_element_bubble_title">
+                        <div class="navbar_element_bubble_title_itself">
+                            <span>{$language['account']}</span>
+                        </div>
+                        <div class="navbar_element_bubble_title_btn" onclick="zhabbler.destroySession();">
+                            <span>{$language['logout']}</span>
+                        </div>
+                    </div>
+                    <a href="/profile/{$user->nickname}/liked" class="navbar_element_bubble_pseudo_elem">
+                        <div>
+                            <i class='bx bxs-heart'></i>
+                        </div>
+                        <div>
+                            <span>{$language['likes']}</span>
+                        </div>
+                    </a>
+                    <a href="/profile/{$user->nickname}/following" class="navbar_element_bubble_pseudo_elem">
+                        <div>
+                            <i class='bx bxs-group'></i>
+                        </div>
+                        <div>
+                            <span>{$language['following']}</span>
+                        </div>
+                    </a>
+                    <a href="/settings/account" class="navbar_element_bubble_pseudo_elem">
+                        <div>
+                            <i class='bx bxs-cog'></i>
+                        </div>
+                        <div>
+                            <span>{$language['settings']}</span>
+                        </div>
+                    </a>
+                    {if $user->admin == 1}
+                    <a onclick="window.location.href = '/admin/users';" class="navbar_element_bubble_pseudo_elem">
+                        <div>
+                            <i class='bx bxs-wrench'></i>
+                        </div>
+                        <div>
+                            <span>Admin panel</span>
+                        </div>
+                    </a>
+                    {/if}
+                    <div class="navbar_element_bubble_title">
+                        <div class="navbar_element_bubble_title_itself">
+                            <span>{$language['profile']}</span>
+                        </div>
+                    </div>
+                    <a href="/profile/{$user->nickname}" class="navbar_element_bubble_pseudo_elem navbar_element_bubble_pseudo_elem_profile">
+                        <div>
+                            <img src="{$user->profileImage}" class="navbar_element_bubble_pseudo_elem_pfp">
+                        </div>
+                        <div>
+                            <div>
+                                <b>{$user->nickname}</b>
+                            </div>
+                            <div>
+                                <span>{$user->name|noescape}</span>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+            <button class="button button_WritePostNT" onclick="zhabbler.writePost();">
+                <div class="button_icon">
+                    <i class='bx bxs-pencil'></i>
+                </div>
+            </button>
+        </div>
+    </div>
+</nav>
+{/if}

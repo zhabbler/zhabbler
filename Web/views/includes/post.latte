@@ -1,0 +1,181 @@
+<div class="post" id="post{$post->zhabURLID}" data-realid="{$post->zhabID}">
+    <div class="postAuthor">
+        <a href="/profile/{$post->nickname}" class="postAuthorProfileImage">
+            <img src="{$post->profileImage}" alt="Изображение">
+            {if $post->zhabRepliedTo != ""}
+                <div class="postAuthorProfileImageReposted">
+                    <i class='bx bx-repost'></i>
+                </div>
+            {/if}
+        </a>
+        <a href="/profile/{$post->nickname}" class="postAuthorPointsToAuthor">
+            {$post->nickname}
+        </a>
+        {if $post->verifed == 1}<i class='bx bxs-badge-check verifed_icon'></i>{/if}
+        {if isset($user) && $post->zhabBy != $user->userID}
+        <a class="FollowLink" data-id="{$post->zhabBy}">
+            {((new Web\Models\Follow())->check_follow_existence($user->token, $post->userID) ? $language['following'] : $language['follow'])}
+        </a>
+        {/if}
+        {if $post->zhabRepliedTo != ""}
+            <span class="postAuthorPointsToRepostGray">
+                {$language['reposted']}
+            </span>
+        {/if}
+        <div class="postAuthorMoreActions">
+            <div class="postAuthorMoreActionsBtn" id="DropdownListener" data-dropdown="#dropdown_{$post->zhabURLID}">
+                <i class='bx bx-dots-horizontal-rounded'></i>
+            </div>
+            <div class="dropdown" id="dropdown_{$post->zhabURLID}" style="display: none;">
+                <div class="dropdown_element">
+                    {(new Web\Models\Posts())->convert_date($post->zhabUploaded)}
+                </div>
+                <hr>
+                <div class="dropdown_element" onclick="copyPostURL({$post->zhabURLID});">
+                    <b>
+                        {$language['copy_url_post']}
+                    </b>
+                </div>
+                {if isset($user)}
+                {if $user->userID != $post->zhabBy}
+                <div class="dropdown_element dropdown_element_red" onclick="zhabbler.report({$post->nickname});">
+                    <b>
+                        {$language['report']}
+                    </b>
+                </div>
+                {else}
+                <div class="dropdown_element dropdown_element_red" onclick="zhabbler.deletePost({$post->zhabURLID});">
+                    <b>
+                        {$language['delete']}
+                    </b>
+                </div>
+                {/if}
+                {if $user->userID != $post->userID && $user->admin == 1}
+                 <div class="dropdown_element dropdown_element_red" onclick="zhabbler.deletePost({$post->zhabURLID});">
+                    <b>
+                        {$language['delete']}
+                    </b>
+                </div>
+                {/if}
+                {/if}
+            </div>
+        </div>
+    </div>
+    {if $post->zhabRepliedTo != ''}
+    {(new Web\Models\Posts())->get_repost($post->zhabURLID)|noescape}
+    {/if}
+    {if $post->zhabAnsweredTo != ""}
+        {var $question = (new Web\Models\Questions())->get_question($post->zhabAnsweredTo)}
+        <div class="postQuestion">
+            <div class="postQuestionItself">
+                <div class="postQuestionItselfAuthor">
+                    <span>
+                        {$question->nickname} {$language['asked']}
+                    </span>
+                </div>
+                <div>
+                    <span>
+                        {$question->question|noescape}
+                    </span>
+                </div>
+            </div>
+            <div class="postQuestionProfilePicture">
+                <img src="{$question->profileImage}">
+            </div>
+        </div>
+    {/if}
+    <div class="postContent" id="realPostContent">
+        {if $post->zhabContains == 1}
+        <div class="postContentWarning" onclick="$(this).remove();">
+            {$language['spoilers_warning_post']}
+        </div>
+        {/if}
+        {$post->zhabContent|noescape}
+    </div>
+    <div class="postActions">
+        <div class="postActionsLikes" id="Likes{$post->zhabURLID}" onclick="zhabbler.change_likes_counter_to_close({$post->zhabURLID});$('#responds' + {$post->zhabURLID}).toggle();$('#responds' + {$post->zhabURLID} + ` .postRespondsTabLikes`).click();">
+            <div id="likesCounter">
+                <b>{$post->zhabLikes}</b> {$language['liked']}
+            </div>
+            <div id="closeEtc" style="display: none">
+                <i class='bx bx-x'></i>
+                {$language['close']}
+            </div>
+        </div>
+        <div class="postActionsItself">
+            <div class="postAction" id="LabelEventer" data-label="{$language['share']}" onclick="copyPostURL({$post->zhabURLID});">
+                <i class='bx bx-share'></i>
+            </div>
+            <div class="postAction" id="LabelEventer" onclick="zhabbler.comments({$post->zhabURLID});" data-label="{$language['responds']}">
+                <i class='bx bx-comment'></i>
+            </div>
+            {if $post->zhabWhoCanRepost != 1}
+            <div class="postAction" id="LabelEventer" onclick="zhabbler.repost({$post->zhabURLID})"data-label="{$language['repost']}">
+                <i class='bx bx-repost'></i>
+            </div>
+            {/if}
+            <div class="postAction" onclick="zhabbler.like({$post->zhabURLID}, $(this))" id="LabelEventer" data-label="{$language['like']}">
+                {if isset($user) && (new Web\Models\Posts())->check_like($user->token, $post->zhabURLID)}
+                    <i class='bx bxs-heart'></i>
+                {else}
+                    <i class='bx bx-heart'></i>
+                {/if}
+            </div>
+        </div>
+    </div>
+    <div class="postResponds" id="responds{$post->zhabURLID}" style="display: none;">
+        <div class="postRespondsTabs">
+            <div class="postRespondsTab postRespondsTabActive postRespondsTabComment" id="showSection" onclick="zhabbler.comments({$post->zhabURLID}, false);" data-postid="{$post->zhabURLID}" data-section="commentsSection">
+                <div class="postRespondsTabIcon"><i class='bx bx-comment'></i></div>
+                <div class="postRespondsTabLabel"><span>{(new Web\Models\Posts())->get_comments_count($post->zhabURLID)}</span></div>
+            </div>
+            <div class="postRespondsTab postRespondsTabReposts" id="showSection" onclick="zhabbler.reposts({$post->zhabURLID});" data-postid="{$post->zhabURLID}" data-section="repostsSection">
+                <div class="postRespondsTabIcon"><i class='bx bx-repost'></i></div>
+                <div class="postRespondsTabLabel"><span>{(new Web\Models\Posts())->get_reposts_count($post->zhabURLID)}</span></div>
+            </div>
+            <div class="postRespondsTab postRespondsTabLikes" id="showSection" onclick="zhabbler.get_who_liked({$post->zhabURLID});" data-postid="{$post->zhabURLID}" data-section="likesSection">
+                <div class="postRespondsTabIcon"><i class='bx bx-heart'></i></div>
+                <div class="postRespondsTabLabel"><span>{$post->zhabLikes}</span></div>
+            </div>
+        </div>
+        <div id="commentsSection" class="JS_section">
+            {if isset($user) && $post->zhabWhoCanComment != 1}
+            <div class="postRespondsRespond">
+                <div class="postRespondsRespondAvatar" onclick="goToPage('/me');">
+                    <img src="{$user->profileImage}">
+                </div>
+                <div class="postRespondsRespondTextarea">
+                    <textarea name="comment" maxlength="128" data-for="{$post->zhabURLID}" placeholder="{$language['write_your_comment']}"></textarea>
+                </div>
+                <div class="postRespondsRespondSendBtn">
+                    <button onclick="zhabbler.sendComment({$post->zhabURLID});" disabled><i class="bx bx-send"></i></button>
+                </div>
+            </div>
+            {/if}
+            <div id="responds_itself">
+                <div class="loader loader_black">
+                    <div class="loader_part loader_part_1"></div>
+                    <div class="loader_part loader_part_2"></div>
+                    <div class="loader_part loader_part_3"></div>
+                </div>
+            </div>
+        </div>
+        <div id="repostsSection" class="JS_section" style="display:none;">
+            <div id="reposts_itself">
+                <div class="loader loader_black">
+                    <div class="loader_part loader_part_1"></div>
+                    <div class="loader_part loader_part_2"></div>
+                    <div class="loader_part loader_part_3"></div>
+                </div>
+            </div>
+        </div>
+        <div id="likesSection" class="JS_section" style="display:none;">
+            <div class="loader loader_black">
+                <div class="loader_part loader_part_1"></div>
+                <div class="loader_part loader_part_2"></div>
+                <div class="loader_part loader_part_3"></div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>checkPostsAttachments();</script>

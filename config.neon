@@ -1,0 +1,18 @@
+mysql:
+    dsn: "mysql:host=localhost;dbname=db_name"
+    user: "user"
+    password: ""
+application:
+    debug: 1
+    default_language: "en"
+    default_time_zone: "America/New_York"
+    email_verification: 0
+    registration_opened: 0
+    unlogged_posts_view: 0
+    base_url: "http://localhost/"
+    encryption_key: ""
+smtp:
+    host: ""
+    username: ""
+    email: ""
+    password: ""

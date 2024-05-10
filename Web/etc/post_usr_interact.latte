@@ -1,0 +1,26 @@
+<div class="post post_usr_interact" id="PopupContainer">
+    <section class="post_usr_interact_el" onclick="zhabbler.openEditor('text');">
+        <div>
+            <div class="post_usr_interact_el_icon">Aa</div>
+            <div class="post_user_interact_el_text">{$language['text']}</div>
+        </div>
+    </section>
+    <section class="post_usr_interact_el" onclick="zhabbler.openEditor('photo');">
+        <div>
+            <div class="post_usr_interact_el_icon" style="color:#ff4242;"><i class='bx bxs-camera'></i></div>
+            <div class="post_user_interact_el_text">{$language['photo']}</div>
+        </div>
+    </section>
+    <section class="post_usr_interact_el" onclick="zhabbler.openEditor('p', {$language['something_somebody_else_said_here']}, `class='content_quote'`);">
+        <div>
+            <div class="post_usr_interact_el_icon" style="color:#ff8c00;"><i class='bx bxs-quote-alt-left' ></i></div>
+            <div class="post_user_interact_el_text">{$language['quote']}</div>
+        </div>
+    </section>
+    <section class="post_usr_interact_el" onclick="zhabbler.openEditor('p', {$language['frog_croak_croak']}, `class='content_dialogue'`);">
+        <div>
+            <div class="post_usr_interact_el_icon" style="color:#009dff;"><i class='bx bxs-conversation' ></i></div>
+            <div class="post_user_interact_el_text">{$language['dialog']}</div>
+        </div>
+    </section>
+</div>

@@ -1,0 +1,3 @@
+RewriteEngine On
+RewriteCond %{REQUEST_URI} !Web/public/
+RewriteRule (.*) /Web/public/$1 [L]

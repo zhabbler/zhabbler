@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/css/main.css">
+    <link rel="shortcut icon" href="/static/images/icon.png" type="image/png">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <title>Жабблер</title>
+</head>
+<body>
+    <div id="app">
+        <div class="popup popup_do_not_close" id="JS_Loader">
+            <div class="loader loader_cpa"><div class="loader_part loader_part_1"></div><div class="loader_part loader_part_2"></div><div class="loader_part loader_part_3"></div></div>
+        </div>
+        {include 'includes/navbar_top.latte'}
+        <div class="container">
+            {include 'includes/navbar.latte'}
+            <main class="main">
+                <div class="tabs">
+                    {if isset($user)}
+                    <a href="/dashboard" class="tab">
+                        <span>
+                            {$language['following_tab']}
+                        </span>
+                    </a>
+                    {/if}
+                    <a href="/dashboard/popular" class="tab tab_active">
+                        <span>
+                            {$language['popular']}
+                        </span>
+                    </a>
+                    <a href="/dashboard/explore" class="tab">
+                        <span>
+                            {$language['explore']}
+                        </span>
+                    </a>
+                </div>
+                <div>
+                    {if isset($user)}
+                    {include '../etc/post_usr_interact.latte'}
+                    {/if}
+                    <div id="PopularPosts">
+                        <div class="loader">
+                            <div class="loader_part loader_part_1"></div>
+                            <div class="loader_part loader_part_2"></div>
+                            <div class="loader_part loader_part_3"></div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+            {include 'includes/nav_options.latte'}
+        </div>
+        <preloader src="/static/js/popular.js"></preloader>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js" integrity="sha512-57oZ/vW8ANMjR/KQ6Be9v/+/h6bq9/l3f0Oc7vn6qMqyhvPd1cvKBRWWpzu0QoneImqr2SkmO4MSqU+RpHom3Q==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="/static/js/main.js"></script>
+</body>
+</html>
