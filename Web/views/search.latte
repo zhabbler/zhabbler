@@ -17,13 +17,14 @@
         <div class="container">
             {include 'includes/navbar.latte'}
             <main class="main">
-                <form method="GET">
-                    <input type="hidden" name="q" value="{$_GET['q']}">
+                <form method="GET" data-reload="3" action="/search">
+                     <input class="input" placeholder="{$language['search_zhabbler']}" name="q" value="{(isset($_GET['q']) ? $_GET['q'] : '')}" style="margin: 15px;margin-bottom:0px;width:calc(100% - 55px);">
                     <select name="type" class="select_search" onchange="this.form.submit()">
                         <option value="posts" {($_GET['type'] == 'posts' ? "selected" : "")}>{$language['posts']}</option>
                         <option value="profiles" {($_GET['type'] == 'profiles' ? "selected" : "")}>{$language['profiles']}</option>
                     </select>
                 </form>
+                {if isset($_GET['q'])}
                 <div id="Searched">
                     <div class="loader">
                         <div class="loader_part loader_part_1"></div>
@@ -31,14 +32,17 @@
                         <div class="loader_part loader_part_3"></div>
                     </div>
                 </div>
+                {/if}
             </main>
             {include 'includes/nav_options.latte'}
         </div>
+        {if isset($_GET['q'])}
         <preloader>var query = "{$_GET['q']}";</preloader>
         {if $_GET['type'] == 'posts'}
         <preloader src="/static/js/search_posts.js"></preloader>
         {else}
         <preloader src="/static/js/search_profiles.js"></preloader>
+        {/if}
         {/if}
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
