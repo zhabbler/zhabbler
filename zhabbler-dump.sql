@@ -183,3 +183,5 @@ CREATE TABLE `zhabs` (
 
 LOCK TABLES `zhabs` WRITE;
 UNLOCK TABLES;
+
+CREATE EVENT rtcounter ON SCHEDULE EVERY 1 HOUR DO UPDATE users SET rateLimitCounter = 0;
