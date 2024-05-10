@@ -19,12 +19,14 @@ final class SearchPresenter
     {
         $params += ["language" => $GLOBALS['language']];
         if(isset($_COOKIE['zhabbler_session'])){
-            if(!isset($_GET['q']) || (new Strings())->is_empty($_GET['q'])){
-                header("Location: /");
-                die;
+            if(isset($_GET['q'])){
+                $_GET['q'] = (new Strings())->convert($_GET['q']);
+                if((new Strings())->is_empty($_GET['q'])){
+                    header("Location: /search");
+                    die;
+                }
             }
-            $_GET['q'] = (new Strings())->convert($_GET['q']);
-            if(!isset($_GET['type']) || ($_GET['type'] != 'profiles' && $_GET['type'] != 'posts')){
+            if(isset($_GET['type']) && ($_GET['type'] != 'profiles' && $_GET['type'] != 'posts')){
                 header("Location: /search?q={$_GET['q']}&type=posts");
                 die;
             }

@@ -24,6 +24,23 @@
             {include '../includes/navbar.latte'}
             <main class="main">
                 <div class="settings_main">
+                    <div class="tabs only_mobile_flex">
+                        <a class="tab" href="/settings/account">
+                            {$language['account']}
+                        </a>
+                        <a class="tab" href="/settings/profile">
+                            {$language['profile']}
+                        </a>
+                        <a class="tab tab_active" href="/settings/dashboard">
+                            {$language['dashboard']}
+                        </a>
+                        <a class="tab" href="javascript:void(zhabbler.chooseLanguage());">
+                            {$language['info']['flag']}
+                        </a>
+                        <a class="tab" href="javascript:void(zhabbler.destroySession());">
+                            {$language['logout']}
+                        </a>
+                    </div>
                     <div class="settings_main_title">
                         <span>{$language['dashboard_settings']}</span>
                     </div>

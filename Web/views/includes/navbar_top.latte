@@ -1,4 +1,23 @@
 {(isset($user) ? (isset($profile) ? (new Web\Models\Personalization())->loadup($profile->userID) : (new Web\Models\Personalization())->loadup($user->userID)) : "")|noescape}
+<nav class="mobile_nav">
+    <a href="/" class="mobile_nav_element">
+        <i class='bx bxs-home'></i>
+    </a>
+    {if isset($user)}
+    <a href="/search" class="mobile_nav_element">
+        <i class='bx bx-search' ></i>
+    </a>
+    <div class="button button_mobile_nav_element" onclick="zhabbler.writePost();">
+        <i class='bx bxs-edit' ></i>
+    </div>
+    <a href="/me" class="mobile_nav_element">
+        <i class='bx bxs-user-circle' ></i>
+    </a>
+    <a href="/settings/account" class="mobile_nav_element">
+        <i class='bx bxs-cog' ></i>
+    </a>
+    {/if}
+</nav>
 {if isset($user) && (new Web\Models\Personalization())->get_personalization_config($user->userID)->personalizationNavbarStyle == 1}
 <style>
     .tabs, .nav_options{
