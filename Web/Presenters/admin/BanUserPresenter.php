@@ -16,6 +16,7 @@ final class BanUserPresenter
 
     public function load(array $params = []): void
     {
+        $params += ["language" => $GLOBALS['language']];
         if(isset($_COOKIE['zhabbler_session'])){
             if(isset($_GET['nickname']) && !(new Strings())->is_empty($_GET['nickname'])){
                 $session = (new Sessions())->get_session($_COOKIE['zhabbler_session']);
