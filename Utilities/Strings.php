@@ -27,6 +27,7 @@ class Strings
 
     public function prepare_post_text(string $string): string
     {
+        $prepared = "";
         $string = strip_tags($string, ['br', 'p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'b', 'i', 'u', 'a', 'strong', 'span', 'img']);
         preg_replace('/(<.+?)(?<=\s)on[a-z]+\s*=\s*(?:([\'"])(?!\2).+?\2|(?:\S+?\(.*?\)(?=[\s>])))(.*?>)/i', "$1 $3", $string);
         $dom = new DOMDocument('1.0', 'UTF-8');
@@ -39,32 +40,33 @@ class Strings
             }
         }
         foreach($dom->getElementsByTagName('*') as $element){
-            if($element->hasAttributes()){
-                foreach($element->attributes as $attr){
-                    $name = $attr->nodeName;
-                    $value = $attr->nodeValue;
-                    if($name == "class" && !in_array($value, ["content_quote", "content_dialogue"])){
-                        $element->removeAttribute($name);
-                    }
-                    if($name == "href" && str_contains($value, "javascript:")){
-                        $element->removeAttribute($name);
-                    }
-                    if($name == "style"){
-                        $value = preg_replace('/\s+/','',$value);
-                        if($value != 'color:rgb(0,0,0);' && $value != 'color:rgb(255,66,66);' && $value != 'color:rgb(255,136,0);' && $value != 'color:rgb(255,247,0);' && $value != 'color:rgb(0,159,0);' && $value != 'color:rgb(0,157,255);' && $value != 'color:rgb(0,38,255);' && $value != 'color:rgb(153,0,255);'){
-                            $element->removeAttribute($name);
+            $attributes = '';
+            if(!in_array($element->nodeName, ['body', 'html', 'img', 'br'])){
+                if($element->hasAttributes()){
+                    foreach($element->attributes as $attr){
+                        if($attr->nodeName == "class" && $element->nodeName == 'p' && ($attr->nodeValue == "content_quote" || $attr->nodeValue == "content_dialogue")){
+                            $attributes .= "{$attr->nodeName}='{$attr->nodeValue}'";
+                        }
+                        if($attr->nodeName == "href" && !str_contains($attr->nodeValue, "javascript:")){
+                            $attributes .= "{$attr->nodeName}='{$attr->nodeValue}'";
+                        }
+                        if($attr->nodeName == "style"){
+                            if(in_array($attr->nodeName, ['color:rgb(0,0,0);', 'color:rgb(255,66,66);', 'color:rgb(255,136,0);', 'color:rgb(255,247,0);', 'color:rgb(0,159,0);', 'color:rgb(0,157,255);', 'color:rgb(0,38,255);', 'color:rgb(153,0,255);'])){
+                                $attributes .= "{$attr->nodeName}='".preg_replace('/\s+/','',$attr->nodeValue)."'";
+                            }
                         }
                     }
-                    if($name == "src"){
-                        $element->setAttribute('src', substr(BASE_URL, 0, -1).$value);
-                    }
-                    $element->removeAttribute("contenteditable");
-                    if(!in_array($name, ["class", "href", "src", "style"])){
-                        $element->removeAttribute($name);
-                    }
+                }
+                if(!$this->is_empty($this->convert($element->nodeValue))){
+                    $prepared .= "<{$element->nodeName} {$attributes}>{$this->convert($element->nodeValue)}</{$element->nodeName}>";
+                }
+            }else if($element->nodeName == 'br'){
+                $prepared .= '<br>';
+            }else if($element->nodeName == 'img'){
+                if(file_exists($_SERVER['DOCUMENT_ROOT'].'/Web/public'.$element->attributes['src']->nodeValue)){
+                    $prepared .= '<img src="'.$element->attributes['src']->nodeValue.'">';
                 }
             }
         }
-        return (!empty($string) ? html_entity_decode(preg_replace('~<(?:!DOCTYPE|/?(?:html|body))[^>]*>\s*~i', '', $dom->saveHTML()), ENT_QUOTES, "UTF-8") : "");
     }
 }
