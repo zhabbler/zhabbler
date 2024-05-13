@@ -68,5 +68,6 @@ class Strings
                 }
             }
         }
+        return $prepared;
     }
 }
