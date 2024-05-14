@@ -21,26 +21,6 @@ conn.onopen = function(e) {
     connection = true;
 };
 
-conn.onclose = function(e){
-    if(connection == true){
-        $("#app").prepend(`<div class="popup popup_choose_alert popup_do_not_close">
-                    <div>
-                        <div>
-                            <h1>
-                                ${locale['connection_to_msgs_down']}
-                            </h1>
-                        </div>
-                        <div style="display: flex;">
-                            <div class="button" onclick="$('.popup:first').remove();" style="margin:0 auto;">
-                                OK
-                            </div>
-                        </div>
-                    </div>
-                </div>`);
-    }
-    connection = false;
-}
-
 conn.onmessage = function(e) {
     if(JSON.parse(e.data).to == user.nickname){
         if(cookie.getCookie("zhabbler_do_not_disturb") != 1){
