@@ -4,32 +4,8 @@ $(document).ready(function(){
             zhabbler.insertIntoEditorContent('p', locale['go_ahead_put_smth']);
         }
     });
-    $(document).on("click", ".popup:first form", function(){
-        $("#ContextMenuTextConfig").fadeOut(200);
-    });
-    $(document).on("click", "#ContextMenuTextConfig .color", function(){
-        document.execCommand('styleWithCSS', false, true);
-        document.execCommand('foreColor', false, $(this).css("background-color"));
-    });
     $(document).on("click", ".ui__btn__image__delete", function(){
         $(`.photo--[data-src="${$(this).data("src")}"]`).remove();
-    });
-    $(document).on("contextmenu", ".popup:first form .postContent", function(e){
-        $("#ContextMenuTextConfig").css({"top":e.clientY, "left":e.clientX});
-        $("#ContextMenuTextConfig").fadeToggle(200);
-        e.stopPropagation();
-        return false;
-    });
-    $(document).on('click', '#createLink', function(){
-        let userLink = prompt("Введите URL");
-        if(userLink !== '' && userLink){
-            if(/http/i.test(userLink)){
-                document.execCommand('createLink', false, userLink);
-            }else{
-                userLink = "http://" + userLink;
-                document.execCommand('createLink', false, userLink);
-            }
-        }
     });
 });
 const publish = (repost, question) => {
