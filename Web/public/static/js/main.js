@@ -905,7 +905,11 @@ const checkPostsAttachments = () => {
         elem = $(this);
         if(typeof elem.attr("src") == 'undefined' && elem.attr("src") == false){
             elem.remove();
-        }
+        }else{
+	    elem.prop("controls", true);
+      	    elem.prop("autoplay", true);
+	    elem.prop("loop", true);
+	}
     });
     $(".post .postContent *:not(img):not(video)").each(function(){
         if($(this).html() == ''){
