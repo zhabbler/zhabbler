@@ -666,7 +666,7 @@ class Zhabbler{
         $(".popup:first").load("/etc/post_usr_interact");
     }
     insertIntoEditorContent(element, placeholder, attributes = ""){
-        $(".popup:first form #pC_sS .postContent").append(`<${element} data-text="${placeholder}" ${attributes} contenteditable="true"></${element}>`);
+        $(".popup:first form #pC_sS .postContent").append(`<${element} data-text="${placeholder}" ${attributes}></${element}>`);
     }
     insertIntoEditorContentImage(element){
         const file = element.files[0];
