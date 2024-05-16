@@ -909,6 +909,7 @@ const checkPostsAttachments = () => {
 	    elem.prop("controls", true);
       	    elem.prop("autoplay", true);
 	    elem.prop("loop", true);
+	    elem.prop("muted", true);
 	}
     });
     $(".post .postContent *:not(img):not(video)").each(function(){
