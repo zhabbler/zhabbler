@@ -1640,6 +1640,8 @@ input[type=checkbox]::before{
     border-radius: 4px;
     border: 1px solid #999;
     color:#333;
+    word-break: break-word;
+    margin-right: 10px;
 }
 .postRespondsRespondItself a{
     color:#333;
