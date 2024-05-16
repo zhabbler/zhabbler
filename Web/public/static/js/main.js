@@ -901,6 +901,12 @@ const checkPostsAttachments = () => {
             elem.attr("src", "/static/images/image_corrupted.png");
         }
     });
+    $(".post .postContent video").each(function(){
+        elem = $(this);
+        if(typeof elem.attr("src") == 'undefined' && elem.attr("src") == false){
+            elem.remove();
+        }
+    });
     $(".post .postContent *:not(img):not(video)").each(function(){
         if($(this).html() == ''){
             $(this).remove();
