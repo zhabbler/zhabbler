@@ -901,20 +901,6 @@ const checkPostsAttachments = () => {
             elem.attr("src", "/static/images/image_corrupted.png");
         }
     });
-    $(".post .postContent video").each(function(){
-        elem = $(this);
-        elem.prop("controls", true);
-        elem.prop("autoplay", true);
-        elem.prop("loop", true);
-        elem.prop("muted", true);
-        if(typeof elem.attr("src") !== 'undefined' && elem.attr("src") !== false){
-            $.get(elem.attr("src")).fail(function(){
-                elem.remove();
-            });
-        }else{
-            elem.remove();
-        }
-    });
     $(".post .postContent *:not(img):not(video)").each(function(){
         if($(this).html() == ''){
             $(this).remove();
