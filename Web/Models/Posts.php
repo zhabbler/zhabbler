@@ -13,7 +13,7 @@ use Latte;
 #[\AllowDynamicProperties]
 class Posts
 {
-	public function __construct()
+    public function __construct()
     {
         $this->latte = new Latte\Engine();
         $this->latte->setTempDirectory($_SERVER['DOCUMENT_ROOT']."/temp");
@@ -297,7 +297,7 @@ class Posts
             </a>
         </div>' : '').'
         <div class="postContent" id="realPostContent" onclick="goToPage(`/zhab/'.$reposted->zhabURLID.'`);">
-        '.strip_tags($reposted->zhabContent, "<p><h1><h2><h3><h4><h5><h6><img><b><i><u><a><span>").'
+        '.strip_tags($reposted->zhabContent, "<p><h1><h2><h3><h4><h5><h6><img><b><i><u><a><span><video>").'
         </div>
         <div class="postAuthor postAuthorReposted">
             <a href="/profile/'.$post->nickname.'" class="postAuthorProfileImage">
@@ -344,11 +344,7 @@ class Posts
     	$result = ["error" => null];
     	$urlid = (is_null($urlid) ? (new Strings())->random_string(72) : $urlid);
         $contains = ($contains == 1 ? 1 : 0);
-<<<<<<< HEAD
     	if(!(new Strings())->is_empty(trim(html_entity_decode(preg_replace('/\s+/', '', strip_tags($post, "<img><video>"))), " \t\n\r\0\x0B\xC2\xA0")) && !(new Strings())->is_empty(strip_tags($post_prepared, "<img><video>"))){
-=======
-    	if(!(new Strings())->is_empty(trim(html_entity_decode(preg_replace('/\s+/', '', strip_tags($post, "<img>"))), " \t\n\r\0\x0B\xC2\xA0")) && !(new Strings())->is_empty(strip_tags($post_prepared, "<img>"))){
->>>>>>> 13a3f0519ae483700041df83e3278cf883087be7
             if(preg_match("/[^a-zA-Z0-9\!]/", $urlid)){
                  $result = ["error" => $this->locale['urlid_symbols_error']];
             }else{
