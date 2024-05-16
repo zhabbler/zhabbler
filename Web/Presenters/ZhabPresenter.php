@@ -26,7 +26,7 @@ final class ZhabPresenter
                 die;
             }
             $post = (new Posts())->get_post($params['id']);
-            $post->zhabContent = strip_tags($post->zhabContent, "<p><h1><h2><h3><h4><h5><h6><img><b><i><u><a><span>");
+            $post->zhabContent = strip_tags($post->zhabContent, "<p><h1><h2><h3><h4><h5><h6><img><b><i><u><a><span><video>");
             $profile = (new User())->get_user_by_id($post->zhabBy);
             $params += ["user" => $user, "post" => $post, "profile" => $profile];
             $this->latte->render($_SERVER['DOCUMENT_ROOT']."/Web/views/zhab.latte", $params);
