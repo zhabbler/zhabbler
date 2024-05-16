@@ -344,7 +344,11 @@ class Posts
     	$result = ["error" => null];
     	$urlid = (is_null($urlid) ? (new Strings())->random_string(72) : $urlid);
         $contains = ($contains == 1 ? 1 : 0);
+<<<<<<< HEAD
     	if(!(new Strings())->is_empty(trim(html_entity_decode(preg_replace('/\s+/', '', strip_tags($post, "<img><video>"))), " \t\n\r\0\x0B\xC2\xA0")) && !(new Strings())->is_empty(strip_tags($post_prepared, "<img><video>"))){
+=======
+    	if(!(new Strings())->is_empty(trim(html_entity_decode(preg_replace('/\s+/', '', strip_tags($post, "<img>"))), " \t\n\r\0\x0B\xC2\xA0")) && !(new Strings())->is_empty(strip_tags($post_prepared, "<img>"))){
+>>>>>>> 13a3f0519ae483700041df83e3278cf883087be7
             if(preg_match("/[^a-zA-Z0-9\!]/", $urlid)){
                  $result = ["error" => $this->locale['urlid_symbols_error']];
             }else{
