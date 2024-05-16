@@ -34,7 +34,7 @@ class Posts
         $output = "";
         foreach($posts as $post){
             $params = [];
-            $post->zhabContent = strip_tags($post->zhabContent, "<p><h1><h2><h3><h4><h5><h6><img><b><i><u><a><span>");
+            $post->zhabContent = strip_tags($post->zhabContent, ["p", "h1", "h2", "h3", "h4", "h5", "h6", "img", "video", "span"]);
             $output .= $this->latte->renderToString($_SERVER['DOCUMENT_ROOT']."/Web/views/includes/post.latte", ["post" => $post, "language" => $this->locale, "user" => $user]);
         }
         die($output);
@@ -64,7 +64,7 @@ class Posts
         $output = "";
         if($user->userID == $profile->userID || $profile->hideLiked != 1){
             foreach($posts as $post){
-                $post->zhabContent = strip_tags($post->zhabContent, "<p><h1><h2><h3><h4><h5><h6><img><b><i><u><a><span>");
+                $post->zhabContent = strip_tags($post->zhabContent, "<p><h1><h2><h3><h4><h5><h6><img><b><i><u><a><span><video>");
                 $output .= $this->latte->renderToString($_SERVER['DOCUMENT_ROOT']."/Web/views/includes/post.latte", ["post" => $post, "user" => $user, "language" => $this->locale]);
             }
         }
@@ -82,7 +82,7 @@ class Posts
         }
         $output = "";
         foreach($posts as $post){
-            $post->zhabContent = strip_tags($post->zhabContent, "<p><h1><h2><h3><h4><h5><h6><img><b><i><u><a><span>");
+            $post->zhabContent = strip_tags($post->zhabContent, "<p><h1><h2><h3><h4><h5><h6><img><b><i><u><a><span><video>");
             $output .= $this->latte->renderToString($_SERVER['DOCUMENT_ROOT']."/Web/views/includes/post.latte", ["post" => $post, "user" => $user, "language" => $this->locale]);
         }
         die($output);
@@ -103,7 +103,7 @@ class Posts
         }
         $output = "";
         foreach($posts as $post){
-            $post->zhabContent = strip_tags($post->zhabContent, "<p><h1><h2><h3><h4><h5><h6><img><b><i><u><a><span>");
+            $post->zhabContent = strip_tags($post->zhabContent, "<p><h1><h2><h3><h4><h5><h6><img><b><i><u><a><span><video>");
             $output .= $this->latte->renderToString($_SERVER['DOCUMENT_ROOT']."/Web/views/includes/post.latte", ["post" => $post, "user" => $user, "language" => $this->locale]);
         }
         die($output);
@@ -202,7 +202,7 @@ class Posts
             $user = (new User())->get_user_by_token($token);
         }
         foreach($posts as $post){
-            $post->zhabContent = strip_tags($post->zhabContent, "<p><h1><h2><h3><h4><h5><h6><img><b><i><u><a><span>");
+            $post->zhabContent = strip_tags($post->zhabContent, "<p><h1><h2><h3><h4><h5><h6><img><b><i><u><a><span><video>");
             $params = ["post" => $post, "language" => $this->locale];
             if(isset($user)){
                 $params += ["user" => $user];
@@ -220,7 +220,7 @@ class Posts
             $user = (new User())->get_user_by_token($token);
         }
         foreach($posts as $post){
-            $post->zhabContent = strip_tags($post->zhabContent, "<p><h1><h2><h3><h4><h5><h6><img><b><i><u><a><span>");
+            $post->zhabContent = strip_tags($post->zhabContent, "<p><h1><h2><h3><h4><h5><h6><img><b><i><u><a><span><video>");
             $params = ["post" => $post, "language" => $this->locale];
             if(isset($user)){
                 $params += ["user" => $user];
@@ -344,7 +344,7 @@ class Posts
     	$result = ["error" => null];
     	$urlid = (is_null($urlid) ? (new Strings())->random_string(72) : $urlid);
         $contains = ($contains == 1 ? 1 : 0);
-    	if(!(new Strings())->is_empty(trim(html_entity_decode(preg_replace('/\s+/', '', strip_tags($post, "<img>"))), " \t\n\r\0\x0B\xC2\xA0")) && !(new Strings())->is_empty(strip_tags($post_prepared, "img"))){
+    	if(!(new Strings())->is_empty(trim(html_entity_decode(preg_replace('/\s+/', '', strip_tags($post, "<img><video>"))), " \t\n\r\0\x0B\xC2\xA0")) && !(new Strings())->is_empty(strip_tags($post_prepared, "<img><video>"))){
             if(preg_match("/[^a-zA-Z0-9\!]/", $urlid)){
                  $result = ["error" => $this->locale['urlid_symbols_error']];
             }else{

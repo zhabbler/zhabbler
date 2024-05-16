@@ -27,7 +27,43 @@ class Files
 		return $result;
 	}
 
-	public function convertImage(string $originalImage, string $outputImage, int $quality){
+	public function upload_video(?array $file, bool $json_result = true): array
+	{
+		$result = ["error" => NULL, "url" => NULL];
+		if(!empty($file['name'][0])){
+			$allowed_extensions = ["mp4", "flv", "webm", "mkv", "vob", "ogv", "ogg", "avi", "wmv", "mov", "mpeg", "mpg", "flv", "3gp"];
+			$ext = explode('.', $file['name']);
+			$ext = strtolower(end($ext));
+			if($file['size'] > 3793747637236){
+				$result = ["error" => "File size is too big", "url" => NULL];
+			}else if(!in_array($ext, $allowed_extensions)){
+				$result = ["error" => "File is not a video", "url" => NULL];
+			}else{
+				$video_name = (new Strings())->random_string(128).$ext;
+				move_uploaded_file($file['tmp_name'], $_SERVER['DOCUMENT_ROOT']."/Web/public/uploads/".$video_name);
+				$videoTitleForMP4 = 'zhabbler_'.(new Strings())->random_string(128).'.mp4';
+				$this->convertVideo($_SERVER['DOCUMENT_ROOT']."/Web/public/uploads/$video_name", $_SERVER['DOCUMENT_ROOT']."/Web/public/uploads/$videoTitleForMP4", 100);
+				$result = ["error" => null, "url" => "/uploads/$videoTitleForMP4"];
+			}
+		}
+		if($json_result){
+			header('Content-Type: application/json');
+			die(json_encode($result));
+		}
+		return $result;
+	}
+
+	public function convertVideo($tempFilePath, $finalFilePath): string
+	{
+        $cmd = "ffmpeg -i $tempFilePath $finalFilePath 2>&1";
+        $outputLog = array();
+        exec($cmd, $outputLog, $returnCode);
+        unlink($tempFilePath);
+        return ($returnCode != 0 ? "error" : "");
+    }
+
+	public function convertImage(string $originalImage, string $outputImage, int $quality): void 
+	{
 	    $exploded = explode('.',$originalImage);
 	    $ext = $exploded[count($exploded) - 1]; 
 

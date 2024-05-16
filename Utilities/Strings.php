@@ -28,7 +28,7 @@ class Strings
     public function prepare_post_text(string $string): string
     {
         $prepared = "";
-        $string = strip_tags($string, ['br', 'p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'span', 'img']);
+        $string = strip_tags($string, ['br', 'p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'span', 'img', 'video']);
         preg_replace('/(<.+?)(?<=\s)on[a-z]+\s*=\s*(?:([\'"])(?!\2).+?\2|(?:\S+?\(.*?\)(?=[\s>])))(.*?>)/i', "$1 $3", $string);
         $dom = new DOMDocument('1.0', 'UTF-8');
         $dom->loadHTML(mb_convert_encoding($string, 'HTML-ENTITIES', "UTF-8"));
@@ -41,7 +41,7 @@ class Strings
         }
         foreach($dom->getElementsByTagName('*') as $element){
             $attributes = '';
-            if(!in_array($element->nodeName, ['body', 'html', 'img', 'br'])){
+            if(!in_array($element->nodeName, ['body', 'html', 'img', 'video', 'br'])){
                 if($element->hasAttributes()){
                     foreach($element->attributes as $attr){
                         if($attr->nodeName == "class" && $element->nodeName == 'p' && ($attr->nodeValue == "content_quote" || $attr->nodeValue == "content_dialogue")){
@@ -65,6 +65,10 @@ class Strings
             }else if($element->nodeName == 'img'){
                 if(file_exists($_SERVER['DOCUMENT_ROOT'].'/Web/public'.$element->attributes['src']->nodeValue)){
                     $prepared .= '<img src="'.$element->attributes['src']->nodeValue.'">';
+                }
+            }else if($element->nodeName == 'video'){
+                if(file_exists($_SERVER['DOCUMENT_ROOT'].'/Web/public'.$element->attributes['src']->nodeValue)){
+                    $prepared .= '<video src="'.$element->attributes['src']->nodeValue.'"></video>';
                 }
             }
         }

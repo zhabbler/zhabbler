@@ -614,6 +614,37 @@ class Zhabbler{
             }
         })
     }
+    addVideoSelection(){
+        if($(".s_media_selections").length == 0){
+            if($(".video-- .loader").length == 0){
+                $("#pC_sS").append(`<div class="s_media_selections" contenteditable="false">
+            <label class="s_media_selection">
+                <div>
+                    <i class='bx bx-video-plus' ></i>
+                </div>
+                <div>
+                    <span>
+                        ${locale['upload_video']}
+                    </span>
+                </div>
+                <input type="file" name="video" hidden accept="video/*" onchange="zhabbler.insertIntoEditorContentVideo(this)" id="video">
+            </label>
+            <div class="s_media_selection" onclick="$('.s_media_selections').remove();">
+                <div>
+                    <i class='bx bx-x' ></i>
+                </div>
+                <div>
+                    <span>
+                        ${locale['cancel']}
+                    </span>
+                </div>
+            </div>
+        </div>`);
+            }else{
+                zhabbler.addError(locale["photo_loader_error"]);
+            }
+        }
+    }
     addPhotoSelection(){
         if($(".s_media_selections").length == 0){
             if($(".photo-- .loader").length == 0){
@@ -641,7 +672,7 @@ class Zhabbler{
             </div>
         </div>`);
             }else{
-                zhabbler.addError("Пожалуйста, подождите пока последнее изображение прогрузиться.");
+                zhabbler.addError(locale["photo_loader_error"]);
             }
         }
     }
@@ -666,7 +697,7 @@ class Zhabbler{
         $(".popup:first").load("/etc/post_usr_interact");
     }
     insertIntoEditorContent(element, placeholder, attributes = ""){
-        $(".popup:first form #pC_sS .postContent").append(`<${element} data-text="${placeholder}" ${attributes} contenteditable="true"></${element}>`);
+        $(".popup:first form #pC_sS .postContent").append(`<${element} data-text="${placeholder}" ${attributes}></${element}>`);
     }
     insertIntoEditorContentImage(element){
         const file = element.files[0];
@@ -678,7 +709,7 @@ class Zhabbler{
                 <div class="loader_part loader_part_2"></div>
                 <div class="loader_part loader_part_3"></div>
             </div>
-            <div class="ui__btn__image__delete"><i class='bx bx-x'></i></div>
+            <div class="ui__btn__delete"><i class='bx bx-x'></i></div>
             <div class="ui__handle"><i class='bx bxs-hand'></i></div>
             <img src="${URL.createObjectURL(file)}"/>
             </div>`);
@@ -698,11 +729,50 @@ class Zhabbler{
                 }else{
                     $(".photo--:last img").attr("src", data.url);
                     $(".photo--:last").attr("data-src", data.url);
-                    $(".photo--:last .ui__btn__image__delete").attr("data-src", data.url);
+                    $(".photo--:last .ui__btn__delete").attr("data-src", data.url);
                     $(".photo--:last .loader").remove();
                 }
             }).fail(function(data){
                 $(".photo--:last").remove();
+                zhabbler.addError(locale['something_went_wrong']);
+            });
+        }
+    }
+    insertIntoEditorContentVideo(element){
+        const file = element.files[0];
+        if(file){
+            $(".s_media_selections").remove();
+            $(".popup:first form #pC_sS .postContent").append(`<div contenteditable="false" class="video--">
+            <div class="loader">
+                <div class="loader_part loader_part_1"></div>
+                <div class="loader_part loader_part_2"></div>
+                <div class="loader_part loader_part_3"></div>
+            </div>
+            <div class="ui__btn__delete"><i class='bx bx-x'></i></div>
+            <div class="ui__handle"><i class='bx bxs-hand'></i></div>
+            <video src="${URL.createObjectURL(file)}" autoplay muted loop></video>
+            </div>`);
+            var formData = new FormData();
+            formData.append('video', file);
+            $.ajax({
+              url: "/api/Files/upload_video",
+              type: "POST",
+              data: formData,
+              enctype: 'multipart/form-data',
+              processData: false,
+              contentType: false
+            }).done(function(data){
+                if(data.error != null){
+                    $(".video--:last").remove();
+                    zhabbler.addError(locale['something_went_wrong']);
+                }else{
+                    $(".video--:last video").attr("src", data.url);
+                    $(".video--:last").attr("data-src", data.url);
+                    $(".video--:last .ui__btn__delete").attr("data-src", data.url);
+                    $(".video--:last .loader").remove();
+                }
+            }).fail(function(data){
+                $(".video--:last").remove();
                 zhabbler.addError(locale['something_went_wrong']);
             });
         }
@@ -726,10 +796,6 @@ class Zhabbler{
             }
             if(execute == "video"){
                 zhabbler.addVideoSelection();
-                return false;
-            }
-            if(execute == "audio"){
-                zhabbler.addAudioSelection();
                 return false;
             }
             $(".popup:first form #pC_sS .postContent").html("");
@@ -835,7 +901,21 @@ const checkPostsAttachments = () => {
             elem.attr("src", "/static/images/image_corrupted.png");
         }
     });
-    $(".post .postContent *:not(img)").each(function(){
+    $(".post .postContent video").each(function(){
+        elem = $(this);
+        elem.prop("controls", true);
+        elem.prop("autoplay", true);
+        elem.prop("loop", true);
+        elem.prop("muted", true);
+        if(typeof elem.attr("src") !== 'undefined' && elem.attr("src") !== false){
+            $.get(elem.attr("src")).fail(function(){
+                elem.remove();
+            });
+        }else{
+            elem.remove();
+        }
+    });
+    $(".post .postContent *:not(img):not(video)").each(function(){
         if($(this).html() == ''){
             $(this).remove();
         }

@@ -13,6 +13,10 @@ const publish = (repost, question) => {
         zhabbler.addWarn(locale['err_photo_post']);
         return false;
     }
+    if($("#pC_sS .postContent .video-- .loader").length > 0){
+        zhabbler.addWarn(locale['err_video_post']);
+        return false;
+    }
     $("#app").prepend(`<div class="popup popup_do_not_close" style="z-index:102048!important;">
         <div class="loader">
             <div class="loader_part loader_part_1"></div>

@@ -56,7 +56,12 @@ $Router->add("POST", "/api/Account/login", "", function(){
 		(new Web\Models\User())->login($_POST['email'], $_POST['password']);
 });
 $Router->add("POST", "/api/Files/upload_image", "", function(){
-	if(isset($_COOKIE['zhabbler_session']))(new Utilities\Files())->upload_image($_FILES['image']);
+	if(isset($_COOKIE['zhabbler_session']))
+		(new Utilities\Files())->upload_image($_FILES['image']);
+});
+$Router->add("POST", "/api/Files/upload_video", "", function(){
+	if(isset($_COOKIE['zhabbler_session']))
+		(new Utilities\Files())->upload_video($_FILES['video']);
 });
 $Router->add("POST", "/api/Account/change_profile_image", "", function(){
 	if(isset($_COOKIE['zhabbler_session']))

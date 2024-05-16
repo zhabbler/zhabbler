@@ -786,7 +786,7 @@ hr{
     margin: 0;
     font-weight: normal;
 }
-.postContent[contentEditable=true]:empty:not(:focus):before, .postContent[contentEditable=true] *[contentEditable=true]:empty:not(:focus):before {
+.postContent[contentEditable=true]:empty:not(:focus):before, .postContent[contentEditable=true] *:empty:not(:focus):not(i):before {
     color:rgba(0, 0, 0, .3);
     content: attr(data-text);
     pointer-events: none;
@@ -904,7 +904,7 @@ hr{
     display: block;
 }
 #pC_sS{
-    height: 320px;
+    min-height: 320px;
     overflow: auto;
 }
 .s_media_selection:hover{
@@ -920,18 +920,20 @@ hr{
     font-size: 48px;
 }
 .postContent img{
-    width: calc(100% + 32px);
-    margin: 0 -16px;
     cursor: pointer;
 }
-form .postContent img{
+.postContent img, .postContent video{
+    width: calc(100% + 32px);
+    margin: 0 -16px;
+}
+form .postContent img, form .postContent video{
     user-select: none;
     display: block;
 }
-form .postContent .photo--{
+form .postContent .photo--, form .postContent .video--{
     margin: 0 -16px;
 }
-form .postContent .photo-- img{
+form .postContent .photo-- img, form .postContent .video-- video{
     margin: 0px!important;
     width: 100%!important;
 }
@@ -955,7 +957,7 @@ form .postContent .photo-- img{
     z-index: 196;
     border-radius: 100%;
 }
-.ui__btn__image__delete{
+.ui__btn__delete{
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1022,7 +1024,7 @@ form .postContent .photo-- img{
     text-align: center;
     z-index: 4096;
 }
-.photo-- .loader{
+.photo-- .loader, .video-- .loader{
     position: absolute!important;
     display: flex;
     align-items: center;
