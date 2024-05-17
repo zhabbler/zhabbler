@@ -762,7 +762,7 @@ class Zhabbler{
               processData: false,
               contentType: false
             }).done(function(data){
-                if(data.error != null){
+                if(data.error != null || data.url == null){
                     $(".video--:last").remove();
                     zhabbler.addError(locale['something_went_wrong']);
                 }else{
@@ -901,21 +901,29 @@ const checkPostsAttachments = () => {
             elem.attr("src", "/static/images/image_corrupted.png");
         }
     });
-    $(".post .postContent video").each(function(){
-        elem = $(this);
-        if(typeof elem.attr("src") == 'undefined' && elem.attr("src") == false){
-            elem.remove();
-        }else{
-	    elem.prop("controls", true);
-      	    elem.prop("autoplay", true);
-	    elem.prop("loop", true);
-	    elem.prop("muted", true);
-	}
-    });
-    $(".post .postContent *:not(img):not(video)").each(function(){
-        if($(this).html() == ''){
-            $(this).remove();
-        }
+    $(".post .postContent video:not(.zhabblerPlayerVideo)").each(function(){
+        uniqueid = makeid(32);
+        $(this).replaceWith(`<div class="zhabblerPlayer" data-player="${uniqueid}">
+        <div class="zhabblerPlayerBigPlayBtn" data-play="${uniqueid}"></div>
+        <div class="zhabblerPlayerControls">
+            <div class="zhabblerPlayerControl zhabblerPlayerControlPlayPause" id="PlayBtn" data-play="${uniqueid}"></div>
+            <div class="zhabblerDurs">
+                <span id="active">
+                    00:00
+                </span>
+            </div>
+            <div class="zhabblerPlayerBar" data-play="${uniqueid}">
+                <div class="zhabblerPlayerBarActive"></div>
+            </div>
+            <div class="zhabblerDurs">
+                <span id="nonactive">
+                    00:00
+                </span> 
+            </div>
+            <div class="zhabblerPlayerControl" id="FullScreenBtn" data-play="${uniqueid}"></div>
+        </div>
+        <video data-play="${uniqueid}" class="zhabblerPlayerVideo" ontimeupdate="videotimeupdate($(this));" src="${$(this).attr("src")}"></video>
+    </div>`);
     });
 }
 $.post("/api/Account/check_logged_in", function(data){
@@ -930,4 +938,15 @@ async function copyPostURL(id) {
     } catch (err) {
         zhabbler.addError(locale['failed_to_copy'])
     }
+}
+const makeid = (length) => {
+    let result = '';
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    const charactersLength = characters.length;
+    let counter = 0;
+    while (counter < length) {
+      result += characters.charAt(Math.floor(Math.random() * charactersLength));
+      counter += 1;
+    }
+    return result;
 }

@@ -922,7 +922,11 @@ hr{
 .postContent img{
     cursor: pointer;
 }
-.postContent img, .postContent video{
+.postContent .zhabblerPlayer{
+    width: 100%;
+    height: 280px;
+}
+.postContent img, .postContent .zhabblerPlayer{
     width: calc(100% + 32px);
     margin: 0 -16px;
 }
