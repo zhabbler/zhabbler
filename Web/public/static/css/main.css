@@ -2659,3 +2659,16 @@ footer .copl{
 .mobile_nav{
     display: none;
 }
+.nve_big{
+    background-color: #fff;
+    color:#000;
+    height: calc(100vh - 52px - 57px);
+}
+.nve_big #Write .input{
+    width: -webkit-fill-available;
+    width: fill-available;
+    width: -moz-available;
+}
+#Write .input{
+    width: 278px;
+}

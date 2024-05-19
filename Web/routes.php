@@ -24,6 +24,7 @@ $Router->add("ANY", "/admin/reports", "admin/ReportsPresenter");
 $Router->add("GET", "/settings/{act}", "SettingsPresenter");
 $Router->add("GET", "/verification/{code}", "EmailVerificationPresenter");
 $Router->add("GET", "/inbox", "InboxPresenter");
+$Router->add("GET", "/messages", "MessagesPresenter");
 $Router->add("GET", "/me", "", function(){
 	if(isset($_COOKIE['zhabbler_session']))
 		header("Location: /profile/".(new Web\Models\User())->get_user_by_token((new Web\Models\Sessions())->get_session($_COOKIE['zhabbler_session'])->sessionToken)->nickname);

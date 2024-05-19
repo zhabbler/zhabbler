@@ -22,6 +22,22 @@
         <div class="container">
             {include 'includes/navbar.latte'}
             <main class="main">
+                {if isset($_GET['show_tabs'])}
+                <div class="tabs only_mobile_flex">
+                    <a class="tab tab_active" href="/inbox?show_tabs">
+                        {$language['inbox']}
+                        {if (new Web\Models\Inbox())->getUnreadCountOfMsgs($user->token) > 0}
+                            ({(new Web\Models\Inbox())->getUnreadCountOfMsgs($user->token)})
+                        {/if}
+                    </a>
+                    <a class="tab" href="/messages?show_tabs">
+                        {$language['messages']}
+                        {if (new Web\Models\Messages())->get_count_of_unread_messages($user->token) > 0}
+                            ({(new Web\Models\Messages())->get_count_of_unread_messages($user->token)})
+                        {/if}
+                    </a>
+                </div>
+                {/if}
                 {if count($msgs) == 0}
                 <div class="inbox_msg inbox_msg_empty_here">
                     <div>

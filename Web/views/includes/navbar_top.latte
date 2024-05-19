@@ -10,11 +10,11 @@
     <div class="button button_mobile_nav_element" onclick="zhabbler.writePost();">
         <i class='bx bxs-edit' ></i>
     </div>
+    <a href="/inbox?show_tabs" class="mobile_nav_element" {((new Web\Models\Inbox())->getUnreadCountOfMsgs($user->token) > 0 || (new Web\Models\Messages())->get_count_of_unread_messages($user->token) > 0 ? 'style="color:rgba(255, 0, 0, .7);"' : "")|noescape}>
+        <i class='bx bxs-envelope' ></i>
+    </a>
     <a href="/me" class="mobile_nav_element">
         <i class='bx bxs-user-circle' ></i>
-    </a>
-    <a href="/settings/account" class="mobile_nav_element">
-        <i class='bx bxs-cog' ></i>
     </a>
     {/if}
 </nav>
