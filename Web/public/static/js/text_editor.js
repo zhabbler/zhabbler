@@ -4,8 +4,9 @@ $(document).ready(function(){
             zhabbler.insertIntoEditorContent('p', locale['go_ahead_put_smth']);
         }
     });
-    $(document).on("click", ".ui__btn__image__delete", function(){
+    $(document).on("click", ".ui__btn__delete", function(){
         $(`.photo--[data-src="${$(this).data("src")}"]`).remove();
+        $(`.video--[data-src="${$(this).data("src")}"]`).remove();
     });
 });
 const publish = (repost, question) => {
