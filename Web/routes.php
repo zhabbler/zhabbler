@@ -175,7 +175,7 @@ $Router->add("POST", "/api/Posts/get_posts_by_user_count", "", function(){
 	die;
 });
 $Router->add("POST", "/api/Posts/get_posts_by_user", "", function(){
-	(new Web\Models\Posts())->get_posts_by_user((int)$_POST['last_id'], $_POST['nickname'], $GLOBALS['session']->sessionToken);
+	(new Web\Models\Posts())->get_posts_by_user((int)$_POST['last_id'], $_POST['nickname'], (isset($_COOKIE['zhabbler_session']) ? $GLOBALS['session']->sessionToken : ""));
 });
 $Router->add("POST", "/api/Sessions/removeSession", "", function(){
 	if(isset($_COOKIE['zhabbler_session']))
@@ -237,6 +237,8 @@ $Router->add("POST", "/api/Questions/ask_question", "", function(){
 	if(isset($_COOKIE['zhabbler_session']))
 		(new Web\Models\Questions())->ask_question($GLOBALS['session']->sessionToken, $_POST['question'], $_POST['to'], $_POST['anonymous']);
 });
+// Public APIs
+$Router->add("ANY", "/developer/api/{func}", "PublicAPIPresenter");
 
 // 404
 $Router->add("ANY", "/404", "NotFoundPresenter");

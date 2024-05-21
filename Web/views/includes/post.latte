@@ -93,6 +93,7 @@
         {$post->zhabContent|noescape}
     </div>
     <div class="postActions">
+        {if isset($user)}
         <div class="postActionsLikes" id="Likes{$post->zhabURLID}" onclick="zhabbler.change_likes_counter_to_close({$post->zhabURLID});$('#responds' + {$post->zhabURLID}).toggle();$('#responds' + {$post->zhabURLID} + ` .postRespondsTabLikes`).click();">
             <div id="likesCounter">
                 <b>{$post->zhabLikes}</b> {$language['liked']}
@@ -102,25 +103,46 @@
                 {$language['close']}
             </div>
         </div>
+        {else}
+        <div class="postActionsLikes" onclick="goToPage('/login');">
+            <div id="likesCounter">
+                <b>{$post->zhabLikes}</b> {$language['liked']}
+            </div>
+        </div>
+        {/if}
         <div class="postActionsItself">
             <div class="postAction" id="LabelEventer" data-label="{$language['share']}" onclick="copyPostURL({$post->zhabURLID});">
                 <i class='bx bx-share'></i>
             </div>
+            {if isset($user)}
             <div class="postAction" id="LabelEventer" onclick="zhabbler.comments({$post->zhabURLID});" data-label="{$language['responds']}">
                 <i class='bx bx-comment'></i>
             </div>
             {if $post->zhabWhoCanRepost != 1}
-            <div class="postAction" id="LabelEventer" onclick="zhabbler.repost({$post->zhabURLID})"data-label="{$language['repost']}">
+            <div class="postAction" id="LabelEventer" onclick="zhabbler.repost({$post->zhabURLID})" data-label="{$language['repost']}">
                 <i class='bx bx-repost'></i>
             </div>
             {/if}
             <div class="postAction" onclick="zhabbler.like({$post->zhabURLID}, $(this))" id="LabelEventer" data-label="{$language['like']}">
-                {if isset($user) && (new Web\Models\Posts())->check_like($user->token, $post->zhabURLID)}
+                {if (new Web\Models\Posts())->check_like($user->token, $post->zhabURLID)}
                     <i class='bx bxs-heart'></i>
                 {else}
                     <i class='bx bx-heart'></i>
                 {/if}
             </div>
+            {else}
+            <div class="postAction" id="LabelEventer" onclick="goToPage('/login');" data-label="{$language['responds']}">
+                <i class='bx bx-comment'></i>
+            </div>
+            {if $post->zhabWhoCanRepost != 1}
+            <div class="postAction" id="LabelEventer" onclick="goToPage('/login');" data-label="{$language['repost']}">
+                <i class='bx bx-repost'></i>
+            </div>
+            {/if}
+            <div class="postAction" onclick="goToPage('/login');" id="LabelEventer" data-label="{$language['like']}">
+                <i class='bx bx-heart'></i>
+            </div>
+            {/if}
         </div>
     </div>
     <div class="postResponds" id="responds{$post->zhabURLID}" style="display: none;">

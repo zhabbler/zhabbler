@@ -18,26 +18,7 @@
         <div class="popup popup_do_not_close" id="JS_Loader">
             <div class="loader loader_cpa"><div class="loader_part loader_part_1"></div><div class="loader_part loader_part_2"></div><div class="loader_part loader_part_3"></div></div>
         </div>
-        <div class="LoginBanner">
-            <div class="LoginBannerContainer">
-                <h2>
-                    {$language['welcome_to_zhabbler_login_text']} <span class="logotype_font">{$language['zhabbler']}</span>!
-                </h2>
-                <div class="login_text_promo_login_banner_container">
-                    <span>
-                        {$language['login_text_promo']}
-                    </span>
-                </div>
-                <div class="buttons">
-                    <button class="button" onclick="goToPage('/register');">
-                        {$language['register']}
-                    </button>
-                    <button class="button button_outline" onclick="goToPage('/login');">
-                        {$language['login']}
-                    </button>
-                </div>
-            </div>
-        </div>
+        {include 'includes/login_banner.latte'}
         {include 'includes/navbar_top.latte'}
         <div class="container">
             {include 'includes/navbar.latte'}
@@ -64,14 +45,6 @@
             </main>
             {include 'includes/nav_options.latte'}
         </div>
-        <style>
-            .nav_options, .navbar{
-                height:calc(100vh - 161px)!important;
-            }
-            .main{
-                padding-bottom:161px;
-            }
-        </style>
         <preloader src="/static/js/popular.js"></preloader>
         <preloader src="/static/player/js/zhabblerplayer.js"></preloader>
     </div>

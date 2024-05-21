@@ -41,6 +41,11 @@ class Sessions
 		}
 	}
 
+	public function check_session_existence(string $session_ident): void
+	{
+		die(json_encode(["exists" => ($GLOBALS['db']->query("SELECT * FROM sessions WHERE sessionIdent = ?", $session_ident)->getRowCount() > 0 ? true : false)]));
+	}
+
 	public function get_session(string $session_ident): Nette\Database\Row
 	{
 		return $GLOBALS['db']->fetch("SELECT * FROM sessions WHERE sessionIdent = ?", $session_ident);

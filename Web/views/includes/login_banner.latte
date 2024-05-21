@@ -1,0 +1,30 @@
+{if !isset($user)}
+<div class="LoginBanner">
+    <div class="LoginBannerContainer">
+        <h2>
+            {$language['welcome_to_zhabbler_login_text']} <span class="logotype_font">{$language['zhabbler']}</span>!
+        </h2>
+        <div class="login_text_promo_login_banner_container">
+            <span>
+                {$language['login_text_promo']}
+            </span>
+        </div>
+        <div class="buttons">
+            <button class="button" onclick="goToPage('/register');">
+                {$language['register']}
+            </button>
+            <button class="button button_outline" onclick="goToPage('/login');">
+                {$language['login']}
+            </button>
+        </div>
+    </div>
+</div>
+<style>
+    .nav_options, .navbar{
+        height:calc(100vh - 161px)!important;
+    }
+    .main{
+        padding-bottom:161px;
+    }
+</style>
+{/if}

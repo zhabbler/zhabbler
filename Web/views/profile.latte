@@ -18,6 +18,7 @@
         <div class="popup popup_do_not_close" id="JS_Loader">
             <div class="loader loader_cpa"><div class="loader_part loader_part_1"></div><div class="loader_part loader_part_2"></div><div class="loader_part loader_part_3"></div></div>
         </div>
+        {include 'includes/login_banner.latte'}
         {include 'includes/navbar_top.latte'}
         <div class="container">
             {include 'includes/navbar.latte'}
@@ -47,6 +48,7 @@
                                 <span>{$profile->biography|breakLines}</span>
                             </div>
                         </div>
+                        {if isset($user)}
                         <div class="profile_btns">
                             {if $profile->userID == $user->userID}
                             <button class="button" style="z-index:10;" onclick="goToPage('/settings/profile');">
@@ -113,10 +115,12 @@
                             </div>
                             {/if}
                         </div>
+                        {/if}
                         <div class="profile_tabs">
                             <a class="profile_tab profile_tab_active" href="/profile/{$profile->nickname}">
                                 {$language['posts']}
                             </a>
+                            {if isset($user)}
                             {if $user->userID == $profile->userID || $profile->hideLiked != 1}
                             <a class="profile_tab" href="/profile/{$profile->nickname}/liked">
                                 {if $profile->hideLiked == 1}
@@ -132,6 +136,7 @@
                                 {/if}
                                 {$language['following_tab']}
                             </a>
+                            {/if}
                             {/if}
                         </div>
                         <div id="Posts">

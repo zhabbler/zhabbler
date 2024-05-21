@@ -13,7 +13,7 @@ class User
 {
     public function __construct()
     {
-        $this->locale = (new Localization())->get_language($_COOKIE['zhabbler_language']);
+        $this->locale = (new Localization())->get_language((isset($_COOKIE['zhabbler_language']) ? $_COOKIE['zhabbler_language'] : $GLOBALS['config']['application']['default_language']));
     }
 
     public function change_profile_image(string $token, ?array $file): void
@@ -194,6 +194,14 @@ class User
         }
     }
 
+    public function get_user_by_id_json(int $id): void
+    {
+        header('Content-Type: application/json');
+        $user = $this->get_user_by_id($id);
+        $result = ["profileImage" => $user->profileImage, "profileCover" => $user->profileCover, "nickname" => $user->nickname, "name" => $user->name, "biography" => $user->biography];
+        die(json_encode($result));
+    }
+
     public function get_user_by_token_json(string $token): void
     {
         header('Content-Type: application/json');
@@ -257,7 +265,7 @@ class User
         die(json_encode($result));
     }
 
-    public function login(string $email, string $password): void
+    public function login(string $email, string $password, bool $json_answer = false): void
     {
         header('Content-Type: application/json');
         $result = ["error" => NULL];
@@ -272,7 +280,11 @@ class User
                     }else{
                         $session = (new Sessions())->create($tempUser->token);
                         if($session != "ERROR"){
-                            setcookie("zhabbler_session", $session, time()+7000000, "/");
+                            if($json_answer){
+                                $result = ["error" => NULL, "session" => $session];
+                            }else{
+                                setcookie("zhabbler_session", $session, time()+7000000, "/");
+                            }
                         }else{
                             $result = ["error" => "Error with session"];
                         }

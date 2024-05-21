@@ -39,7 +39,7 @@ class Files
 			}else if(!in_array($ext, $allowed_extensions)){
 				$result = ["error" => "File is not a video", "url" => NULL];
 			}else{
-				$video_name = (new Strings())->random_string(128).$ext;
+				$video_name = (new Strings())->random_string(128).'.'.$ext;
 				move_uploaded_file($file['tmp_name'], $_SERVER['DOCUMENT_ROOT']."/Web/public/uploads/".$video_name);
 				$videoTitleForMP4 = 'zhabbler_'.(new Strings())->random_string(128).'.mp4';
 				$this->convertVideo($_SERVER['DOCUMENT_ROOT']."/Web/public/uploads/$video_name", $_SERVER['DOCUMENT_ROOT']."/Web/public/uploads/$videoTitleForMP4", 100);

@@ -30,14 +30,39 @@ class Posts
         }else{
             $posts = $GLOBALS['db']->fetchAll("SELECT * FROM zhabs LEFT JOIN users ON userID = zhabBy WHERE zhabBy = ? ORDER BY zhabID DESC LIMIT 7", $profile->userID);
         }
-        $user = (new User())->get_user_by_token($token);
+        $params = ["language" => $this->locale];
+        if($token != "")
+            $user = (new User())->get_user_by_token($token);
+            $params += ["user" => $user];
         $output = "";
         foreach($posts as $post){
-            $params = [];
+            $params += ["post" => $post];
             $post->zhabContent = strip_tags($post->zhabContent, ["p", "h1", "h2", "h3", "h4", "h5", "h6", "img", "video", "span"]);
-            $output .= $this->latte->renderToString($_SERVER['DOCUMENT_ROOT']."/Web/views/includes/post.latte", ["post" => $post, "language" => $this->locale, "user" => $user]);
+            $output .= $this->latte->renderToString($_SERVER['DOCUMENT_ROOT']."/Web/views/includes/post.latte", $params);
         }
         die($output);
+    }
+
+    public function get_posts_by_user_json(int $lastID, string $nickname, string $token): array
+    {
+        header('Content-Type: application/json');
+        $profile = (new User())->get_user_by_nickname($nickname);
+        if($lastID != 0){
+            $posts = $GLOBALS['db']->fetchAll("SELECT * FROM zhabs LEFT JOIN users ON userID = zhabBy WHERE zhabID < ? AND zhabBy = ? ORDER BY zhabID DESC LIMIT 7", $lastID, $profile->userID);
+        }else{
+            $posts = $GLOBALS['db']->fetchAll("SELECT * FROM zhabs LEFT JOIN users ON userID = zhabBy WHERE zhabBy = ? ORDER BY zhabID DESC LIMIT 7", $profile->userID);
+        }
+        if($lastID != 0){
+            $posts = $GLOBALS['db']->fetchAll("SELECT * FROM zhabs LEFT JOIN users ON userID = zhabBy WHERE zhabID < ? AND reason = '' ORDER BY zhabID DESC LIMIT 7", $lastID);
+        }else{
+            $posts = $GLOBALS['db']->fetchAll("SELECT * FROM zhabs LEFT JOIN users ON userID = zhabBy WHERE reason = '' ORDER BY zhabID DESC LIMIT 7");
+        }
+        $output = [];
+        foreach($posts as $post){
+            $post->zhabContent = strip_tags($post->zhabContent, "<p><h1><h2><h3><h4><h5><h6><img><b><i><u><a><span><video>");
+            $output[] = ["postID" => $post->zhabID, "postBy" => $post->nickname, "postContent" => $post->zhabContent, "liked" => $post->zhabLikes, "uploaded" => (string)$post->zhabUploaded];
+        }
+        die(json_encode($output));
     }
 
     public function get_posts_by_user_count(string $nickname): int
@@ -210,6 +235,22 @@ class Posts
             $output .= $this->latte->renderToString($_SERVER['DOCUMENT_ROOT']."/Web/views/includes/post.latte", $params);
         }
         die($output);
+    }
+
+    public function get_all_posts_json(int $lastID, string $token): void
+    {
+        header('Content-Type: application/json');
+        if($lastID != 0){
+            $posts = $GLOBALS['db']->fetchAll("SELECT * FROM zhabs LEFT JOIN users ON userID = zhabBy WHERE zhabID < ? AND reason = '' ORDER BY zhabID DESC LIMIT 7", $lastID);
+        }else{
+            $posts = $GLOBALS['db']->fetchAll("SELECT * FROM zhabs LEFT JOIN users ON userID = zhabBy WHERE reason = '' ORDER BY zhabID DESC LIMIT 7");
+        }
+        $output = [];
+        foreach($posts as $post){
+            $post->zhabContent = strip_tags($post->zhabContent, "<p><h1><h2><h3><h4><h5><h6><img><b><i><u><a><span><video>");
+            $output[] = ["postID" => $post->zhabID, "postBy" => $post->nickname, "postContent" => $post->zhabContent, "liked" => $post->zhabLikes, "uploaded" => (string)$post->zhabUploaded];
+        }
+        die(json_encode($output));
     }
 
     public function get_all_popular_posts(string $token): void
