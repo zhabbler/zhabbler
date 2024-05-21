@@ -30,12 +30,13 @@ class Posts
         }else{
             $posts = $GLOBALS['db']->fetchAll("SELECT * FROM zhabs LEFT JOIN users ON userID = zhabBy WHERE zhabBy = ? ORDER BY zhabID DESC LIMIT 7", $profile->userID);
         }
-        $params = ["language" => $this->locale];
-        if($token != "")
-            $user = (new User())->get_user_by_token($token);
-            $params += ["user" => $user];
         $output = "";
         foreach($posts as $post){
+            $params = ["language" => $this->locale];
+            if($token != ""){
+                $user = (new User())->get_user_by_token($token);
+                $params += ["user" => $user];
+            }
             $params += ["post" => $post];
             $post->zhabContent = strip_tags($post->zhabContent, ["p", "h1", "h2", "h3", "h4", "h5", "h6", "img", "video", "span"]);
             $output .= $this->latte->renderToString($_SERVER['DOCUMENT_ROOT']."/Web/views/includes/post.latte", $params);
