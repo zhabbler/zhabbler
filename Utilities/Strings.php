@@ -62,13 +62,9 @@ class Strings
                 }
             }else if($element->nodeName == 'br'){
                 $prepared .= '<br>';
-            }else if($element->nodeName == 'img'){
-                if(file_exists($_SERVER['DOCUMENT_ROOT'].'/Web/public'.$element->attributes['src']->nodeValue)){
-                    $prepared .= '<img src="'.$element->attributes['src']->nodeValue.'">';
-                }
-            }else if($element->nodeName == 'video'){
-                if(file_exists($_SERVER['DOCUMENT_ROOT'].'/Web/public'.$element->attributes['src']->nodeValue)){
-                    $prepared .= '<video src="'.$element->attributes['src']->nodeValue.'"></video>';
+            }else if($element->nodeName == 'img' || $element->nodeName == 'video'){
+                if(!$this->is_empty($element->attributes['src']->nodeValue) && file_exists($_SERVER['DOCUMENT_ROOT'].'/Web/public'.$element->attributes['src']->nodeValue)){
+                    $prepared .= '<'.$element->nodeName.' src="'.$element->attributes['src']->nodeValue.'"></'.$element->nodeName.'>';
                 }
             }
         }

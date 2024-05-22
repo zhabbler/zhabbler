@@ -894,9 +894,13 @@ const checkPostsAttachments = () => {
     $(".post .postContent img").each(function(){
         elem = $(this);
         if(typeof elem.attr("src") !== 'undefined' && elem.attr("src") !== false){
-            $.get(elem.attr("src")).fail(function(){
+            if(elem.attr("src").replace(/\s/g,'') != ""){
+                $.get(elem.attr("src")).fail(function(){
+                    elem.attr("src", "/static/images/image_corrupted.png");
+                });
+            }else{
                 elem.attr("src", "/static/images/image_corrupted.png");
-            });
+            }
         }else{
             elem.attr("src", "/static/images/image_corrupted.png");
         }
