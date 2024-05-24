@@ -19,3 +19,5 @@ CREATE TABLE `tags` (
 
 LOCK TABLES `tags` WRITE;
 UNLOCK TABLES;
+
+ALTER TABLE `zhabs` ADD `zhabTags` LONGTEXT;
