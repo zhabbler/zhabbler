@@ -95,9 +95,11 @@
             {$language['show_more']}
         </div>
     </div>
+    {if !empty($post->zhabTags)}
     <div class="postTags">
         {(new Web\Models\Posts())->show_tags_html($user->token, $post->zhabTags)|noescape}
     </div>
+    {/if}
     <div class="postActions">
         {if isset($user)}
         <div class="postActionsLikes" id="Likes{$post->zhabURLID}" onclick="zhabbler.change_likes_counter_to_close({$post->zhabURLID});$('#responds' + {$post->zhabURLID}).toggle();$('#responds' + {$post->zhabURLID} + ` .postRespondsTabLikes`).click();">
