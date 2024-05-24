@@ -18,32 +18,27 @@
         <div class="popup popup_do_not_close" id="JS_Loader">
             <div class="loader loader_cpa"><div class="loader_part loader_part_1"></div><div class="loader_part loader_part_2"></div><div class="loader_part loader_part_3"></div></div>
         </div>
-        {include 'includes/login_banner.latte'}
         {include 'includes/navbar_top.latte'}
         <div class="container">
             {include 'includes/navbar.latte'}
             <main class="main">
                 <div class="tabs">
-                    {if isset($user)}
                     <a href="/dashboard" class="tab">
                         <span>
                             {$language['following_tab']}
                         </span>
                     </a>
-                    {/if}
                     <a href="/dashboard/popular" class="tab">
                         <span>
                             {$language['popular']}
                         </span>
                     </a>
-                    {if isset($user)}
-                    <a href="/dashboard/mytags" class="tab">
+                    <a href="/dashboard/mytags" class="tab tab_active">
                         <span>
                             {$language['your_tags']}
                         </span>
                     </a>
-                    {/if}
-                    <a href="/dashboard/explore" class="tab tab_active">
+                    <a href="/dashboard/explore" class="tab">
                         <span>
                             {$language['explore']}
                         </span>
@@ -53,7 +48,30 @@
                     {if isset($user)}
                     {include '../etc/post_usr_interact.latte'}
                     {/if}
-                    <div id="ExplorePosts">
+                    <div class="tags_followed_pg">
+                        <div class="tags_followed_pg_title">
+                            <span>{$language['tags_u_followed']}</span>
+                        </div>
+                        <div class="tags_followed_pg_btns">
+                            <button class="tags_followed_pg_btn tags_followed_pg_btn_left" onclick="zhabbler.scrollFTags('left');" style="display: none;">
+                                <i class='bx bxs-chevron-left'></i>
+                            </button>
+                            <div class="tags_followed_pg_itself" id="FollowedTagsMTPg">
+                                {foreach (new Web\Models\Posts())->get_followed_tags($user->token) as $tag}
+                                <div class="tag_pg" onclick="goToPage('/search?q=' + {$tag->followedTag})">
+                                    #{$tag->followedTag}
+                                </div>
+                                {/foreach}
+                                <div class="tag_pg tag_pg_add" onclick="zhabbler.addTagsPopup();">
+                                    <i class='bx bx-plus'></i>
+                                </div>
+                            </div>
+                            <button class="tags_followed_pg_btn tags_followed_pg_btn_right" onclick="zhabbler.scrollFTags('right');">
+                                <i class='bx bxs-chevron-right'></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div id="MyTagsPosts">
                         <div class="loader">
                             <div class="loader_part loader_part_1"></div>
                             <div class="loader_part loader_part_2"></div>
@@ -64,7 +82,7 @@
             </main>
             {include 'includes/nav_options.latte'}
         </div>
-        <preloader src="/static/js/explore.js"></preloader>
+        <preloader src="/static/js/mytags.js"></preloader>
         <preloader src="/static/player/js/zhabblerplayer.js"></preloader>
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>

@@ -23,12 +23,33 @@
             {include 'includes/navbar.latte'}
             <main class="main">
                 <form method="GET" data-reload="3" action="/search">
-                     <input class="input" placeholder="{$language['search_zhabbler']}" name="q" value="{(isset($_GET['q']) ? $_GET['q'] : '')}" style="margin: 15px;margin-bottom:0px;width:calc(100% - 55px);">
+                    <input class="input_search" placeholder="{$language['search_zhabbler']}" name="q" value="{(isset($_GET['q']) ? $_GET['q'] : '')}" style="margin: 15px;margin-bottom:0px;">
                     <select name="type" class="select_search" onchange="this.form.submit()">
                         <option value="posts" {($_GET['type'] == 'posts' ? "selected" : "")}>{$language['posts']}</option>
                         <option value="profiles" {($_GET['type'] == 'profiles' ? "selected" : "")}>{$language['profiles']}</option>
                     </select>
                 </form>
+                {if $_GET['type'] != 'profiles' && (new Web\Models\Posts())->check_tag_existence($_GET['q'])}
+                <div class="tag-searched">
+                    <div class="tag-searched-tag">
+                        #{$_GET['q']}
+                    </div>
+                    <div class="tag-searched-followed">
+                        {(new Web\Models\Posts())->followed_tag_count($_GET['q'])} {$language['followers']}
+                    </div>
+                    <div class="dFaIcjSc">
+                    {if !(new Web\Models\Posts())->check_followed_tag($user->token, $_GET['q'])}
+                        <button class="button" onclick="zhabbler.addTagsPopup({$_GET['q']});">
+                            {$language['follow']}
+                        </button>
+                    {else}
+                        <button class="button button_outline" onclick="zhabbler.addTagsPopup();">
+                            {$language['unfollow']}
+                        </button>
+                    {/if}
+                    </div>
+                </div>
+                {/if}
                 {if isset($_GET['q'])}
                 <div id="Searched">
                     <div class="loader">
@@ -43,10 +64,10 @@
         </div>
         {if isset($_GET['q'])}
         <preloader>var query = "{$_GET['q']}";</preloader>
-        {if $_GET['type'] == 'posts'}
-        <preloader src="/static/js/search_posts.js"></preloader>
-        {else}
+        {if $_GET['type'] == 'profiles'}
         <preloader src="/static/js/search_profiles.js"></preloader>
+        {else}
+        <preloader src="/static/js/search_posts.js"></preloader>
         {/if}
         {/if}
         <preloader src="/static/player/js/zhabblerplayer.js"></preloader>

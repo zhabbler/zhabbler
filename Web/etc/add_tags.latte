@@ -1,0 +1,20 @@
+<div class="popup_container popup_container_big add_tags_popup" id="PopupContainer">
+    <div>
+        <input type="text" placeholder="{$language['search_tags']}" class="input input_tags">
+        <div class="popup_tags">
+        {foreach $tags as $tag}
+            <div class="popup_tag">
+                #<span>{$tag->followedTag}</span>
+            </div>
+        {/foreach}
+        </div>
+    </div>
+    <div class="popup_container_bottom_actions">
+        <div class="button button_outline" onclick="$('.popup:first').remove();">
+            {$language['cancel']}
+        </div>
+        <div class="button mla" onclick="zhabbler.addFollowedTags()">
+            {$language['done']}
+        </div>
+    </div>
+</div>

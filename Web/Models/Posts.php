@@ -96,15 +96,62 @@ class Posts
         }
         die($output);
     }
+
+    public function get_posts_by_tags_count(string $token): int
+    {
+        $user = (new User())->get_user_by_token($token);
+        $followed_tags = $this->get_followed_tags($user->token);
+        if(count($followed_tags) > 0){
+            $query = "SELECT * FROM zhabs LEFT JOIN users ON userID = zhabBy WHERE ".($lastID != 0 ? "zhabID < ? AND" : "")." reason = '' AND (";
+            foreach($followed_tags as $key => $tag){
+                $query .= 'FIND_IN_SET("'.$tag->followedTag.'", zhabTags)';
+                if($key + 1 != count($followed_tags)){
+                    $query .= " OR ";
+                }else{
+                    $query .= ")";
+                }
+            }
+            return $GLOBALS['db']->query($query)->getRowCount();
+        }
+        return 0;
+    }
+
+    public function get_posts_by_tags(int $lastID, string $token): void
+    {
+        $user = (new User())->get_user_by_token($token);
+        $followed_tags = $this->get_followed_tags($user->token);
+        if(count($followed_tags) > 0){
+            $query = "SELECT * FROM zhabs LEFT JOIN users ON userID = zhabBy WHERE ".($lastID != 0 ? "zhabID < ? AND" : "")." reason = '' AND (";
+            foreach($followed_tags as $key => $tag){
+                $query .= 'FIND_IN_SET("'.$tag->followedTag.'", zhabTags)';
+                if($key + 1 != count($followed_tags)){
+                    $query .= " OR ";
+                }else{
+                    $query .= ") ORDER BY zhabID DESC LIMIT 7";
+                }
+            }
+            if($lastID != 0){
+                $posts = $GLOBALS['db']->fetchAll($query, $lastID);
+            }else{
+                $posts = $GLOBALS['db']->fetchAll($query);
+            }
+            $output = "";
+            foreach($posts as $post){
+                $post->zhabContent = strip_tags($post->zhabContent, "<p><h1><h2><h3><h4><h5><h6><img><b><i><u><a><span><video>");
+                $output .= $this->latte->renderToString($_SERVER['DOCUMENT_ROOT']."/Web/views/includes/post.latte", ["post" => $post, "user" => $user, "language" => $this->locale]);
+            }
+            die($output);
+        }
+    }
     
     public function search_posts(int $lastID, string $query, string $token): array
     {
         $user = (new User())->get_user_by_token($token);
         $query = (new Strings())->convert($query);
         if($lastID != 0){
-            $posts = $GLOBALS['db']->fetchAll("SELECT * FROM zhabs LEFT JOIN users ON userID = zhabBy WHERE lastID < ? AND zhabContent LIKE ? AND reason = '' ORDER BY zhabID DESC LIMIT 7", $lastID, "%$query%");
+            $posts = $GLOBALS['db']->fetchAll("SELECT * FROM zhabs LEFT JOIN users ON userID = zhabBy WHERE lastID < ? AND zhabContent LIKE ? AND reason = '' OR zhabTags LIKE ? ORDER BY zhabID DESC LIMIT 7", $lastID, "%$query%", "%$query%");
         }else{
-            $posts = $GLOBALS['db']->fetchAll("SELECT * FROM zhabs LEFT JOIN users ON userID = zhabBy WHERE zhabContent LIKE ? AND reason = '' ORDER BY zhabID DESC LIMIT 7", "%$query%");
+            $posts = $GLOBALS['db']->fetchAll("SELECT * FROM zhabs LEFT JOIN users ON userID = zhabBy WHERE zhabContent LIKE ? OR zhabTags LIKE ? AND reason = '' ORDER BY zhabID DESC LIMIT 7", "%$query%", "%$query%");
         }
         $output = "";
         foreach($posts as $post){
@@ -114,6 +161,22 @@ class Posts
         die($output);
     }
 
+    public function check_tag_existence(string $tag): bool
+    {
+        return ($GLOBALS['db']->query("SELECT * FROM tags WHERE tag = ?", $tag)->getRowCount() > 0 ? true : false);
+    }
+
+    public function followed_tag_count(string $tag): int
+    {
+        return $GLOBALS['db']->query("SELECT * FROM followed_tags WHERE followedTag = ?", $tag)->getRowCount();
+    }
+
+    public function check_followed_tag(string $token, string $tag): bool
+    {
+        $user = (new User())->get_user_by_token($token);
+        return ($GLOBALS['db']->query("SELECT * FROM followed_tags WHERE followedTag = ? AND followedTagBy = ?", $tag, $user->userID)->getRowCount() > 0 ? true : false);
+    }
+    
     public function search_posts_count(string $query): int
     {
         return $GLOBALS['db']->query("SELECT * FROM zhabs WHERE zhabContent LIKE ?", "%$query%")->getRowCount();
@@ -379,7 +442,50 @@ class Posts
         die(json_encode($result));
     }
 
-    public function add(string $post, string $urlid = null, int $contains, int $who_comment, int $who_repost, string $repost = "", string $question = ""): void
+    public function search_tags(string $query): void
+    {
+        header('Content-Type: application/json');
+        $result = [];
+        foreach($GLOBALS['db']->fetchAll("SELECT * FROM tags WHERE tag LIKE ?", "%$query%") as $tag){
+            $result[] = ["tag" => $tag->tag];
+        }
+        die(json_encode($result));
+    }
+
+    public function show_tags_html(string $token, string $tags){
+        $user = (new User())->get_user_by_token($token);
+        $tags_array = explode(",", $tags);
+        $result = "";
+        foreach($tags_array as $key => $tag){
+            $result .= '<a href="/search?q='.$tag.'" '.($GLOBALS['db']->query("SELECT * FROM followed_tags WHERE followedTag = ? AND followedTagBy = ?", $tag, $user->userID)->getRowCount() > 0 ? 'class="active_tag_s"' : '').'>#'.$tag.'</a>';
+        }
+        return $result;
+    }
+    
+    public function add_followed_tags(string $token, string $tags): void
+    {
+        $user = (new User())->get_user_by_token($token);
+        $GLOBALS['db']->query("DELETE FROM followed_tags WHERE followedTagBy = ?", $user->userID);
+        if(!(new Strings())->is_empty($tags)){
+            $tags_array = explode(",", $tags);
+            foreach($tags_array as $key => $tag){
+                $tag = preg_replace("/<[^>]*>?/", "", $tag);
+                $tag = preg_replace("/[^a-zA-Z0-9\p{Cyrillic}]/u", "", $tag);
+                if(!(new Strings())->is_empty($tag)){
+                    if($GLOBALS['db']->query("SELECT * FROM followed_tags WHERE followedTag = ?", $tag)->getRowCount() == 0)
+                        $GLOBALS['db']->query("INSERT INTO followed_tags", ["followedTag" => $tag, "followedTagBy" => $user->userID]);
+                }
+            }
+        }
+    }
+
+    public function get_followed_tags(string $token): array
+    {
+        $user = (new User())->get_user_by_token($token);
+        return $GLOBALS['db']->fetchAll("SELECT * FROM followed_tags WHERE followedTagBy = ?", $user->userID);
+    }
+
+    public function add(string $post, string $urlid = null, int $contains, int $who_comment, int $who_repost, string $repost = "", string $question = "", string $tags = ""): void
     {
         header('Content-Type: application/json');
     	$post_prepared = (new Strings())->prepare_post_text($post);
@@ -399,6 +505,19 @@ class Posts
                     $result = ["error" => "You cannot answer this question."];
                 }else{
                     if($GLOBALS['db']->query("SELECT * FROM zhabs WHERE zhabURLID = ?", $urlid)->getRowCount() == 0){
+                        if(!(new Strings())->is_empty(str_replace(",", "", $tags))){
+                            $tags_array = explode(",", $tags);
+                            $tags = "";
+                            foreach($tags_array as $key => $tag){
+                                $tag = preg_replace("/<[^>]*>?/", "", $tag);
+                                $tag = preg_replace("/[^a-zA-Z0-9\p{Cyrillic}]/u", "", $tag);
+                                $tags .= (!(new Strings())->is_empty($tag) ? (strlen($tag) <= 32 ? $tag : "") : "");
+                                if($key + 1 != count($tags_array))
+                                    $tags .= ",";
+                                if($GLOBALS['db']->query("SELECT * FROM tags WHERE tag = ?", $tag)->getRowCount() == 0)
+                                    $GLOBALS['db']->query("INSERT INTO tags", ["tag" => $tag]);
+                            }
+                        }
                         (new RateLimit())->increase_rate_limit($this->user->token);
                         $GLOBALS['db']->query("INSERT INTO zhabs", [
                             "zhabURLID" => $urlid,
@@ -409,7 +528,8 @@ class Posts
                             "zhabWhoCanComment" => ($who_comment == 1 ? 1 : 0),
                             "zhabWhoCanRepost" => ($who_repost == 1 ? 1 : 0),
                             "zhabRepliedTo" => (!empty($repost) && $this->check_post_existence($repost) ? $repost : ""),
-                            "zhabAnsweredTo" => (!empty($question) && $GLOBALS['db']->query("SELECT * FROM inbox WHERE inboxMessage = 'question_asked' AND inboxLinked = ?", $question)->getRowCount() > 0 && (new Questions())->check_question_existence($question) ? $question : "")
+                            "zhabAnsweredTo" => (!empty($question) && $GLOBALS['db']->query("SELECT * FROM inbox WHERE inboxMessage = 'question_asked' AND inboxLinked = ?", $question)->getRowCount() > 0 && (new Questions())->check_question_existence($question) ? $question : ""),
+                            "zhabTags" => $tags
                         ]);
                         if(isset($reposted))
                             (new Notifications())->addNotify(2, $this->user->token, $reposted->userID, "/zhab/".$urlid);
