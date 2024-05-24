@@ -2837,7 +2837,7 @@ footer .copl{
 }
 .tags_followed_pg .tags_followed_pg_itself{
     display: flex;
-    overflow: auto;
+    overflow: hidden;
 }
 .tags_followed_pg .tags_followed_pg_itself .tag_pg{
     display: flex;
