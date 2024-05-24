@@ -511,11 +511,13 @@ class Posts
                             foreach($tags_array as $key => $tag){
                                 $tag = preg_replace("/<[^>]*>?/", "", $tag);
                                 $tag = preg_replace("/[^a-zA-Z0-9\p{Cyrillic}]/u", "", $tag);
-                                $tags .= (!(new Strings())->is_empty($tag) ? (strlen($tag) <= 32 ? $tag : "") : "");
-                                if($key + 1 != count($tags_array))
-                                    $tags .= ",";
-                                if($GLOBALS['db']->query("SELECT * FROM tags WHERE tag = ?", $tag)->getRowCount() == 0)
-                                    $GLOBALS['db']->query("INSERT INTO tags", ["tag" => $tag]);
+                                if(!(new Strings())->is_empty($tag) && strlen($tag) <= 32){
+                                    $tags .= $tag;
+                                    if($key + 1 != count($tags_array))
+                                        $tags .= ",";
+                                    if($GLOBALS['db']->query("SELECT * FROM tags WHERE tag = ?", $tag)->getRowCount() == 0)
+                                        $GLOBALS['db']->query("INSERT INTO tags", ["tag" => $tag]);
+                                }
                             }
                         }
                         (new RateLimit())->increase_rate_limit($this->user->token);
