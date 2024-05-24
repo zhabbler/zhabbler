@@ -511,7 +511,7 @@ class Posts
                             foreach($tags_array as $key => $tag){
                                 $tag = preg_replace("/<[^>]*>?/", "", $tag);
                                 $tag = preg_replace("/[^a-zA-Z0-9\p{Cyrillic}]/u", "", $tag);
-                                if(!(new Strings())->is_empty($tag) && strlen($tag) <= 32){
+                                if(!(new Strings())->is_empty($tag) && mb_strlen($tag) < 32){
                                     $tags .= $tag;
                                     if($key + 1 != count($tags_array))
                                         $tags .= ",";
