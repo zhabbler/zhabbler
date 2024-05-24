@@ -5,7 +5,7 @@ use Web\Models\User;
 use Web\Models\Sessions;
 use Latte;
 #[\AllowDynamicProperties]
-final class PopularPresenter
+final class MyTagsPresenter
 {
     public function __construct()
     {
@@ -20,11 +20,11 @@ final class PopularPresenter
             $session = (new Sessions())->get_session($_COOKIE['zhabbler_session']);
             $user = (new User())->get_user_by_token($session->sessionToken);
             $params += ["user" => $user];
-            $this->latte->render($_SERVER['DOCUMENT_ROOT']."/Web/views/popular.latte", $params);
+            $this->latte->render($_SERVER['DOCUMENT_ROOT']."/Web/views/mytags.latte", $params);
         }else{
             header("Location: /");
             die;
         }
     }
 }
-(new PopularPresenter())->load();
+(new MyTagsPresenter())->load();

@@ -13,6 +13,7 @@ $Router->add("GET", "/profile/{nickname}/{section}", "ProfilePresenter");
 $Router->add("GET", "/zhab/{id}", "ZhabPresenter");
 $Router->add("GET", "/destroy_account", "DestroyAccountPresenter");
 $Router->add("GET", "/dashboard/explore", "ExplorePresenter");
+$Router->add("GET", "/dashboard/mytags", "MyTagsPresenter");
 $Router->add("GET", "/dashboard/popular", "PopularPresenter");
 $Router->add("GET", "/admin/users", "admin/UsersPresenter");
 $Router->add("GET", "/admin/questions", "admin/QuestionsPresenter");
@@ -37,6 +38,7 @@ $Router->add("GET", "/etc/post_usr_interact", "etc/PostUsrInteractPresenter");
 $Router->add("GET", "/etc/messages", "etc/MessagesPresenter");
 $Router->add("GET", "/etc/activity", "etc/ActivityPresenter");
 $Router->add("POST", "/etc/im", "etc/IMPresenter");
+$Router->add("GET", "/etc/add_tags", "etc/AddTagsPresenter");
 $Router->add("POST", "/etc/ask_question", "etc/AskQuestionPresenter");
 
 // APIs
@@ -92,7 +94,7 @@ $Router->add("POST", "/api/Posts/like", "", function(){
 });
 $Router->add("POST", "/api/Posts/add", "", function(){
 	if(isset($_COOKIE['zhabbler_session']))
-		(new Web\Models\Posts())->add($_POST['content'], (!(new Utilities\Strings())->is_empty($_POST['post_id']) ? $_POST['post_id'] : null), (int)$_POST['post_contains'], (int)$_POST['who_can_comment'], (int)$_POST['who_can_repost'], $_POST['repost'], $_POST['question']);
+		(new Web\Models\Posts())->add($_POST['content'], (!(new Utilities\Strings())->is_empty($_POST['post_id']) ? $_POST['post_id'] : null), (int)$_POST['post_contains'], (int)$_POST['who_can_comment'], (int)$_POST['who_can_repost'], $_POST['repost'], $_POST['question'], $_POST['tags']);
 });
 $Router->add("POST", "/api/Posts/get_comments", "", function(){
 	(new Web\Models\Posts())->get_comments($_POST['id'], (isset($_COOKIE['zhabbler_session']) ? (new Web\Models\Sessions())->get_session($_COOKIE['zhabbler_session'])->sessionToken : ''));
@@ -170,6 +172,16 @@ $Router->add("GET", "/api/Posts/get_posts_by_followings_count", "", function(){
 		echo((new Web\Models\Posts())->get_posts_by_followings_count($GLOBALS['session']->sessionToken));
 	die;
 });
+$Router->add("POST", "/api/Posts/get_posts_by_tags", "", function(){
+	if(isset($_COOKIE['zhabbler_session']))
+		(new Web\Models\Posts())->get_posts_by_tags($_POST['last_id'], $GLOBALS['session']->sessionToken);
+	die;
+});
+$Router->add("GET", "/api/Posts/get_posts_by_tags_count", "", function(){
+	if(isset($_COOKIE['zhabbler_session']))
+		echo((new Web\Models\Posts())->get_posts_by_tags_count($GLOBALS['session']->sessionToken));
+	die;
+});
 $Router->add("POST", "/api/Posts/get_posts_by_user_count", "", function(){
 	echo((new Web\Models\Posts())->get_posts_by_user_count($_POST['nickname']));
 	die;
@@ -236,6 +248,14 @@ $Router->add("POST", "/api/User/get_query_count", "", function(){
 $Router->add("POST", "/api/Questions/ask_question", "", function(){
 	if(isset($_COOKIE['zhabbler_session']))
 		(new Web\Models\Questions())->ask_question($GLOBALS['session']->sessionToken, $_POST['question'], $_POST['to'], $_POST['anonymous']);
+});
+$Router->add("GET", "/api/Posts/search_tags", "", function(){
+	if(isset($_COOKIE['zhabbler_session']))
+		(new Web\Models\Posts())->search_tags($_GET['query']);
+});
+$Router->add("GET", "/api/Posts/add_followed_tags", "", function(){
+	if(isset($_COOKIE['zhabbler_session']))
+		(new Web\Models\Posts())->add_followed_tags($GLOBALS['session']->sessionToken, $_GET['tags']);
 });
 // Public APIs
 $Router->add("ANY", "/developer/api/{func}", "PublicAPIPresenter");

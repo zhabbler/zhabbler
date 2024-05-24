@@ -91,6 +91,12 @@
         </div>
         {/if}
         {$post->zhabContent|noescape}
+        <div class="postReadMore" onclick="zhabbler.showMore({$post->zhabURLID});">
+            {$language['show_more']}
+        </div>
+    </div>
+    <div class="postTags">
+        {(new Web\Models\Posts())->show_tags_html($user->token, $post->zhabTags)|noescape}
     </div>
     <div class="postActions">
         {if isset($user)}

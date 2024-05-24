@@ -24,6 +24,45 @@ $(document).ready(function(){
     $(document).on("click", "#PopupContainer", function(event){
         event.stopPropagation();
     });
+    $(document).on("keyup", ".input_tags", function(){
+        let results = '';
+        if($(this).val().replace(/\s+/g, '') != ""){
+            if($(".input_tags_searched").length == 0){
+                $(this).after(`<div class="input_tags_searched">
+                <div class="loader loader_black">
+                    <div class="loader_part loader_part_1"></div>
+                    <div class="loader_part loader_part_2"></div>
+                    <div class="loader_part loader_part_3"></div>
+                </div>
+                </div>`);
+            }
+            elem = $(this);
+            $.get("/api/Posts/search_tags", {query:$(this).val().replace(/\s+/g, '')}, function(data){
+                $.each(data, function(i, item){
+                    results += `<div class="input_tags_searched_tag">
+                    <div class="tag_ii">
+                        #<span>${data[i].tag}</span>
+                    </div>
+                    <div class="mla">
+                        ${locale['follow']}
+                    </div>
+                </div>`
+                });
+                $(".input_tags_searched").html(results);
+                results = '';
+            });
+        }else{
+            $(".input_tags_searched").remove();
+        }
+    });
+    $(document).on("click", ".input_tags_searched_tag", function(){
+        $(".input_tags").val("");
+        $(".input_tags_searched").remove();
+        $(".popup_tags").prepend(`<div class="popup_tag">#<span>${$(this).find(".tag_ii span").text()}</span></div>`);
+    });
+    $(document).on("click", ".popup_tag", function(){
+        $(this).remove();
+    });
     $(document).on("click", "#realPostContent img", function(){
         $("#app").prepend(`<div class="photoViewer"><div class="photoViewerClose"><i class="bx bx-x"></i></div><img src="${$(this).attr("src")}"></div>`);
     });
@@ -187,6 +226,32 @@ class Zhabbler{
     answer(id){
         zhabbler.openEditor("text", "", "", "", id);
     }
+    addFollowedTags(){
+        let tags = "";
+        $(".popup_tags .popup_tag").each(function(i){
+            if(i + 1 != $(".popup_tags .popup_tag").length){
+                tags += $(this).find("span").text() + ",";
+            }else{
+                tags += $(this).find("span").text();
+            }
+        });
+        $.get("/api/Posts/add_followed_tags", {tags:tags}, function(){
+            goToPage("/dashboard/mytags");
+        });
+    }
+    addTagsPopup(query = ""){
+        $("#app").prepend(`<div class="popup popup_do_not_close"><div class="loader loader_cpa"><div class="loader_part loader_part_1"></div><div class="loader_part loader_part_2"></div><div class="loader_part loader_part_3"></div></div></div>`);
+        $(".popup:first").load("/etc/add_tags", function(){
+            if(query != ""){
+                $(".input_tags").val(query);
+                $(".input_tags").trigger("keyup");
+            }
+        });
+    }
+    showMore(id){
+        $(`#post${id} .postReadMore`).remove();
+        $(`#post${id} .postContent`).css("max-height", "unset");
+    }
     activityBubble(){
         $("#NVT_US_BBL").hide();
         if($(".navbar_element_bubble:not(#NVT_US_BBL)").length > 0){
@@ -194,6 +259,23 @@ class Zhabbler{
         }else{
             $(($(".navbar_top").length > 0 ? "#NVT_FA" : ".main")).prepend(`<div class="navbar_element_bubble" id="ActivityBubble"><div class="loader loader_black  loader_cpa"><div class="loader_part loader_part_1"></div><div class="loader_part loader_part_2"></div><div class="loader_part loader_part_3"></div></div></div>`);
             $("#ActivityBubble").load("/etc/activity");
+        }
+    }
+    scrollFTags(pos){
+        if(pos == 'right'){
+            document.getElementById("FollowedTagsMTPg").scrollLeft += 170;
+        }else{
+            document.getElementById("FollowedTagsMTPg").scrollLeft -= 170;
+        }
+        if(document.getElementById("FollowedTagsMTPg").scrollLeft == (document.getElementById("FollowedTagsMTPg").scrollWidth - document.getElementById("FollowedTagsMTPg").offsetWidth)){
+            $(".tags_followed_pg_btn_right").fadeOut(200);
+            $(".tags_followed_pg_btn_left").fadeIn(200);
+        }else if(document.getElementById("FollowedTagsMTPg").scrollLeft == 0){
+            $(".tags_followed_pg_btn_left").fadeOut(200);
+            $(".tags_followed_pg_btn_right").fadeIn(200);
+        }else{
+            $(".tags_followed_pg_btn_left").fadeIn(200);
+            $(".tags_followed_pg_btn_right").fadeIn(200);
         }
     }
     profileBubble(){

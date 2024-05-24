@@ -23,16 +23,19 @@
             {include 'includes/navbar.latte'}
             <main class="main">
                 <div class="tabs">
-                    {if isset($user)}
                     <a href="/dashboard" class="tab">
                         <span>
                             {$language['following_tab']}
                         </span>
                     </a>
-                    {/if}
                     <a href="/dashboard/popular" class="tab tab_active">
                         <span>
                             {$language['popular']}
+                        </span>
+                    </a>
+                    <a href="/dashboard/mytags" class="tab">
+                        <span>
+                            {$language['your_tags']}
                         </span>
                     </a>
                     <a href="/dashboard/explore" class="tab">
