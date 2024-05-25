@@ -2081,7 +2081,7 @@ footer .copl{
     display: block;
 }
 #WriteResults .bubble_nve_warning{
-    height: calc(403px - 38px);
+    height: calc(403px - 42px);
 }
 .messages_b_close{
     margin-left: auto;
@@ -2779,7 +2779,7 @@ footer .copl{
     width: -moz-available;
 }
 #Write .input{
-    width: 278px;
+    width: calc(100% - 22px);
 }
 .write_post_tags{
     display: flex;
