@@ -154,7 +154,7 @@ class User
                 $result = ["error" => $this->locale['error_big_name']];
             }else if(strlen($nickname) < 3 || strlen($nickname) > 20){
                 $result = ["error" => $this->locale['error_big_nickname']];
-            }else if(preg_match("/[^a-zA-Z0-9\!]/", $nickname)){
+            }else if(!preg_match("/^[a-zA-Z0-9]{3,}$/", $nickname)){
                  $result = ["error" => $this->locale['error_nickname_symbols']];
             }else if($nickname != $user->nickname && $GLOBALS['db']->query("SELECT * FROM users WHERE nickname = ?", $nickname)->getRowCount() > 0){
                 $result = ["error" => $this->locale['error_nickname_is_used']];
@@ -321,7 +321,7 @@ class User
                     $result = ["error" => $this->locale['error_nickname_is_used']];
                 }else if($GLOBALS['db']->query("SELECT * FROM users WHERE email = ?", $email)->getRowCount() > 0){
                     $result = ["error" => $this->locale['error_email_is_used']];
-                }else if(preg_match("/[^a-zA-Z0-9\!]/", $nickname)){
+                }else if(!preg_match("/^[a-zA-Z0-9]{3,}$/", $nickname)){
                     $result = ["error" => $this->locale['error_nickname_symbols']];
                 }else{
                     $password = password_hash($password, PASSWORD_DEFAULT);
