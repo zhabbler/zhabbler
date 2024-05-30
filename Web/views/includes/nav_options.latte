@@ -13,7 +13,7 @@
             {foreach (new Web\Models\User())->random_profiles() as $profile}
             <div class="nav_options_whoToFollow_profile" onclick="goToPage('/profile/' + {$profile->nickname});">
                 <div class="nav_options_whoToFollow_profile_picture">
-                    <img src="{$profile->profileImage}" alt="Изображение">
+                    <img src="{$profile->profileImage}" alt="РР·РѕР±СЂР°Р¶РµРЅРёРµ">
                 </div>
                 <div class="nav_options_whoToFollow_profile_information">
                     <div>
@@ -25,7 +25,7 @@
                     </div>
                     <div>
                         <span>
-                            {$profile->name}
+                            {$profile->name|noescape}
                         </span>
                     </div>
                 </div>
