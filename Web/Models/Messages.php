@@ -90,7 +90,7 @@ class Messages
                 $GLOBALS['db']->query("INSERT INTO messages", [
                     "messageBy" => $user->userID,
                     "messageTo" => $to,
-                    "messageContent" => $message,
+                    "messageContent" => preg_replace('!(http|ftp|scp)(s)?:\/\/[a-zA-Z0-9.?&_/]+!', "<a href=\"\\0\">\\0</a>", $message),
                     "messageAdded" => date("Y-m-d H:i:s"),
                     "messageReaded" => ($user->userID == $to ? 1 : 0)
                 ]);

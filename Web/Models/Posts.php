@@ -38,7 +38,7 @@ class Posts
                 $params += ["user" => $user];
             }
             $params += ["post" => $post];
-            $post->zhabContent = strip_tags($post->zhabContent, ["p", "h1", "h2", "h3", "h4", "h5", "h6", "img", "video", "span"]);
+            $post->zhabContent = strip_tags($post->zhabContent, ["p", "h1", "h2", "h3", "h4", "h5", "h6", "img", "video", "span", "a"]);
             $output .= $this->latte->renderToString($_SERVER['DOCUMENT_ROOT']."/Web/views/includes/post.latte", $params);
         }
         die($output);
@@ -60,7 +60,7 @@ class Posts
         }
         $output = [];
         foreach($posts as $post){
-            $post->zhabContent = strip_tags($post->zhabContent, "<p><h1><h2><h3><h4><h5><h6><img><b><i><u><a><span><video>");
+            $post->zhabContent = strip_tags($post->zhabContent, ["p", "h1", "h2", "h3", "h4", "h5", "h6", "img", "video", "span", "a"]);
             $output[] = ["postID" => $post->zhabID, "postBy" => $post->nickname, "postContent" => $post->zhabContent, "liked" => $post->zhabLikes, "uploaded" => (string)$post->zhabUploaded];
         }
         die(json_encode($output));
@@ -90,7 +90,7 @@ class Posts
         $output = "";
         if($user->userID == $profile->userID || $profile->hideLiked != 1){
             foreach($posts as $post){
-                $post->zhabContent = strip_tags($post->zhabContent, "<p><h1><h2><h3><h4><h5><h6><img><b><i><u><a><span><video>");
+                $post->zhabContent = strip_tags($post->zhabContent, ["p", "h1", "h2", "h3", "h4", "h5", "h6", "img", "video", "span", "a"]);
                 $output .= $this->latte->renderToString($_SERVER['DOCUMENT_ROOT']."/Web/views/includes/post.latte", ["post" => $post, "user" => $user, "language" => $this->locale]);
             }
         }
@@ -137,7 +137,7 @@ class Posts
             }
             $output = "";
             foreach($posts as $post){
-                $post->zhabContent = strip_tags($post->zhabContent, "<p><h1><h2><h3><h4><h5><h6><img><b><i><u><a><span><video>");
+                $post->zhabContent = strip_tags($post->zhabContent, ["p", "h1", "h2", "h3", "h4", "h5", "h6", "img", "video", "span", "a"]);
                 $output .= $this->latte->renderToString($_SERVER['DOCUMENT_ROOT']."/Web/views/includes/post.latte", ["post" => $post, "user" => $user, "language" => $this->locale]);
             }
             die($output);
@@ -155,7 +155,7 @@ class Posts
         }
         $output = "";
         foreach($posts as $post){
-            $post->zhabContent = strip_tags($post->zhabContent, "<p><h1><h2><h3><h4><h5><h6><img><b><i><u><a><span><video>");
+            $post->zhabContent = strip_tags($post->zhabContent, ["p", "h1", "h2", "h3", "h4", "h5", "h6", "img", "video", "span", "a"]);
             $output .= $this->latte->renderToString($_SERVER['DOCUMENT_ROOT']."/Web/views/includes/post.latte", ["post" => $post, "user" => $user, "language" => $this->locale]);
         }
         die($output);
@@ -192,7 +192,7 @@ class Posts
         }
         $output = "";
         foreach($posts as $post){
-            $post->zhabContent = strip_tags($post->zhabContent, "<p><h1><h2><h3><h4><h5><h6><img><b><i><u><a><span><video>");
+            $post->zhabContent = strip_tags($post->zhabContent, ["p", "h1", "h2", "h3", "h4", "h5", "h6", "img", "video", "span", "a"]);
             $output .= $this->latte->renderToString($_SERVER['DOCUMENT_ROOT']."/Web/views/includes/post.latte", ["post" => $post, "user" => $user, "language" => $this->locale]);
         }
         die($output);
@@ -245,7 +245,7 @@ class Posts
             $GLOBALS['db']->query("INSERT INTO comments", [
                 "commentBy" => $user->userID,
                 "commentTo" => $id,
-                "commentContent" => $comment,
+                "commentContent" => preg_replace('!(http|ftp|scp)(s)?:\/\/[a-zA-Z0-9.?&_/]+!', "<a href=\"\\0\">\\0</a>", $comment),
                 "commentAdded" => date("Y-m-d H:i:s")
             ]);
             preg_match_all('/(^|\s)(@\w+)/', $comment, $result);
@@ -291,7 +291,7 @@ class Posts
             $user = (new User())->get_user_by_token($token);
         }
         foreach($posts as $post){
-            $post->zhabContent = strip_tags($post->zhabContent, "<p><h1><h2><h3><h4><h5><h6><img><b><i><u><a><span><video>");
+            $post->zhabContent = strip_tags($post->zhabContent, ["p", "h1", "h2", "h3", "h4", "h5", "h6", "img", "video", "span", "a"]);
             $params = ["post" => $post, "language" => $this->locale];
             if(isset($user)){
                 $params += ["user" => $user];
@@ -311,7 +311,7 @@ class Posts
         }
         $output = [];
         foreach($posts as $post){
-            $post->zhabContent = strip_tags($post->zhabContent, "<p><h1><h2><h3><h4><h5><h6><img><b><i><u><a><span><video>");
+            $post->zhabContent = strip_tags($post->zhabContent, ["p", "h1", "h2", "h3", "h4", "h5", "h6", "img", "video", "span", "a"]);
             $output[] = ["postID" => $post->zhabID, "postBy" => $post->nickname, "postContent" => $post->zhabContent, "liked" => $post->zhabLikes, "uploaded" => (string)$post->zhabUploaded];
         }
         die(json_encode($output));
@@ -325,7 +325,7 @@ class Posts
             $user = (new User())->get_user_by_token($token);
         }
         foreach($posts as $post){
-            $post->zhabContent = strip_tags($post->zhabContent, "<p><h1><h2><h3><h4><h5><h6><img><b><i><u><a><span><video>");
+            $post->zhabContent = strip_tags($post->zhabContent, ["p", "h1", "h2", "h3", "h4", "h5", "h6", "img", "video", "span", "a"]);
             $params = ["post" => $post, "language" => $this->locale];
             if(isset($user)){
                 $params += ["user" => $user];
@@ -402,7 +402,7 @@ class Posts
             </a>
         </div>' : '').'
         <div class="postContent" id="realPostContent" onclick="goToPage(`/zhab/'.$reposted->zhabURLID.'`);">
-        '.strip_tags($reposted->zhabContent, "<p><h1><h2><h3><h4><h5><h6><img><b><i><u><a><span><video>").'
+        '.strip_tags($reposted->zhabContent, ["p", "h1", "h2", "h3", "h4", "h5", "h6", "img", "video", "span", "a"]).'
         </div>
         <div class="postAuthor postAuthorReposted">
             <a href="/profile/'.$post->nickname.'" class="postAuthorProfileImage">
@@ -523,7 +523,7 @@ class Posts
                         (new RateLimit())->increase_rate_limit($this->user->token);
                         $GLOBALS['db']->query("INSERT INTO zhabs", [
                             "zhabURLID" => $urlid,
-                            "zhabContent" => $post_prepared,
+                            "zhabContent" => preg_replace('!(http|ftp|scp)(s)?:\/\/[a-zA-Z0-9.?&_/]+!', "<a href=\"\\0\">\\0</a>", $post_prepared),
                             "zhabBy" => $this->user->userID,
                             "zhabContains" => $contains,
                             "zhabUploaded" => date("Y-m-d"),
