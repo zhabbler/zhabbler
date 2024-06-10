@@ -26,8 +26,8 @@ $(document).ready(function(){
 });
 const add_tag = (tag) => {
     tag = tag.replace(/<[^>]*>?/gm, '');
-    if(tag.replace(/\s+/g, '') != "" && $(`.write_post_tag[data-tag="${tag.replace(/[^a-zA-ZР°-СЏРђ-РЇ0-9]/g, '')}"]`).length == 0){
-        tag = tag.replace(/[^a-zA-ZР°-СЏРђ-РЇ0-9]/g, '');
+    if(tag.replace(/\s+/g, '') != "" && $(`.write_post_tag[data-tag="${tag.replace(/[^a-zA-Zа-яА-Я0-9]/g, '')}"]`).length == 0){
+        tag = tag.replace(/[^a-zA-Zа-яА-Я0-9]/g, '');
         $(".write_post_tag_add_input").replaceWith(`<div class="write_post_tag" data-tag="${tag}">#<span>${tag}</span><i class='bx bx-x'></i></div>`);
     }else{
         $(".write_post_tag_add_input").remove();
