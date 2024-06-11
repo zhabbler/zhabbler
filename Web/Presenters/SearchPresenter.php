@@ -30,6 +30,10 @@ final class SearchPresenter
                 header("Location: /search?q={$_GET['q']}&type=posts");
                 die;
             }
+            if(!isset($_GET['type']) && !isset($_GET['q'])){
+                $_GET['type'] = "";
+                $_GET['q'] = "";
+            }
             $session = (new Sessions())->get_session($_COOKIE['zhabbler_session']);
             $user = (new User())->get_user_by_token($session->sessionToken);
             $params += ["user" => $user];
