@@ -1,3 +1,8 @@
+{if isset($user) && $user->activated != 1}
+<div class="warning_top">
+    <span>{$language['email_top_warn']}</span>
+</div>
+{/if}
 {(isset($user) ? (isset($profile) ? (new Web\Models\Personalization())->loadup($profile->userID) : (new Web\Models\Personalization())->loadup($user->userID)) : "")|noescape}
 <nav class="mobile_nav">
     <a href="/" class="mobile_nav_element">

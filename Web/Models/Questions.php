@@ -36,28 +36,32 @@ class Questions
         $to = (new User())->get_user_by_nickname($nickname);
         $question = (new Strings())->convert($question);
         $result = ["error" => null];
-        if(!(new Strings())->is_empty($question)){
-            if($to->askQuestions != 1){
-                $result = ["error" => "You cannot ask this user questions."];
+        if($user->activated == 1 && $to->activated == 1){
+            if(!(new Strings())->is_empty($question)){
+                if($to->askQuestions != 1){
+                    $result = ["error" => "You cannot ask this user questions."];
+                }else{
+                    $uniqueID = (new Strings())->random_string(128);
+                    $GLOBALS['db']->query("INSERT INTO questions", [
+                        "questionBy" => ($anonymous != 1 ? $user->userID : 0),
+                        "questionTo" => $to->userID,
+                        "questionUniqueID" => $uniqueID,
+                        "question" => $question,
+                        "questionAdded" => date("Y-m-d H:i:s")
+                    ]);
+                    $GLOBALS['db']->query("INSERT INTO inbox", [
+                        "inboxTo" => $to->userID,
+                        "inboxMessage" => "question_asked",
+                        "inboxBy" => ($anonymous != 1 ? $user->userID : 0),
+                        "inboxLinked" => $uniqueID
+                    ]);
+                    (new RateLimit())->increase_rate_limit($user->token);
+                }
             }else{
-                $uniqueID = (new Strings())->random_string(128);
-                $GLOBALS['db']->query("INSERT INTO questions", [
-                    "questionBy" => ($anonymous != 1 ? $user->userID : 0),
-                    "questionTo" => $to->userID,
-                    "questionUniqueID" => $uniqueID,
-                    "question" => $question,
-                    "questionAdded" => date("Y-m-d H:i:s")
-                ]);
-                $GLOBALS['db']->query("INSERT INTO inbox", [
-                    "inboxTo" => $to->userID,
-                    "inboxMessage" => "question_asked",
-                    "inboxBy" => ($anonymous != 1 ? $user->userID : 0),
-                    "inboxLinked" => $uniqueID
-                ]);
-                (new RateLimit())->increase_rate_limit($user->token);
+                $result = ["error" => $this->locale['some_fields_are_empty']];
             }
         }else{
-            $result = ["error" => $this->locale['some_fields_are_empty']];
+            $result = ["error" => $this->locale['you_need_to_activate_account']];
         }
         die(json_encode($result));
     }

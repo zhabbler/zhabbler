@@ -257,6 +257,11 @@ $Router->add("GET", "/api/Posts/add_followed_tags", "", function(){
 	if(isset($_COOKIE['zhabbler_session']))
 		(new Web\Models\Posts())->add_followed_tags($GLOBALS['session']->sessionToken, $_GET['tags']);
 });
+$Router->add("GET", "/api/Messages/get_conversations", "", function(){
+	header('Content-Type: application/json');
+	if(isset($_COOKIE['zhabbler_session']))
+		echo(json_encode((new Web\Models\Messages())->get_conversations($GLOBALS['session']->sessionToken)));
+});
 // Public APIs
 $Router->add("ANY", "/developer/api/{func}", "PublicAPIPresenter");
 

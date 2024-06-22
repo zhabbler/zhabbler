@@ -21,30 +21,70 @@
         {include 'includes/navbar_top.latte'}
         <div class="container">
             {include 'includes/navbar.latte'}
-            <main class="main">
-                {if isset($_GET['show_tabs'])}
-                <div class="tabs only_mobile_flex">
-                    <a class="tab" href="/inbox?show_tabs">
-                        {$language['inbox']}
-                        {if (new Web\Models\Inbox())->getUnreadCountOfMsgs($user->token) > 0}
-                            ({(new Web\Models\Inbox())->getUnreadCountOfMsgs($user->token)})
-                        {/if}
-                    </a>
-                    <a class="tab tab_active" href="/messages?show_tabs">
-                        {$language['messages']}
-                        {if (new Web\Models\Messages())->get_count_of_unread_messages($user->token) > 0}
-                            ({(new Web\Models\Messages())->get_count_of_unread_messages($user->token)})
-                        {/if}
-                    </a>
+            <main class="main main_messages">
+                <div class="main_messages_convos">
+                    <section class="main_messages_convos_top">
+                        <div class="main_messages_convos_title">
+                            <span>
+                                {$language['messages']}
+                            </span>
+                        </div>
+                        <div class="main_messages_convos_elements">
+                            <div class="main_messages_convos_element" onclick="writeMessage();">
+                                <i class='bx bxs-edit'></i>
+                            </div>
+                        </div>
+                    </section>
+                    <div id="Messages">
+                        <div class="alert-msgs-con" style="display: none;">
+                            <div>
+                                <div>
+                                    <i class='bx bx-error'></i>
+                                </div>
+                                <div>
+                                    <span>{$language['failed_to_connect_msgs']}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="MessagesLoader">
+                            <div class="loader">
+                                <div class="loader_part loader_part_1"></div>
+                                <div class="loader_part loader_part_2"></div>
+                                <div class="loader_part loader_part_3"></div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                {/if}
-                <div class="nve_big">
-                    {include '../etc/messages.latte'}
+                <div class="main_messages_im" data-convo="" style="display:none;">
+                    <div class="main_messages_im_person">
+                        <div class="main_messages_im_person_image">
+                            <img src="/static/images/no_avatar_1900.png" alt="Profile picture">
+                        </div>
+                        <div class="main_messages_im_person_info">
+                            <span></span>
+                        </div>
+                    </div>
+                    <section class="main_messages_im_msgs" id="MessagesList"></section>
+                    <div class="main_messages_write_message">
+                        <label class="main_messages_write_message_element">
+                            <input type="file" accept="image/*" hidden="" onchange="imsendimage(this, '');">
+                            <i class='bx bx-image-alt' ></i>
+                        </label>
+                        <div class="main_messages_write_message_textarea">
+                            <textarea name="message" onkeydown="sendbyenter()" placeholder="{$language['message']}..."></textarea>
+                        </div>
+                        <div class="main_messages_write_message_element" onclick="">
+                            <i class='bx bx-send' ></i>
+                        </div>
+                    </div>
                 </div>
             </main>
-            {include 'includes/nav_options.latte'}
         </div>
         <preloader src="/static/player/js/zhabblerplayer.js"></preloader>
+        <preloader src="/static/js/messages.js"></preloader>
+        {if isset($open_msgs)}
+        <preloader>openMessages("{$open_msgs}");</preloader>
+        {/if}
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js" integrity="sha512-57oZ/vW8ANMjR/KQ6Be9v/+/h6bq9/l3f0Oc7vn6qMqyhvPd1cvKBRWWpzu0QoneImqr2SkmO4MSqU+RpHom3Q==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>

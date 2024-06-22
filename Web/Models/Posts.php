@@ -240,22 +240,24 @@ class Posts
         $user = (new User())->get_user_by_token($token);
         $comment = (new Strings())->convert($comment);
         $post = $this->get_post($id);
-        if(!(new Strings())->is_empty($comment) && $this->check_post_existence($id) && $post->zhabWhoCanComment != 1){
-            (new RateLimit())->increase_rate_limit($token);
-            $GLOBALS['db']->query("INSERT INTO comments", [
-                "commentBy" => $user->userID,
-                "commentTo" => $id,
-                "commentContent" => preg_replace('!(http|ftp|scp)(s)?:\/\/[a-zA-Z0-9.?&_/]+!', "<a href=\"\\0\">\\0</a>", $comment),
-                "commentAdded" => date("Y-m-d H:i:s")
-            ]);
-            preg_match_all('/(^|\s)(@\w+)/', $comment, $result);
-            if(count($result[0]) > 0){
-                $nickname = str_replace("@", "", $result[2][0]);
-                if((new User())->check_user_existence($nickname) && $nickname != $user->nickname){
-                    $mention_user_info = (new User())->get_user_by_nickname($nickname);
-                    (new Notifications())->addNotify(3, $token, $mention_user_info->userID, "/zhab/".$post->zhabURLID);
+        if($user->activated == 1){
+            if(!(new Strings())->is_empty($comment) && $this->check_post_existence($id) && $post->zhabWhoCanComment != 1){
+                (new RateLimit())->increase_rate_limit($token);
+                $GLOBALS['db']->query("INSERT INTO comments", [
+                    "commentBy" => $user->userID,
+                    "commentTo" => $id,
+                    "commentContent" => preg_replace('!(http|ftp|scp)(s)?:\/\/[a-zA-Z0-9.?&_/]+!', "<a href=\"\\0\">\\0</a>", $comment),
+                    "commentAdded" => date("Y-m-d H:i:s")
+                ]);
+                preg_match_all('/(^|\s)(@\w+)/', $comment, $result);
+                if(count($result[0]) > 0){
+                    $nickname = str_replace("@", "", $result[2][0]);
+                    if((new User())->check_user_existence($nickname) && $nickname != $user->nickname){
+                        $mention_user_info = (new User())->get_user_by_nickname($nickname);
+                        (new Notifications())->addNotify(3, $token, $mention_user_info->userID, "/zhab/".$post->zhabURLID);
+                    }
+                    (new Notifications())->addNotify(1, $token, $post->userID, "/zhab/".$post->zhabURLID);
                 }
-                (new Notifications())->addNotify(1, $token, $post->userID, "/zhab/".$post->zhabURLID);
             }
         }
     }
@@ -426,7 +428,7 @@ class Posts
         header('Content-Type: application/json');
         $result = ["liked" => false];
         $user = (new User())->get_user_by_token($token);
-        if($this->check_post_existence($id)){
+        if($this->check_post_existence($id) && $user->activated == 1){
             if($this->check_like($token, $id)){
                 $GLOBALS['db']->query("DELETE FROM likes WHERE likeBy = ? AND likeTo = ?", $user->userID, $id);
                 $GLOBALS['db']->query("UPDATE zhabs SET zhabLikes = zhabLikes - 1 WHERE zhabURLID = ?", $id);
@@ -472,7 +474,7 @@ class Posts
                 $tag = preg_replace("/<[^>]*>?/", "", $tag);
                 $tag = preg_replace("/[^a-zA-Z0-9\p{Cyrillic}]/u", "", $tag);
                 if(!(new Strings())->is_empty($tag)){
-                    if($GLOBALS['db']->query("SELECT * FROM followed_tags WHERE followedTag = ?", $tag)->getRowCount() == 0)
+                    if($GLOBALS['db']->query("SELECT * FROM followed_tags WHERE followedTag = ? AND followedTagBy = ?", $tag, $user->userID)->getRowCount() == 0)
                         $GLOBALS['db']->query("INSERT INTO followed_tags", ["followedTag" => $tag, "followedTagBy" => $user->userID]);
                 }
             }
@@ -492,59 +494,63 @@ class Posts
     	$result = ["error" => null];
     	$urlid = (is_null($urlid) ? (new Strings())->random_string(72) : $urlid);
         $contains = ($contains == 1 ? 1 : 0);
-    	if(!(new Strings())->is_empty(trim(html_entity_decode(preg_replace('/\s+/', '', strip_tags($post, "<img><video>"))), " \t\n\r\0\x0B\xC2\xA0")) && !(new Strings())->is_empty(strip_tags($post_prepared, "<img><video>"))){
-            if(preg_match("/[^a-zA-Z0-9\!]/", $urlid)){
-                 $result = ["error" => $this->locale['urlid_symbols_error']];
-            }else{
-                if(!empty($repost) && $this->check_post_existence($repost)){
-                    $reposted = $this->get_post($repost);
-                }
-                if(isset($reposted) && $reposted->zhabWhoCanRepost == 1){
-                    $result = ["error" => "You cannot repost this post."];
-                }else if(isset($question_itself) && $question_itself->questionTo != $user->userID){
-                    $result = ["error" => "You cannot answer this question."];
+        if($this->user->activated != 1){
+            $result = ["error" => $this->locale['you_need_to_activate_account']];
+        }else{
+            if(!(new Strings())->is_empty(trim(html_entity_decode(preg_replace('/\s+/', '', strip_tags($post, "<img><video>"))), " \t\n\r\0\x0B\xC2\xA0")) && !(new Strings())->is_empty(strip_tags($post_prepared, "<img><video>"))){
+                if(preg_match("/[^a-zA-Z0-9\!]/", $urlid)){
+                    $result = ["error" => $this->locale['urlid_symbols_error']];
                 }else{
-                    if($GLOBALS['db']->query("SELECT * FROM zhabs WHERE zhabURLID = ?", $urlid)->getRowCount() == 0){
-                        if(!(new Strings())->is_empty(str_replace(",", "", $tags))){
-                            $tags_array = explode(",", $tags);
-                            $tags = "";
-                            foreach($tags_array as $key => $tag){
-                                $tag = preg_replace("/<[^>]*>?/", "", $tag);
-                                $tag = preg_replace("/[^a-zA-Z0-9\p{Cyrillic}]/u", "", $tag);
-                                if(!(new Strings())->is_empty($tag) && mb_strlen($tag) < 32){
-                                    $tags .= $tag;
-                                    if($key + 1 != count($tags_array))
-                                        $tags .= ",";
-                                    if($GLOBALS['db']->query("SELECT * FROM tags WHERE tag = ?", $tag)->getRowCount() == 0)
-                                        $GLOBALS['db']->query("INSERT INTO tags", ["tag" => $tag]);
+                    if(!empty($repost) && $this->check_post_existence($repost)){
+                        $reposted = $this->get_post($repost);
+                    }
+                    if(isset($reposted) && $reposted->zhabWhoCanRepost == 1){
+                        $result = ["error" => "You cannot repost this post."];
+                    }else if(isset($question_itself) && $question_itself->questionTo != $user->userID){
+                        $result = ["error" => "You cannot answer this question."];
+                    }else{
+                        if($GLOBALS['db']->query("SELECT * FROM zhabs WHERE zhabURLID = ?", $urlid)->getRowCount() == 0){
+                            if(!(new Strings())->is_empty(str_replace(",", "", $tags))){
+                                $tags_array = explode(",", $tags);
+                                $tags = "";
+                                foreach($tags_array as $key => $tag){
+                                    $tag = preg_replace("/<[^>]*>?/", "", $tag);
+                                    $tag = preg_replace("/[^a-zA-Z0-9\p{Cyrillic}]/u", "", $tag);
+                                    if(!(new Strings())->is_empty($tag) && mb_strlen($tag) < 32){
+                                        $tags .= $tag;
+                                        if($key + 1 != count($tags_array))
+                                            $tags .= ",";
+                                        if($GLOBALS['db']->query("SELECT * FROM tags WHERE tag = ?", $tag)->getRowCount() == 0)
+                                            $GLOBALS['db']->query("INSERT INTO tags", ["tag" => $tag]);
+                                    }
                                 }
                             }
+                            (new RateLimit())->increase_rate_limit($this->user->token);
+                            $GLOBALS['db']->query("INSERT INTO zhabs", [
+                                "zhabURLID" => $urlid,
+                                "zhabContent" => preg_replace('!(http|ftp|scp)(s)?:\/\/[a-zA-Z0-9.?&_/]+!', "<a href=\"\\0\">\\0</a>", $post_prepared),
+                                "zhabBy" => $this->user->userID,
+                                "zhabContains" => $contains,
+                                "zhabUploaded" => date("Y-m-d"),
+                                "zhabWhoCanComment" => ($who_comment == 1 ? 1 : 0),
+                                "zhabWhoCanRepost" => ($who_repost == 1 ? 1 : 0),
+                                "zhabRepliedTo" => (!empty($repost) && $this->check_post_existence($repost) ? $repost : ""),
+                                "zhabAnsweredTo" => (!empty($question) && $GLOBALS['db']->query("SELECT * FROM inbox WHERE inboxMessage = 'question_asked' AND inboxLinked = ?", $question)->getRowCount() > 0 && (new Questions())->check_question_existence($question) ? $question : ""),
+                                "zhabTags" => $tags
+                            ]);
+                            if(isset($reposted))
+                                (new Notifications())->addNotify(2, $this->user->token, $reposted->userID, "/zhab/".$urlid);
+                            if(!empty($question) && (new Questions())->check_question_existence($question))
+                                $GLOBALS['db']->query("DELETE FROM inbox WHERE inboxMessage = 'question_asked' AND inboxLinked = ?", $question);
+                        }else{
+                            $result = ["error" => $this->locale['cannot_use_user_post_id']];
                         }
-                        (new RateLimit())->increase_rate_limit($this->user->token);
-                        $GLOBALS['db']->query("INSERT INTO zhabs", [
-                            "zhabURLID" => $urlid,
-                            "zhabContent" => preg_replace('!(http|ftp|scp)(s)?:\/\/[a-zA-Z0-9.?&_/]+!', "<a href=\"\\0\">\\0</a>", $post_prepared),
-                            "zhabBy" => $this->user->userID,
-                            "zhabContains" => $contains,
-                            "zhabUploaded" => date("Y-m-d"),
-                            "zhabWhoCanComment" => ($who_comment == 1 ? 1 : 0),
-                            "zhabWhoCanRepost" => ($who_repost == 1 ? 1 : 0),
-                            "zhabRepliedTo" => (!empty($repost) && $this->check_post_existence($repost) ? $repost : ""),
-                            "zhabAnsweredTo" => (!empty($question) && $GLOBALS['db']->query("SELECT * FROM inbox WHERE inboxMessage = 'question_asked' AND inboxLinked = ?", $question)->getRowCount() > 0 && (new Questions())->check_question_existence($question) ? $question : ""),
-                            "zhabTags" => $tags
-                        ]);
-                        if(isset($reposted))
-                            (new Notifications())->addNotify(2, $this->user->token, $reposted->userID, "/zhab/".$urlid);
-                        if(!empty($question) && (new Questions())->check_question_existence($question))
-                            $GLOBALS['db']->query("DELETE FROM inbox WHERE inboxMessage = 'question_asked' AND inboxLinked = ?", $question);
-                    }else{
-                        $result = ["error" => $this->locale['cannot_use_user_post_id']];
                     }
                 }
+            }else{
+                $result = ["error" => $this->locale['some_fields_are_empty']];
             }
-    	}else{
-    		$result = ["error" => $this->locale['some_fields_are_empty']];
-    	}
+        }
     	die(json_encode($result));
     }
 }

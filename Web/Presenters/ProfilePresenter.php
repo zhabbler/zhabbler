@@ -35,6 +35,10 @@ final class ProfilePresenter
             die;
         }
         $profile = (new User())->get_user_by_nickname($params['nickname']);
+        if($profile->activated != 1){
+            header("Location: ".($profile->userID == $user->userID ? "/" : "/404"));
+            die;
+        }
         $params += ["profile" => $profile];
         if(isset($params['section']) && isset($user)){
             if($user->userID != $profile->userID){

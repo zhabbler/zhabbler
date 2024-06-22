@@ -170,6 +170,9 @@
         </div>
         <div id="commentsSection" class="JS_section">
             {if isset($user) && $post->zhabWhoCanComment != 1}
+            {if $user->activated != 1}
+            <div style="color:#666;text-align:center;padding:15px;"><span>{$language['you_need_to_activate_account']}</span></div>
+            {else}
             <div class="postRespondsRespond">
                 <div class="postRespondsRespondAvatar" onclick="goToPage('/me');">
                     <img src="{$user->profileImage}">
@@ -181,6 +184,7 @@
                     <button onclick="zhabbler.sendComment({$post->zhabURLID});" disabled><i class="bx bx-send"></i></button>
                 </div>
             </div>
+            {/if}
             {/if}
             <div id="responds_itself">
                 <div class="loader loader_black">
