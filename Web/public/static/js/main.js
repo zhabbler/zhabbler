@@ -1,11 +1,43 @@
 var page_id = 0;
 var locale = null;
 var opened_msgs = [];
+var conn = new WebSocket('ws://localhost:8000');
+var user = null;
+var connection = null;
 $.post("/api/Localization/get_string", function(data){
     locale = data;
 });
+$.post("/api/User/get_user_details", function(data){
+    user = data;
+});
+
+conn.addEventListener("error", (event) => {
+    connection = false;
+});
+conn.onopen = function(e) {
+    console.log("websockets connected");
+    connection = true;
+};
+conn.onmessage = function(e) {
+    json_data = JSON.parse(e.data);
+    if(json_data.to == user.nickname){
+        $.post("/api/Messages/check_is_there_an_unread_msgs", {to:json_data.by}, function(data){
+            if(data.result == 1){
+                new Audio("/static/audios/new_msg.mp3").play();
+                if($(".main_messages_im").length > 0 && $(".main_messages_im").data("convo") == json_data.by){
+                    getMessages(json_data.by);
+                }else if($(".main_messages").length > 0){
+                    getConvos();
+                    zhabbler.addNotify(json_data.by + locale['new_msg_notify'], "/messages?im=" + json_data.by);
+                }else{
+                    zhabbler.addNotify(json_data.by + locale['new_msg_notify'], "/messages?im=" + json_data.by);
+                }
+            }
+        });
+    }
+}
+
 $(document).ready(function(){
-    zhabbler.loadPreloaders();
     $(document).on("click", ".popup", function(){
         if(!$(this).hasClass("popup_do_not_close")){
             $(".popup:first").remove();
@@ -60,6 +92,9 @@ $(document).ready(function(){
         $(".input_tags_searched").remove();
         $(".popup_tags").prepend(`<div class="popup_tag">#<span>${$(this).find(".tag_ii span").text()}</span></div>`);
     });
+    $(document).on("click", ".notification", function(){
+        $(this).remove();
+    });
     $(document).on("click", ".popup_tag", function(){
         $(this).remove();
     });
@@ -68,7 +103,10 @@ $(document).ready(function(){
     });
     $(document).on("click", ".message_image img", function(){
         $("#app").prepend(`<div class="photoViewer"><div class="photoViewerClose"><i class="bx bx-x"></i></div><img src="${$(this).attr("src")}"></div>`);
-    })
+    });
+    $(document).on("click", ".main_messages_im_msg_itself img", function(){
+        $("#app").prepend(`<div class="photoViewer"><div class="photoViewerClose"><i class="bx bx-x"></i></div><img src="${$(this).attr("src")}"></div>`);
+    });
     $(document).on("click", ".photoViewer", function(){
         $(this).remove();
     });
@@ -239,6 +277,24 @@ class Zhabbler{
             goToPage("/dashboard/mytags");
         });
     }
+    addNotify(message){
+        if($(".notifications").length == 0){
+            $("#app").prepend("<div class='notifications'></div>");
+        }
+        $(".notifications").append(`<div class="notification">
+                <div>
+                    <i class='bx bxs-chat'></i>
+                </div>
+                <div>
+                    <span>
+                        ${message}
+                    </span>
+                </div>
+            </div>`);
+        setTimeout(() => {
+            $(".notifications .notification:first").remove();
+        }, 10000);
+    }
     addTagsPopup(query = ""){
         $("#app").prepend(`<div class="popup popup_do_not_close"><div class="loader loader_cpa"><div class="loader_part loader_part_1"></div><div class="loader_part loader_part_2"></div><div class="loader_part loader_part_3"></div></div></div>`);
         $(".popup:first").load("/etc/add_tags", function(){
@@ -263,20 +319,22 @@ class Zhabbler{
     }
     scrollFTags(pos){
         if(pos == 'right'){
-            document.getElementById("FollowedTagsMTPg").scrollLeft += 170;
+            $("#FollowedTagsMTPg").animate({scrollLeft:"+=510"}, 250);
         }else{
-            document.getElementById("FollowedTagsMTPg").scrollLeft -= 170;
+            $("#FollowedTagsMTPg").animate({scrollLeft:"-=510"}, 250);
         }
-        if(document.getElementById("FollowedTagsMTPg").scrollLeft == (document.getElementById("FollowedTagsMTPg").scrollWidth - document.getElementById("FollowedTagsMTPg").offsetWidth)){
-            $(".tags_followed_pg_btn_right").fadeOut(200);
-            $(".tags_followed_pg_btn_left").fadeIn(200);
-        }else if(document.getElementById("FollowedTagsMTPg").scrollLeft == 0){
-            $(".tags_followed_pg_btn_left").fadeOut(200);
-            $(".tags_followed_pg_btn_right").fadeIn(200);
-        }else{
-            $(".tags_followed_pg_btn_left").fadeIn(200);
-            $(".tags_followed_pg_btn_right").fadeIn(200);
-        }
+        setTimeout(() => {
+            if(document.getElementById("FollowedTagsMTPg").scrollLeft == (document.getElementById("FollowedTagsMTPg").scrollWidth - document.getElementById("FollowedTagsMTPg").offsetWidth)){
+                $(".tags_followed_pg_btn_right").fadeOut(200);
+                $(".tags_followed_pg_btn_left").fadeIn(200);
+            }else if(document.getElementById("FollowedTagsMTPg").scrollLeft == 0){
+                $(".tags_followed_pg_btn_left").fadeOut(200);
+                $(".tags_followed_pg_btn_right").fadeIn(200);
+            }else{
+                $(".tags_followed_pg_btn_left").fadeIn(200);
+                $(".tags_followed_pg_btn_right").fadeIn(200);
+            }
+        }, 255);
     }
     profileBubble(){
         if($(".navbar_element_bubble:not(#NVT_US_BBL)").length > 0){
@@ -444,59 +502,13 @@ class Zhabbler{
         </div>`);
         }
     }
+    openIM(nickname){
+        goToPage(`/messages?peer=${nickname}`);
+    }
     askQuestion(nickname){
         $("#app").prepend(`<div class="popup popup_do_not_close"><div class="loader"><div class="loader_part loader_part_1"></div><div class="loader_part loader_part_2"></div><div class="loader_part loader_part_3"></div></div></div>`);
         $.post("/etc/ask_question", {nickname:nickname}, function(data){
             $(".popup:first").html(data);
-        });
-    }
-    openIM(nickname, hidden = false){
-        if($(`#IM_${nickname}`).length == 0){
-            if($(".messages_a").length == 0){
-                $("#app").prepend('<div class="messages_a"></div>');
-            }
-            $("#MessagesBubble").html('<div class="loader loader_black  loader_cpa"><div class="loader_part loader_part_1"></div><div class="loader_part loader_part_2"></div><div class="loader_part loader_part_3"></div></div>');
-            $.post("/api/User/get_user_by_nickname", {nickname:nickname}, function(data){
-                $("#MessagesBubble").remove();
-                $(".messages_a").prepend(`<div class="messages_b ${(hidden == true ? "messages_b_hidden" : "")}" id="IM_${data.nickname}"><div class="loader loader_black  loader_cpa"><div class="loader_part loader_part_1"></div><div class="loader_part loader_part_2"></div><div class="loader_part loader_part_3"></div></div></div>`);
-                $.post("/etc/im", {nickname:nickname}, function(data){
-                    $(`#IM_${nickname}`).html(data);
-                    zhabbler.getMessages(nickname);
-                    $('#msgsbtn_navb .navbar_element_title span').html(locale['messages']);
-                    zhabbler.loadPreloaders();
-                    if(opened_msgs.indexOf(nickname) == -1){
-                        opened_msgs.unshift(nickname);
-                    }
-                });
-            });
-        }
-    }
-    getMessages(nickname){
-        $.post("/api/Messages/get_messages", {to:nickname}, function(data){
-            var result = '';
-            $.each(data, function(i, data){
-                if(data.image != ''){
-                    result += `<div class="message_box ${(data.messageByUser == 1 ? "message_by_user" : "")}">
-                    <div class="message message_image">
-                        <img src="${data.image}">
-                        <small><span>${data.added}</span></small>
-                    </div>
-                </div>`;
-                }else{
-                    result += `<div class="message_box ${(data.messageByUser == 1 ? "message_by_user" : "")}">
-                        <div class="message">
-                            ${data.message}
-                            <small><span>${data.added}</span></small>
-                        </div>
-                    </div>`;
-                }
-            })
-            $(`#IM_${nickname} .messages_b_msgs_box`).html(result);
-            setTimeout(() => {
-                $(`#IM_${nickname} .messages_b_msgs_box`).animate({
-                    scrollTop: $(`#IM_${nickname} .messages_b_msgs_box`).get(0).scrollHeight
-                }, 200);
-            }, 100);
         });
     }
     reposts(id){
@@ -1012,11 +1024,6 @@ const checkPostsAttachments = () => {
     </div>`);
     });
 }
-$.post("/api/Account/check_logged_in", function(data){
-    if(data.result == 1){
-        zhabbler.loadScript("/static/js/im.js");
-    }
-});
 async function copyPostURL(id) {
     try {
         await navigator.clipboard.writeText(`${window.location.origin}/zhab/${id}`);
@@ -1036,3 +1043,4 @@ const makeid = (length) => {
     }
     return result;
 }
+zhabbler.loadPreloaders();

@@ -24,12 +24,7 @@ class Sessions
 				header("Location: /");
 				die;
 			}
-			if($user->activated != 1 or !empty($user->reason)){
-				setcookie("zhabbler_session", "", time()-7000000, "/");
-				header("Location: /");
-				die;
-			}
-			if($GLOBALS['db']->query("SELECT * FROM users WHERE token = ?", $session->sessionToken)->getRowCount() == 0){
+			if(!empty($user->reason)){
 				setcookie("zhabbler_session", "", time()-7000000, "/");
 				header("Location: /");
 				die;

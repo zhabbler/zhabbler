@@ -6,7 +6,7 @@ use Web\Models\User;
 #[\AllowDynamicProperties]
 class Follow
 {
-    public function check_follow_existence(string $token, string $user_id): bool
+    public function check_follow_existence(string $token, int $user_id): bool
     {
         $user = (new User())->get_user_by_token($token);
         return ($user->userID != $user_id ? ($GLOBALS['db']->query("SELECT * FROM follows WHERE followBy = ? AND followTo = ?", $user->userID, $user_id)->getRowCount() > 0 ? true : false) : false);
@@ -18,20 +18,23 @@ class Follow
         return ($GLOBALS['db']->query("SELECT * FROM follows WHERE followBy = ?", $user->userID)->getRowCount() > 0 ? true : false);
     }
 
-    public function follow(string $token, string $user_id): void
+    public function follow(string $token, int $user_id): void
     {
         header('Content-Type: application/json');
         $user = (new User())->get_user_by_token($token);
+        $profile = (new User())->get_user_by_id($user_id);
         $result = ["followed" => 0];
-        if($user->userID != $user_id){
-            if($this->check_follow_existence($token, $user_id)){
-                $GLOBALS['db']->query("DELETE FROM follows WHERE followBy = ? AND followTo = ?", $user->userID, $user_id);
-            }else{
-                $GLOBALS['db']->query("INSERT INTO follows", [
-                    "followTo" => $user_id,
-                    "followBy" => $user->userID
-                ]);
-                $result = ["followed" => 1];
+        if($user->activated == 1 && $profile->activated == 1){
+            if($user->userID != $user_id){
+                if($this->check_follow_existence($token, $user_id)){
+                    $GLOBALS['db']->query("DELETE FROM follows WHERE followBy = ? AND followTo = ?", $user->userID, $user_id);
+                }else{
+                    $GLOBALS['db']->query("INSERT INTO follows", [
+                        "followTo" => $user_id,
+                        "followBy" => $user->userID
+                    ]);
+                    $result = ["followed" => 1];
+                }
             }
         }
         die(json_encode($result));

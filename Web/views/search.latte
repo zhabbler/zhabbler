@@ -24,10 +24,14 @@
             <main class="main">
                 <form method="GET" data-reload="3" action="/search">
                     <input class="input_search" placeholder="{$language['search_zhabbler']}" name="q" value="{(isset($_GET['q']) ? $_GET['q'] : '')}" style="margin: 15px;margin-bottom:0px;">
-                    <select name="type" class="select_search" onchange="this.form.submit()">
-                        <option value="posts" {($_GET['type'] == 'posts' ? 'selected' : '')}>{$language['posts']}</option>
-                        <option value="profiles" {($_GET['type'] == 'profiles' ? "selected" : "")}>{$language['profiles']}</option>
-                    </select>
+                    <div class="dF">
+                        <a href="/search?q={$_GET['q']}&type=posts" class="select_search {($_GET['type'] == 'profiles' ? '' : 'select_search_selected')}">
+                            {$language['posts']}
+                        </a>
+                        <a href="/search?q={$_GET['q']}&type=profiles" class="select_search {($_GET['type'] == 'profiles' ? 'select_search_selected' : '')}">
+                            {$language['profiles']}
+                        </a>
+                    </div>
                 </form>
                 {if $_GET['type'] != 'profiles' && (new Web\Models\Posts())->check_tag_existence($_GET['q'])}
                 <div class="tag-searched">

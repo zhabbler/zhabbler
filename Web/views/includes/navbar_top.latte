@@ -1,3 +1,8 @@
+{if isset($user) && $user->activated != 1}
+<div class="warning_top">
+    <span>{$language['email_top_warn']}</span>
+</div>
+{/if}
 {(isset($user) ? (isset($profile) ? (new Web\Models\Personalization())->loadup($profile->userID) : (new Web\Models\Personalization())->loadup($user->userID)) : "")|noescape}
 <nav class="mobile_nav">
     <a href="/" class="mobile_nav_element">
@@ -32,6 +37,12 @@
     .nav_options .nav_options_searchbar{
         display: none;
     }
+    .main_messages_convos, .main_messages_im{
+        height: calc(100vh - 56px);
+    }
+    .main_messages_im_msgs{
+        height: calc(100vh - 156px);
+    }
 </style>
 <preloader>
     $(".nav_options .nav_options_searchbar").remove();
@@ -57,14 +68,12 @@
                 {/if}
                 <i class="bx bxs-envelope"></i>
             </a>
-            <div class="navbar_top_container_element_bubble_contains" id="NVT_FM">
-                <a onclick="messagesBubble();" class="navbar_top_container_element">
-                    {if (new Web\Models\Messages())->get_count_of_unread_messages($user->token) > 0}
-                        <div class="navbar_top_container_element_counter">{(new Web\Models\Messages())->get_count_of_unread_messages($user->token)}</div>
-                    {/if}
-                    <i class="bx bxs-message-square-dots"></i>
-                </a>
-            </div>
+            <a href="/messages" class="navbar_top_container_element">
+                {if (new Web\Models\Messages())->get_count_of_unread_messages($user->token) > 0}
+                    <div class="navbar_top_container_element_counter">{(new Web\Models\Messages())->get_count_of_unread_messages($user->token)}</div>
+                {/if}
+                <i class="bx bxs-message-square-dots"></i>
+            </a>
             <div class="navbar_top_container_element_bubble_contains" id="NVT_FA">
                 <a class="navbar_top_container_element" onclick="zhabbler.activityBubble();">
                     {if (new Web\Models\Notifications())->notificationUnreadedCount($user->token) > 0}
