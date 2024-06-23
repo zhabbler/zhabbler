@@ -36,6 +36,7 @@
             </span>
         </div>
     </li>
+    {if $user->activated == 1}
     <li class="navbar_element" onclick="zhabbler.activityBubble();">
         <div class="navbar_element_icon">
             <i class='bx bxs-bolt'></i>
@@ -49,7 +50,7 @@
             </span>
         </div>
     </li>
-    <li class="navbar_element" id="msgsbtn_navb" onclick="messagesBubble();">
+    <li class="navbar_element" href="/messages">
         <div class="navbar_element_icon">
             <i class='bx bxs-message-square-dots'></i>
         </div>
@@ -75,6 +76,7 @@
             </span>
         </div>
     </li>
+    {/if}
     <li class="navbar_element" onclick="zhabbler.showExtended();">
         <div class="navbar_element_icon">
             <i class='bx bxs-user'></i>
@@ -86,6 +88,7 @@
         </div>
     </li>
     <div class="navbar_extended">
+        {if $user->activated == 1}
         <li class="navbar_element" href="/profile/{$user->nickname}/liked">
             <div class="navbar_element_icon">
                 <i class='bx bxs-heart'></i>
@@ -106,6 +109,7 @@
                 </span>
             </div>
         </li>
+        {/if}
         <li class="navbar_element" onclick="zhabbler.destroySession();">
             <div class="navbar_element_icon">
                 <i class='bx bxs-log-out'></i>
@@ -134,6 +138,7 @@
             </div>
         </li>
     </div>
+    {if $user->activated == 1}
     <li class="navbar_element" href="/settings/account">
         <div class="navbar_element_icon">
             <i class='bx bxs-cog' ></i>
@@ -144,6 +149,7 @@
             </span>
         </div>
     </li>
+    {/if}
     {if $user->admin == 1}
     <li class="navbar_element" onclick="window.location.href = '/admin/users'">
         <div class="navbar_element_icon">

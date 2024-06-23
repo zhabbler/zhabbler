@@ -66,7 +66,7 @@
                                     <i class='bx bx-plus'></i>
                                 </div>
                             </div>
-                            <button class="tags_followed_pg_btn tags_followed_pg_btn_right" onclick="zhabbler.scrollFTags('right');">
+                            <button class="tags_followed_pg_btn tags_followed_pg_btn_right" onclick="zhabbler.scrollFTags('right');" {(count((new Web\Models\Posts())->get_followed_tags($user->token)) == 0 ? 'style="display:none;"' : '')|noescape}>
                                 <i class='bx bxs-chevron-right'></i>
                             </button>
                         </div>

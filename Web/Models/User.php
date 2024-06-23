@@ -21,10 +21,12 @@ class User
         header('Content-Type: application/json');
         $file = (new Files())->upload_image($file, false);
         $user = $this->get_user_by_token($token);
-        if($file['error'] == null && !empty($file['url'])){
-            $GLOBALS['db']->query("UPDATE users SET profileImage = ? WHERE token = ?", $file['url'], $token);
-            if($user->profileImage != '/static/images/no_avatar_1900.png')
-                unlink("{$_SERVER['DOCUMENT_ROOT']}/Web/public{$user->profileImage}");
+        if($user->activated == 1){
+            if($file['error'] == null && !empty($file['url'])){
+                $GLOBALS['db']->query("UPDATE users SET profileImage = ? WHERE token = ?", $file['url'], $token);
+                if($user->profileImage != '/static/images/no_avatar_1900.png')
+                    unlink("{$_SERVER['DOCUMENT_ROOT']}/Web/public{$user->profileImage}");
+            }
         }
         die(json_encode($file));
     }
@@ -33,7 +35,7 @@ class User
     {
         $user = $this->get_user_by_token($token);
         $reason = (new Strings())->convert($reason);
-        $who = $GLOBALS['db']->fetch("SELECT * FROM users WHERE nickname = ? AND activated = 1", $nickname);
+        $who = $GLOBALS['db']->fetch("SELECT * FROM users WHERE nickname = ?", $nickname);
         if($user->admin == 1 && $who->userID != $user->userID){
             if($who->reason == ''){
                 $GLOBALS['db']->query("UPDATE users SET reason = ? WHERE token = ?", $reason, $who->token);
@@ -45,12 +47,23 @@ class User
     
     public function check_banned_user(string $nickname): bool
     {
-        return ($GLOBALS['db']->fetch("SELECT * FROM users WHERE nickname = ? AND activated = 1", $nickname)->reason == '' ? false : true);
+        return ($GLOBALS['db']->fetch("SELECT * FROM users WHERE nickname = ?", $nickname)->reason == '' ? false : true);
     }
 
     public function check_banned_user_by_id(int $id): bool
     {
-        return ($GLOBALS['db']->fetch("SELECT * FROM users WHERE userID = ? AND activated = 1", $id)->reason == '' ? false : true);
+        return ($GLOBALS['db']->fetch("SELECT * FROM users WHERE userID = ?", $id)->reason == '' ? false : true);
+    }
+
+    public function check_users(): void
+    {
+        foreach($GLOBALS['db']->fetchAll("SELECT * FROM users WHERE reason = ''") as $user){
+            if($user->activated != 1 && $user->joined != date("Y-m-d")){
+                (new Sessions())->removeSessions($user->token);
+                $GLOBALS['db']->query("DELETE FROM users WHERE userID = ?", $user->userID);
+                $GLOBALS['db']->query("DELETE FROM emails WHERE emailFor = ?", $user->userID);
+            }
+        }
     }
 
     public function search_users(string $query, int $lastID = 0): void
@@ -59,9 +72,9 @@ class User
         $query = (new Strings())->convert($query);
         $result = [];
         if($lastID == 0){
-            $searched = $GLOBALS['db']->fetchAll("SELECT * FROM users WHERE nickname LIKE ? AND reason = '' ORDER BY userID DESC LIMIT 15", "%$query%");
+            $searched = $GLOBALS['db']->fetchAll("SELECT * FROM users WHERE nickname LIKE ? AND reason = '' AND activated = 1 ORDER BY userID DESC LIMIT 15", "%$query%");
         }else{
-            $searched = $GLOBALS['db']->fetchAll("SELECT * FROM users WHERE nickname LIKE ? AND userID < ? AND reason = '' ORDER BY userID DESC LIMIT 15", "%$query%", $lastID);
+            $searched = $GLOBALS['db']->fetchAll("SELECT * FROM users WHERE nickname LIKE ? AND userID < ? AND reason = '' AND activated = 1 ORDER BY userID DESC LIMIT 15", "%$query%", $lastID);
         }
         foreach($searched as $search){
             $result[] = ["userID" => $search->userID, "profileImage" => $search->profileImage, "name" => $search->name, "nickname" => $search->nickname];
@@ -70,7 +83,7 @@ class User
     }
 
     public function get_query_count(string $query){
-        return $GLOBALS['db']->query("SELECT * FROM users WHERE nickname LIKE ? AND reason = ''", "%$query%")->getRowCount();
+        return $GLOBALS['db']->query("SELECT * FROM users WHERE nickname LIKE ? AND reason = '' AND activated = 1", "%$query%")->getRowCount();
     }
     
     public function change_profile_cover(string $token, ?array $file): void
@@ -78,28 +91,32 @@ class User
         header('Content-Type: application/json');
         $file = (new Files())->upload_image($file, false);
         $user = $this->get_user_by_token($token);
-        if($file['error'] == NULL && !empty($file['url'])){
-            $GLOBALS['db']->query("UPDATE users SET profileCover = ? WHERE token = ?", $file['url'], $token);
-            if(!empty($user->profileCover))
-                unlink("{$_SERVER['DOCUMENT_ROOT']}/Web/public{$user->profileCover}");
+        if($user->activated == 1){
+            if($file['error'] == NULL && !empty($file['url'])){
+                $GLOBALS['db']->query("UPDATE users SET profileCover = ? WHERE token = ?", $file['url'], $token);
+                if(!empty($user->profileCover))
+                    unlink("{$_SERVER['DOCUMENT_ROOT']}/Web/public{$user->profileCover}");
+            }
         }
         die(json_encode($file));
     }
 
     public function check_user_existence(string $nickname): bool
     {
-        return ($GLOBALS['db']->query("SELECT * FROM users WHERE nickname = ? AND reason = '' AND activated = 1", $nickname)->getRowCount() > 0 ? true : false);
+        return ($GLOBALS['db']->query("SELECT * FROM users WHERE nickname = ? AND reason = ''", $nickname)->getRowCount() > 0 ? true : false);
     }
 
     public function report(string $token, string $to): void
     {
         $user = $this->get_user_by_token($token);
         $who = $this->get_user_by_nickname($to);
-        if($user->userID != $who->userID && $GLOBALS['db']->query("SELECT * FROM reports WHERE reportBy = ? AND reportTo = ?", $user->userID, $who->userID)->getRowCount() == 0){
-            $GLOBALS['db']->query("INSERT INTO reports", [
-                "reportBy" => $user->userID,
-                "reportTo" => $who->userID
-            ]);
+        if($user->activated == 1){
+            if($user->userID != $who->userID && $GLOBALS['db']->query("SELECT * FROM reports WHERE reportBy = ? AND reportTo = ?", $user->userID, $who->userID)->getRowCount() == 0){
+                $GLOBALS['db']->query("INSERT INTO reports", [
+                    "reportBy" => $user->userID,
+                    "reportTo" => $who->userID
+                ]);
+            }
         }
     }
     
@@ -127,7 +144,7 @@ class User
             $GLOBALS['db']->query("DELETE FROM messages WHERE messageBy = ? OR messageTo = ?", $user->userID, $user->userID);
             $GLOBALS['db']->query("DELETE FROM reports WHERE reportBy = ? OR reportTo = ?", $user->userID, $user->userID);
             $GLOBALS['db']->query("DELETE FROM likes WHERE likeBy = ?", $user->userID);
-            $GLOBALS['db']->query("DELETE FROM inbox WHERE inboxTo = ?", $user->userID);
+            $GLOBALS['db']->query("DELETE FROM inbox WHERE inboxTo = ? OR inboxBy = ?", $user->userID, $user->userID);
             $GLOBALS['db']->query("DELETE FROM follows WHERE followTo = ? OR followBy = ?", $user->userID, $user->userID);
             $GLOBALS['db']->query("DELETE FROM emails WHERE emailFor = ?", $user->userID);
         }else{
@@ -138,7 +155,7 @@ class User
 
     public function check_user_existence_by_id(int $id): bool
     {
-        return ($GLOBALS['db']->query("SELECT * FROM users WHERE userID = ? AND reason = '' AND activated = 1", $id)->getRowCount() > 0 ? true : false);
+        return ($GLOBALS['db']->query("SELECT * FROM users WHERE userID = ? AND reason = ''", $id)->getRowCount() > 0 ? true : false);
     }
 
     public function update_user_info(string $token, string $name, string $nickname, string $biography): void
@@ -149,20 +166,22 @@ class User
         $bio = (!(new Strings())->is_empty($biography) ? (new Strings())->convert($biography) : "");
         $user = $this->get_user_by_token($token);
         $result = ["error" => NULL];
-        if(!(new Strings())->is_empty($name) && !(new Strings())->is_empty($nickname)){
-            if(strlen($name) > 48){
-                $result = ["error" => $this->locale['error_big_name']];
-            }else if(strlen($nickname) < 3 || strlen($nickname) > 20){
-                $result = ["error" => $this->locale['error_big_nickname']];
-            }else if(!preg_match("/^[a-zA-Z0-9]{3,}$/", $nickname)){
-                 $result = ["error" => $this->locale['error_nickname_symbols']];
-            }else if($nickname != $user->nickname && $GLOBALS['db']->query("SELECT * FROM users WHERE nickname = ?", $nickname)->getRowCount() > 0){
-                $result = ["error" => $this->locale['error_nickname_is_used']];
+        if($user->activated == 1){
+            if(!(new Strings())->is_empty($name) && !(new Strings())->is_empty($nickname)){
+                if(strlen($name) > 48){
+                    $result = ["error" => $this->locale['error_big_name']];
+                }else if(strlen($nickname) < 3 || strlen($nickname) > 20){
+                    $result = ["error" => $this->locale['error_big_nickname']];
+                }else if(!preg_match("/^[a-zA-Z0-9]{3,}$/", $nickname)){
+                    $result = ["error" => $this->locale['error_nickname_symbols']];
+                }else if($nickname != $user->nickname && $GLOBALS['db']->query("SELECT * FROM users WHERE nickname = ?", $nickname)->getRowCount() > 0){
+                    $result = ["error" => $this->locale['error_nickname_is_used']];
+                }else{
+                    $GLOBALS['db']->query("UPDATE users SET name = ?, nickname = ?, biography = ? WHERE token = ?", $name, $nickname, $bio, $token);
+                }
             }else{
-                $GLOBALS['db']->query("UPDATE users SET name = ?, nickname = ?, biography = ? WHERE token = ?", $name, $nickname, $bio, $token);
+                $result = ["error" => $this->locale["some_fields_are_empty"]];
             }
-        }else{
-            $result = ["error" => $this->locale["some_fields_are_empty"]];
         }
         die(json_encode($result));
     }
@@ -170,27 +189,27 @@ class User
     public function get_user_by_token(string $token, bool $showEvenBanned = false): Nette\Database\Row
     {
         if(!$showEvenBanned){
-            return $GLOBALS['db']->fetch("SELECT * FROM users WHERE token = ? AND reason = '' AND activated = 1", $token);
+            return $GLOBALS['db']->fetch("SELECT * FROM users WHERE token = ? AND reason = ''", $token);
         }else{
-            return $GLOBALS['db']->fetch("SELECT * FROM users WHERE token = ? AND activated = 1", $token);
+            return $GLOBALS['db']->fetch("SELECT * FROM users WHERE token = ?", $token);
         }
     }
 
     public function get_user_by_id(int $id, bool $showEvenBanned = false): Nette\Database\Row
     {
         if(!$showEvenBanned){
-            return $GLOBALS['db']->fetch("SELECT * FROM users WHERE userID = ? AND reason = '' AND activated = 1", $id);
+            return $GLOBALS['db']->fetch("SELECT * FROM users WHERE userID = ? AND reason = ''", $id);
         }else{
-            return $GLOBALS['db']->fetch("SELECT * FROM users WHERE userID = ? AND activated = 1", $id);
+            return $GLOBALS['db']->fetch("SELECT * FROM users WHERE userID = ?", $id);
         }
     }
 
     public function get_user_by_nickname(string $nickname, bool $showEvenBanned = false): Nette\Database\Row
     {
         if(!$showEvenBanned){
-            return $GLOBALS['db']->fetch("SELECT * FROM users WHERE nickname = ? AND reason = '' AND activated = 1", $nickname);
+            return $GLOBALS['db']->fetch("SELECT * FROM users WHERE nickname = ? AND reason = ''", $nickname);
         }else{
-            return $GLOBALS['db']->fetch("SELECT * FROM users WHERE nickname = ? AND activated = 1", $nickname);
+            return $GLOBALS['db']->fetch("SELECT * FROM users WHERE nickname = ?", $nickname);
         }
     }
 
@@ -228,20 +247,22 @@ class User
         header('Content-Type: application/json');
         $result = ["error" => NULL];
         $user = $this->get_user_by_token($token);
-        if(password_verify($password, $user->password)){
-            if($user->email != $email){
-                if($GLOBALS['db']->query("SELECT * FROM users WHERE email = ?", $email)->getRowCount() > 0){
-                    $result = ["error" => $this->locale['error_email_is_used']];
-                }else{
-                    if(!(new Strings())->is_empty($email) && filter_var($email, FILTER_VALIDATE_EMAIL)){
-                        $GLOBALS["db"]->query("UPDATE users SET email = ? WHERE token = ?", $email, $token);
+        if($user->activated == 1){
+            if(password_verify($password, $user->password)){
+                if($user->email != $email){
+                    if($GLOBALS['db']->query("SELECT * FROM users WHERE email = ?", $email)->getRowCount() > 0){
+                        $result = ["error" => $this->locale['error_email_is_used']];
                     }else{
-                        $result = ["error" => $this->locale["failed_change_email"]];
+                        if(!(new Strings())->is_empty($email) && filter_var($email, FILTER_VALIDATE_EMAIL)){
+                            $GLOBALS["db"]->query("UPDATE users SET email = ? WHERE token = ?", $email, $token);
+                        }else{
+                            $result = ["error" => $this->locale["failed_change_email"]];
+                        }
                     }
                 }
+            }else{
+                $result = ["error" => $this->locale["incorrect_password"]];
             }
-        }else{
-            $result = ["error" => $this->locale["incorrect_password"]];
         }
         die(json_encode($result));
     }
@@ -251,16 +272,18 @@ class User
         header('Content-Type: application/json');
         $user = $this->get_user_by_token($token);
         $result = ["error" => NULL];
-        if(password_verify($password, $user->password)){
-            if(strlen($password) < 8){
-                $result = ["error" => $this->locale['error_small_password']];
+        if($user->activated == 1){
+            if(password_verify($password, $user->password)){
+                if(strlen($password) < 8){
+                    $result = ["error" => $this->locale['error_small_password']];
+                }else{
+                    (new Sessions())->removeSessions($token);
+                    $password_hashed = password_hash($new_password, PASSWORD_DEFAULT);
+                    $GLOBALS['db']->query("UPDATE users SET password = ? WHERE token = ?", $password_hashed, $token);
+                }
             }else{
-                (new Sessions())->removeSessions($token);
-                $password_hashed = password_hash($new_password, PASSWORD_DEFAULT);
-                $GLOBALS['db']->query("UPDATE users SET password = ? WHERE token = ?", $password_hashed, $token);
+                $result = ["error" => $this->locale["incorrect_password"]];
             }
-        }else{
-            $result = ["error" => $this->locale["incorrect_password"]];
         }
         die(json_encode($result));
     }
@@ -273,7 +296,7 @@ class User
             if($GLOBALS['db']->query("SELECT * FROM users WHERE email = ?", $email)->getRowCount() > 0){
                 $tempUser = $GLOBALS['db']->fetch("SELECT * FROM users WHERE email = ?", $email);
                 if(password_verify($password, $tempUser->password)){
-                    if($tempUser->activated != 1){
+                    if($tempUser->activated != 1 && $json_answer){
                         $result = ["warning" => $this->locale['need_to_verify_email']];
                     }else if(!empty($tempUser->reason)){
                         $result = ["warning" => $this->locale['login_error_banned_user'].$tempUser->reason];

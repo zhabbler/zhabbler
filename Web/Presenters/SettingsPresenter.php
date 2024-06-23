@@ -21,12 +21,17 @@ final class SettingsPresenter
         if(isset($_COOKIE['zhabbler_session'])){
             $session = (new Sessions())->get_session($_COOKIE['zhabbler_session']);
             $user = (new User())->get_user_by_token($session->sessionToken);
-            $personalization_config = (new Personalization())->get_personalization_config($user->userID);
-            $params += ["user" => $user, "personalization_config" => $personalization_config];
-            if(file_exists($_SERVER['DOCUMENT_ROOT']."/Web/views/settings/{$params['act']}.latte")){
-                $this->latte->render($_SERVER['DOCUMENT_ROOT']."/Web/views/settings/{$params['act']}.latte", $params);
+            if($user->activated == 1){
+                $personalization_config = (new Personalization())->get_personalization_config($user->userID);
+                $params += ["user" => $user, "personalization_config" => $personalization_config];
+                if(file_exists($_SERVER['DOCUMENT_ROOT']."/Web/views/settings/{$params['act']}.latte")){
+                    $this->latte->render($_SERVER['DOCUMENT_ROOT']."/Web/views/settings/{$params['act']}.latte", $params);
+                }else{
+                    header("Location: /");
+                    die;
+                }
             }else{
-                header("Location: /");
+                header("Location: /404");
                 die;
             }
         }else{
