@@ -35,6 +35,7 @@ body{
     margin: 0;
     padding: 0;
     background-color: #00391e;
+    -webkit-tap-highlight-color:  rgba(255, 255, 255, 0); 
 }
 @keyframes fadeIn {
     from{opacity: 0;}
@@ -2176,6 +2177,7 @@ footer .copl{
     z-index: 102048;
     left: 0;
     width: 300px;
+    height: fit-content;
 }
 .navbar_element_bubble_error{
     display: flex;
@@ -2612,15 +2614,27 @@ footer .copl{
 }
 .select_search{
     margin: 15px;
+    margin-right: 0px;
     padding: 10px 20px;
-    min-width: 100px;
-    border-radius: 21px;
+    border-radius: 9999px;
     background-color: transparent;
     outline: none;
     color:#fff;
     font-size: 16px;
     font-weight: bold;
     cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.select_search.select_search_selected{
+    color: #fff!important;
+}
+.select_search{
+    text-decoration: none!important;
+}
+.dF{
+    display: flex;
 }
 .profile_followers_counter{
     color:#999;
@@ -2750,6 +2764,18 @@ footer .copl{
     .navbar, .navbar_top, .nav_options, .navbar_settings_styles{
         display: none!important;
     }
+    .notifications{
+        top:0;
+        bottom:none!important;
+        width: 100%!important;
+    }
+    .notification{
+        margin: 0px!important;
+        width: 100%!important;
+    }
+    .main_messages_im_msgs{
+        height: calc(100vh - 156px)!important;
+    }
     .main{
         min-width: -webkit-fill-available;
         min-width: -moz-available;
@@ -2801,6 +2827,12 @@ footer .copl{
     .tabs{
         top: 0!important;
     }
+    .main_messages_im{
+        width: 100%!important;
+    }
+    .main_messages_im_person_close{
+        display: flex!important;
+    }
     .popup .post{
         width: 100%!important;
         height: 100vh!important;
@@ -2819,11 +2851,30 @@ footer .copl{
     .only_mobile_flex{
         display: flex!important;
     }
-    .tabs .tab{
+    .tabs .tab, .main_messages_write_message{
         width: 100%!important;
     }
     .mobile_nav{
         display: flex!important;
+    }
+    .main_messages, .main_messages_convos{
+        min-width: 100%!important;
+        max-width: 100%!important;
+    }
+    .main_messages_convos{
+        border-right:none!important;
+    }
+    .main{
+        border:none!important;
+    }
+    .main_messages{
+        margin-bottom: 0px!important;
+    }
+    .opened_im .main_messages_convos{
+        display: none!important;
+    }
+    .main_messages, .main_messages_convos, .main_messages_im{
+        height: calc(100vh - 57px)!important;
     }
 }
 .only_mobile_flex{
@@ -3034,6 +3085,14 @@ footer .copl{
     border-bottom: 1px solid rgba(255, 255, 255, .1);
     cursor: pointer;
 }
+.main_messages_im_person_close{
+    font-size: 24px;
+    margin-right: 10px;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
 .main_messages_convos .main_messages_convo:hover{
     background: rgba(255, 255, 255, .1);
 }
@@ -3083,8 +3142,6 @@ footer .copl{
 }
 .main_messages_write_message{
     width: 602px;
-    position: fixed!important;
-    bottom: 0;
     border-top: 1px solid rgba(255, 255, 255, .1);
     min-height: 49px;
     display: flex;

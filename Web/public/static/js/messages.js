@@ -9,15 +9,28 @@ $(document).ready(function(){
         }
         $("#MessagesLoader").remove();
     }
-    $(document).on("input", ".main_messages_write_message_textarea textarea", function () {
-        this.setAttribute("style", "height:" + (this.scrollHeight) + "px;overflow-y:hidden;");
-        this.style.height = 0;
-        this.style.height = (this.scrollHeight) + "px";
-        $("#MessagesList").css("height", `calc(100vh - ${$(".main_messages_write_message").height() + 51}px)`);
-        document.getElementById("MessagesList").scrollTop = document.getElementById("MessagesList").scrollHeight;
+    $(document).on("input", ".main_messages_write_message_textarea textarea", function(){
+        if($(window).width() > 980){
+            this.setAttribute("style", "height:" + (this.scrollHeight) + "px;overflow-y:hidden;");
+            this.style.height = 0;
+            this.style.height = (this.scrollHeight) + "px";
+            let npx = $(".main_messages_write_message").height() + 51;
+            if($(".navbar_top").length > 0){
+                npx += 56;
+            }
+            $("#MessagesList").css("height", `calc(100vh - ${npx}px)`);
+            document.getElementById("MessagesList").scrollTop = document.getElementById("MessagesList").scrollHeight;
+        }
     });
     $(document).on("click", ".main_messages_convo", function(){
         $(this).find('.main_messages_convo_nM').remove();
+        $(".main_messages_convo_active").removeClass("main_messages_convo_active");
+        $(this).addClass("main_messages_convo_active");
+    });
+    $(document).on("click", ".main_messages_im_person_close", function(){
+        $(".main_messages").removeClass("opened_im");
+        $(".main_messages_im").hide();
+        $(".main_messages_convo_active").removeClass("main_messages_convo_active");
     });
 });
 
@@ -57,6 +70,9 @@ function openMessages(nickname){
         $(".main_messages_write_message_element input[type='file']").attr("onchange", `sendImage(this, '${data.nickname}')`);
         $(".main_messages_write_message_textarea textarea").attr("onkeydown", `sendbyenter('${data.nickname}', event)`);
     });
+    if(!$(".main_messages").hasClass("opened_im")){
+        $(".main_messages").addClass("opened_im");
+    }
     getMessages(nickname);
 }
 function getMessages(nickname){
