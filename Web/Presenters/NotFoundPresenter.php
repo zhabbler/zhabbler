@@ -5,7 +5,7 @@ final class NotFoundPresenter
 {
     public function load(): void
     {
-        // header("HTTP/1.0 404 Not Found");
+        header("HTTP/1.0 404 Not Found");
         include $_SERVER['DOCUMENT_ROOT']."/Web/templates/404.phtml";
     }
 }
