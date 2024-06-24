@@ -11,7 +11,7 @@
     <link rel="apple-touch-icon" href="/static/images/icons/icon-512x512.png" />
     <meta name="apple-mobile-web-app-status-bar" content="#13b522" />
     <meta name="theme-color" content="#13b522" />
-    <title>Жабблер</title>
+    <title>Р–Р°Р±Р±Р»РµСЂ</title>
 </head>
 <body>
     <div id="app">
@@ -114,15 +114,6 @@
                             <div class="settings_section_content">
                                 <input type="checkbox" id="questions_io" value="1" {($user->askQuestions == 1 ? "checked" : "")}>
                                 <span>{$language['questions_about_conf_settings']}</span>
-                            </div>
-                        </section>
-                        <section class="settings_section">
-                            <div class="settings_section_title">
-                                <span>{$language['do_not_disturb']}</span>
-                            </div>
-                            <div class="settings_section_content">
-                                <input type="checkbox" id="do_not_disturb_io" value="1" {(isset($_COOKIE['zhabbler_do_not_disturb']) && $_COOKIE['zhabbler_do_not_disturb'] == 1 ? "checked" : "")}>
-                                <span>{$language['do_not_disturb_about_conf_settings']}</span>
                             </div>
                         </section>
                     </div>
