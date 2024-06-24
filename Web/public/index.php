@@ -8,7 +8,6 @@ if(isset($_GET['lang'])){
 }
 $GLOBALS['language'] = (new Web\Entities\Localization())->get_language($_COOKIE['zhabbler_language']);
 $GLOBALS['language']['info'] = (new Web\Entities\Localization())->get_language_info($_COOKIE['zhabbler_language']);
-(new Web\Models\User())->check_users();
 if(isset($_COOKIE['zhabbler_session']))
     (new Web\Models\Sessions())->check_session();
 require $_SERVER['DOCUMENT_ROOT']."/Web/routes.php";
