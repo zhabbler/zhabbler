@@ -163,7 +163,7 @@ class Posts
 
     public function check_tag_existence(string $tag): bool
     {
-        return ($GLOBALS['db']->query("SELECT * FROM tags WHERE tag = ?", $tag)->getRowCount() > 0 ? true : false);
+        return ($GLOBALS['db']->query("SELECT * FROM tags WHERE tag = ?", $tag)->getRowCount() > 0 && $GLOBALS['db']->query("SELECT * FROM zhabs WHERE FIND_IN_SET(?, zhabTags)", $tag)->getRowCount() > 0 ? true : false);
     }
 
     public function followed_tag_count(string $tag): int
@@ -211,6 +211,13 @@ class Posts
             $GLOBALS['db']->query("DELETE FROM comments WHERE commentTo = ?", $id);
             $GLOBALS['db']->query("DELETE FROM likes WHERE likeTo = ?", $id);
             $GLOBALS['db']->query("DELETE FROM zhabs WHERE zhabURLID = ?", $id);
+            $tags_array = explode(",", $post->zhabTags);
+            foreach($tags_array as $tag){
+                if($GLOBALS['db']->query("SELECT * FROM zhabs WHERE FIND_IN_SET(?, zhabTags)", $tag)->getRowCount() == 0){
+                    $GLOBALS['db']->query("DELETE FROM tags WHERE tag = ?", $tag);
+                    $GLOBALS['db']->query("DELETE FROM followed_tags WHERE followedTag = ?", $tag);
+                }
+            }
         }
     }
 
@@ -449,17 +456,28 @@ class Posts
         header('Content-Type: application/json');
         $result = [];
         foreach($GLOBALS['db']->fetchAll("SELECT * FROM tags WHERE tag LIKE ?", "%$query%") as $tag){
-            $result[] = ["tag" => $tag->tag];
+            if($GLOBALS['db']->query("SELECT * FROM zhabs WHERE FIND_IN_SET(?, zhabTags)", $tag->tag)->getRowCount() > 0){
+                $result[] = ["tag" => $tag->tag];
+            }else{
+                $GLOBALS['db']->query("DELETE FROM tags WHERE tag = ?", $tag->tag);
+                $GLOBALS['db']->query("DELETE FROM followed_tags WHERE followedTag = ?", $tag->tag);
+            }
         }
         die(json_encode($result));
     }
 
     public function show_tags_html(string $token, string $tags){
-        $user = (new User())->get_user_by_token($token);
+        if($token != ''){
+            $user = (new User())->get_user_by_token($token);
+        }
         $tags_array = explode(",", $tags);
         $result = "";
         foreach($tags_array as $key => $tag){
-            $result .= '<a href="/search?q='.$tag.'" '.($GLOBALS['db']->query("SELECT * FROM followed_tags WHERE followedTag = ? AND followedTagBy = ?", $tag, $user->userID)->getRowCount() > 0 ? 'class="active_tag_s"' : '').'>#'.$tag.'</a>';
+            if(isset($user)){
+                $result .= '<a href="/search?q='.$tag.'" '.($GLOBALS['db']->query("SELECT * FROM followed_tags WHERE followedTag = ? AND followedTagBy = ?", $tag, $user->userID)->getRowCount() > 0 ? 'class="active_tag_s"' : '').'>#'.$tag.'</a>';
+            }else{
+                $result .= '<a href="/search?q='.$tag.'">#'.$tag.'</a>';
+            }
         }
         return $result;
     }
@@ -473,7 +491,7 @@ class Posts
             foreach($tags_array as $key => $tag){
                 $tag = preg_replace("/<[^>]*>?/", "", $tag);
                 $tag = preg_replace("/[^a-zA-Z0-9\p{Cyrillic}]/u", "", $tag);
-                if(!(new Strings())->is_empty($tag)){
+                if(!(new Strings())->is_empty($tag) && $GLOBALS['db']->query("SELECT * FROM tags WHERE tag = ?", $tag)->getRowCount() > 0){
                     if($GLOBALS['db']->query("SELECT * FROM followed_tags WHERE followedTag = ? AND followedTagBy = ?", $tag, $user->userID)->getRowCount() == 0)
                         $GLOBALS['db']->query("INSERT INTO followed_tags", ["followedTag" => $tag, "followedTagBy" => $user->userID]);
                 }
@@ -516,7 +534,7 @@ class Posts
                                 foreach($tags_array as $key => $tag){
                                     $tag = preg_replace("/<[^>]*>?/", "", $tag);
                                     $tag = preg_replace("/[^a-zA-Z0-9\p{Cyrillic}]/u", "", $tag);
-                                    if(!(new Strings())->is_empty($tag) && mb_strlen($tag) < 32){
+                                    if(!(new Strings())->is_empty($tag) && mb_strlen($tag) <= 32){
                                         $tags .= $tag;
                                         if($key + 1 != count($tags_array))
                                             $tags .= ",";

@@ -15,6 +15,7 @@ final class LoginPresenter
     {
         $params += ["language" => $GLOBALS['language']];
         if(!isset($_COOKIE['zhabbler_session'])){
+            $params += ["password_reseting" => (!empty($GLOBALS['config']['smtp']['host']) && !empty($GLOBALS['config']['smtp']['username']) && !empty($GLOBALS['config']['smtp']['email']) && !empty($GLOBALS['config']['smtp']['password']) ? true : false)];
             $this->latte->render($_SERVER['DOCUMENT_ROOT']."/Web/views/login.latte", $params);
         }else{
             header("Location: /dashboard");

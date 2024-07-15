@@ -10,7 +10,6 @@ $.post("/api/Localization/get_string", function(data){
 $.post("/api/User/get_user_details", function(data){
     user = data;
 });
-
 conn.addEventListener("error", (event) => {
     connection = false;
 });
@@ -20,23 +19,30 @@ conn.onopen = function(e) {
 };
 conn.onmessage = function(e) {
     json_data = JSON.parse(e.data);
-    if(json_data.to == user.nickname){
-        $.post("/api/Messages/check_is_there_an_unread_msgs", {to:json_data.by}, function(data){
-            if(data.result == 1){
-                new Audio("/static/audios/new_msg.mp3").play();
-                if($(".main_messages_im").length > 0 && $(".main_messages_im").data("convo") == json_data.by){
-                    getMessages(json_data.by);
-                }else if($(".main_messages").length > 0){
-                    getConvos();
-                    zhabbler.addNotify(json_data.by + locale['new_msg_notify'], "/messages?im=" + json_data.by);
-                }else{
-                    zhabbler.addNotify(json_data.by + locale['new_msg_notify'], "/messages?im=" + json_data.by);
+    if(typeof json_data.deleted !== 'undefined'){
+        if($(".main_messages_im").length > 0 && $(".main_messages_im").attr("data-convo") == json_data.by){
+            getMessages(json_data.by);
+        }else if($(".main_messages").length > 0){
+            getConvos();
+        }
+    }else{
+        if(json_data.to == user.nickname){
+            $.post("/api/Messages/check_is_there_an_unread_msgs", {to:json_data.by}, function(data){
+                if(data.result == 1){
+                    new Audio("/static/audios/new_msg.mp3").play();
+                    if($(".main_messages_im").length > 0 && $(".main_messages_im").attr("data-convo") == json_data.by){
+                        getMessages(json_data.by);
+                    }else if($(".main_messages").length > 0){
+                        getConvos();
+                        zhabbler.addNotify(json_data.by + locale['new_msg_notify'], "/messages?im=" + json_data.by);
+                    }else{
+                        zhabbler.addNotify(json_data.by + locale['new_msg_notify'], "/messages?im=" + json_data.by);
+                    }
                 }
-            }
-        });
+            });
+        }
     }
 }
-
 $(document).ready(function(){
     $(document).on("click", ".popup", function(){
         if(!$(this).hasClass("popup_do_not_close")){
@@ -149,6 +155,72 @@ $(document).ready(function(){
             elem.prop("disabled", false);
         });
     });
+    $(document).on("focusin", ".nav_options_searchbar input", function(){
+        $(".nav_options_req_search").fadeIn(200);
+    });
+    $(document).on("keyup", ".nav_options_searchbar input", function(){
+        let result = '';
+        if($(this).val() != ""){
+            $("#sforw").show();
+            $("#sprev").hide();
+            elem = $(this);
+            result += `<a href="/search?q=${$(this).val()}" class="nav_options_req_search_recent_s">
+                <i class='bx bx-search'></i>
+                <span>
+                    ${locale['go_to']} <b>${htmlspecialchars($(this).val())}</b>
+                </span>
+            </a>`;
+            $.get("/api/Posts/search_tags", {query:$(this).val().replace(/\s+/g, '')}, function(data){
+                if(data.length > 0){
+                    result += `<div class="nav_options_req_search_tt"><span>${locale['tags']}</span></div>`;
+                    for(let i=0;i<6;i++){
+                        if(i+1 <= data.length){
+                            result += `<a href="/search?q=${data[i]["tag"]}" class="nav_options_req_search_recent_s">
+                                <i class='bx bx-hash'></i>
+                                <span>
+                                    ${data[i]["tag"]}
+                                </span>
+                            </a>`;
+                        }
+                    }
+                }
+                $("#sforw").html(result);
+            });
+            $.post("/api/User/search_users", {query:$(this).val().replace(/\s+/g, ''), last_id: 0}, function(data){
+                if(data.length > 0){
+                    result += `<div class="nav_options_req_search_tt"><span>${locale['profiles']}</span></div>`;
+                    for(let i=0;i<6;i++){
+                        if(i+1 <= data.length){
+                            result += `<a href="/profile/${data[i]["nickname"]}" class="nav_options_req_search_recent_s">
+                            <img src="${data[i]["profileImage"]}" class="nav_options_req_search_recent_s_avatar">
+                            <div style="font-size:14px;">
+                                <div>
+                                    <span>
+                                        <b>${data[i]["nickname"]}</b>
+                                    </span>
+                                </div>
+                                <div>
+                                    <span>
+                                        ${data[i]["name"]}
+                                    </span>
+                                </div>
+                            </div>
+                        </a>`;
+                        }
+                    }
+                }
+                $("#sforw").html(result);
+            });
+        }else{
+            $("#sforw").hide();
+            $("#sprev").show();
+        }
+    });
+    $(document).on("focusout", ".nav_options_searchbar input", function(){
+        if($(this).val() == ''){
+            $(".nav_options_req_search").fadeOut(200);
+        }
+    });
     $(document).on("click", ".FollowLink", function(){
         elem = $(this);
         elem.prop("disabled", true);
@@ -207,14 +279,14 @@ $(document).ready(function(){
         var form = $(this);
         if(form.data("reload") != 3){
             form.find("button[type=submit]").prop("disabled", true);
-            form.find("button[type=submit]").prepend('<span class="button_loader"></span>');
+            form.find("button[type=submit]").prepend('<div class="new_btn_loader"><div class="loader"><div class="loader_part loader_part_1"></div><div class="loader_part loader_part_2"></div><div class="loader_part loader_part_3"></div></div></div>');
             $.ajax({
                 type: form.attr('method'),
                 url: form.attr('action'),
                 data: form.serialize()
             }).done(function(data){
                 form.find("button[type=submit]").prop("disabled", false);
-                form.find("button[type=submit] .button_loader").remove();
+                form.find("button[type=submit] .new_btn_loader").remove();
                 if(data.error != null){
                     zhabbler.addError(data.error);
                 }else if(data.warning != null){
@@ -238,7 +310,7 @@ $(document).ready(function(){
             }).fail(function(){
                 zhabbler.addError(locale["something_went_wrong"]);
                 form.find("button[type=submit]").prop("disabled", false);
-                form.find("button[type=submit] .button_loader").remove();
+                form.find("button[type=submit] .new_btn_loader").remove();
             });
 
             e.preventDefault();
@@ -253,6 +325,17 @@ $(document).ready(function(){
     });
 });
 class Zhabbler{
+    followFromRec(id){
+        $.post("/api/Follow/follow", {id:id}, function(data){
+            if(data.followed == 1){
+                $(`.nav_options_whoToFollow_profile[data-profile="${id}"]`).remove();
+                if($(`.nav_options_whoToFollow_profile`).length == 0){
+                    $("#h1tp1d").remove();
+                }
+            }
+            elem.prop("disabled", false);
+        });
+    }
     destroySession(){
         $.post("/api/Sessions/destroy", function(){
             window.location.href = "/";
@@ -788,7 +871,7 @@ class Zhabbler{
             <div class="loader_part loader_part_3"></div>
         </div>
     </div>`); 
-        $(".popup:first").load("/etc/post_usr_interact");
+        $(".popup:first").load("/etc/post_usr_interact?popup");
     }
     insertIntoEditorContent(element, placeholder, attributes = ""){
         $(".popup:first form #pC_sS .postContent").append(`<${element} data-text="${placeholder}" ${attributes}></${element}>`);
@@ -873,7 +956,7 @@ class Zhabbler{
     }
     openEditor(execute, placeholder = "", attributes = "", repost = "", question = ""){
         $(".popup").remove();
-        $("#app").prepend(`<div class="popup popup_do_not_close">
+        $("#app").prepend(`<div class="popup popup_do_not_close" id="postEditor">
             <div class="loader">
                 <div class="loader_part loader_part_1"></div>
                 <div class="loader_part loader_part_2"></div>
@@ -937,12 +1020,6 @@ class Cookie{
 const zhabbler = new Zhabbler();
 const cookie = new Cookie();
 window.addEventListener('popstate', function (event) {
-    $(".main").html(`<div class="loader" style="display:none;">
-        <div class="loader_part loader_part_1"></div>
-        <div class="loader_part loader_part_2"></div>
-        <div class="loader_part loader_part_3"></div>
-    </div>`);
-    $(".main .loader").fadeIn(500);
     console.log(`location: ${document.location}, state: ${JSON.stringify(history.state)}`,);
     togo = `${document.location} #app`;
     $('html,body').scrollTop(0);
@@ -955,12 +1032,6 @@ window.addEventListener('popstate', function (event) {
 }, false);
 const goToPage = (href) => {
     if(!isValidUrl(href)){
-        $(".main").html(`<div class="loader" style="display:none;">
-            <div class="loader_part loader_part_1"></div>
-            <div class="loader_part loader_part_2"></div>
-            <div class="loader_part loader_part_3"></div>
-        </div>`);
-        $(".main .loader").fadeIn(500);
         console.log(`location: ${document.location}, state: ${JSON.stringify(history.state)}`,);
         togo = `${href} #app`;
         $('html,body').scrollTop(0);
@@ -974,6 +1045,17 @@ const goToPage = (href) => {
     }else{
         window.location.href = href;
     }
+}
+const htmlspecialchars = (text) => {
+    var map = {
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      '"': '&quot;',
+      "'": '&#039;'
+    };
+    
+    return text.replace(/[&<>"']/g, function(m) { return map[m]; });
 }
 const isValidUrl = (urlString) => {
     var urlPattern = new RegExp('^(https?:\\/\\/)?'+

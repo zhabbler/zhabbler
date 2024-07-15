@@ -22,6 +22,19 @@ class Messages
     	return $result;
     }
 
+    public function delete_message(string $token, int $id): void
+    {
+        $user = (new User())->get_user_by_token($token);
+        $message = $this->get_message($id);
+        if($user->userID == $message->messageBy){
+            $GLOBALS['db']->query("DELETE FROM messages WHERE messageID = ?", $id);
+        }
+    }
+
+    public function get_message(int $id): Nette\Database\Row
+    {
+        return $GLOBALS['db']->fetch("SELECT * FROM messages WHERE messageID = ?", $id);
+    }
 
     public function get_conversation(string $token, int $to): Nette\Database\Row
     {
@@ -151,7 +164,7 @@ class Messages
             $msg = openssl_decrypt($message->messageContent, 'aes-256-ecb', ENCRYPTION_KEY.md5($message->nickname));
             $msg = (!empty($msg) && empty($message->messageImage) ? $msg : "Error: Failed to decrypt message");
             $image = (!empty($message->messageImage) ? openssl_decrypt($message->messageImage, 'aes-256-ecb', ENCRYPTION_KEY.md5($message->nickname)) : "");
-            $result[] = ["profileImage" => $message->profileImage, "nickname" => $message->nickname, "message" => $msg, "added" => (string)$message->messageAdded, "image" => $image, "messageByUser" => ($user->userID == $message->messageBy ? 1 : 0), "readed" => $message->messageReaded];
+            $result[] = ["id" => $message->messageID, "profileImage" => $message->profileImage, "nickname" => $message->nickname, "message" => $msg, "added" => (string)$message->messageAdded, "image" => $image, "messageByUser" => ($user->userID == $message->messageBy ? 1 : 0), "readed" => $message->messageReaded];
             if($user->userID != $message->userID && $message->messageReaded != 1){
                 $GLOBALS['db']->query("UPDATE messages SET messageReaded = 1 WHERE messageID = ?", $message->messageID);
             }

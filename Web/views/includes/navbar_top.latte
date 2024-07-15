@@ -12,7 +12,7 @@
     <a href="/search" class="mobile_nav_element">
         <i class='bx bx-search' ></i>
     </a>
-    <div class="button button_mobile_nav_element" onclick="zhabbler.writePost();">
+    <div class="button button_mobile_nav_element" onclick="zhabbler.openEditor('text');">
         <i class='bx bxs-edit' ></i>
     </div>
     <a href="/inbox?show_tabs" class="mobile_nav_element" {((new Web\Models\Inbox())->getUnreadCountOfMsgs($user->token) > 0 || (new Web\Models\Messages())->get_count_of_unread_messages($user->token) > 0 ? 'style="color:rgba(255, 0, 0, .7);"' : "")|noescape}>
@@ -53,7 +53,27 @@
             <a href="/dashboard" class="navbar_top_logotype">{$language['zhabbler']}</a>
         </div>
         <form method="get" action="/search" data-reload="3" class="nav_options_searchbar">
-            <input type="text" name="q" autocomplete="off" value="{(isset($_GET['q'])) ? $_GET['q'] : ''}" placeholder="{$language['search_zhabbler']}">
+            <input type="text" name="q" autocomplete="off" value="{(isset($_GET['q']) ? $_GET['q'] : '')|noescape}" placeholder="{$language['search_zhabbler']}">
+            <div class="nav_options_req_search" style="display:none;">
+                <div id="sforw" style="display: none;">
+                    <div class="loader loader_black" style="height:200px;"><div class="loader_part loader_part_1"></div><div class="loader_part loader_part_2"></div><div class="loader_part loader_part_3"></div></div>
+                </div>
+                <div id="sprev">
+                    {if count((new Web\Models\Posts())->get_followed_tags($user->token)) > 0}
+                    <div class="nav_options_req_search_tt">
+                        <span>{$language['tags_u_followed']}</span>
+                    </div>
+                    {foreach (new Web\Models\Posts())->get_followed_tags($user->token) as $tag}
+                    <a href="/search?q={$tag->followedTag}" class="nav_options_req_search_recent_s">
+                        <i class='bx bx-hash'></i>
+                        <span>
+                            {$tag->followedTag}
+                        </span>
+                    </a>
+                    {/foreach}
+                    {/if}
+                </div>
+            </div>
         </form>
         <div class="navbar_top_container_elements_icons">
             <a href="/dashboard" class="navbar_top_container_element">

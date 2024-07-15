@@ -30,7 +30,7 @@ $(document).ready(function(){
     $(document).on("click", ".load_more_btn_profile_following", function(e){
         var btn = $(this);
         btn.prop("disabled", true);
-        btn.prepend('<span class="button_loader"></span>');
+        btn.prepend('<div class="new_btn_loader"><div class="loader"><div class="loader_part loader_part_1"></div><div class="loader_part loader_part_2"></div><div class="loader_part loader_part_3"></div></div></div>');
         $.post("/api/Follow/get_following", {last_id:Number($("#Following > .following_person:last").data("followid")), nickname:btn.data("nickname")}, function(data){
             $("#Following .loader").remove();
             $.each(data, function(i, data){

@@ -1,8 +1,28 @@
 <section class="nav_options">
     <form method="get" action="/search" data-reload="3" class="nav_options_searchbar">
-        <input type="text" name="q" autocomplete="off" value="{(isset($_GET['q'])) ? $_GET['q'] : ''}" placeholder="{$language['search_zhabbler']}">
+        <input type="text" name="q" autocomplete="off" value="{(isset($_GET['q']) ? $_GET['q'] : '')|noescape}" placeholder="{$language['search_zhabbler']}">
     </form>
-    {if count((new Web\Models\User())->random_profiles()) != 0}
+    {if isset($user) && (new Web\Models\Personalization())->get_personalization_config($user->userID)->personalizationNavbarStyle != 1}
+    <div class="nav_options_req_search" style="display:none;">
+        <div id="sforw" style="display: none;"></div>
+        <div id="sprev">
+            {if count((new Web\Models\Posts())->get_followed_tags($user->token)) > 0}
+            <div class="nav_options_req_search_tt">
+                <span>{$language['tags_u_followed']}</span>
+            </div>
+            {foreach (new Web\Models\Posts())->get_followed_tags($user->token) as $tag}
+            <a href="/search?q={$tag->followedTag}" class="nav_options_req_search_recent_s">
+                <i class='bx bx-hash'></i>
+                <span>
+                    {$tag->followedTag}
+                </span>
+            </a>
+            {/foreach}
+            {/if}
+        </div>
+    </div>
+    {/if}
+    {if !isset($user) && count((new Web\Models\User())->random_profiles()) != 0}
     <div class="nav_options_whoToFollow">
         <div>
             <h1 class="h1tp">
@@ -13,7 +33,7 @@
             {foreach (new Web\Models\User())->random_profiles() as $profile}
             <div class="nav_options_whoToFollow_profile" onclick="goToPage('/profile/' + {$profile->nickname});">
                 <div class="nav_options_whoToFollow_profile_picture">
-                    <img src="{$profile->profileImage}" alt="РР·РѕР±СЂР°Р¶РµРЅРёРµ">
+                    <img src="{$profile->profileImage}">
                 </div>
                 <div class="nav_options_whoToFollow_profile_information">
                     <div>
@@ -39,6 +59,43 @@
         </div>
     </div>
     {/if}
+    {if isset($user) && count((new Web\Models\User())->recommended_profiles($user->token)) != 0}
+    <div class="nav_options_whoToFollow">
+        <div>
+            <h1 class="h1tp" id="h1tp1d">
+                {$language['check_out_these_profile']}
+            </h1>
+        </div>
+        <div>
+            {foreach (new Web\Models\User())->recommended_profiles($user->token) as $profile}
+            <div class="nav_options_whoToFollow_profile" data-profile="{$profile->userID}">
+                <div class="nav_options_whoToFollow_profile_picture" onclick="goToPage('/profile/' + {$profile->nickname});">
+                    <img src="{$profile->profileImage}">
+                </div>
+                <div class="nav_options_whoToFollow_profile_information" onclick="goToPage('/profile/' + {$profile->nickname});">
+                    <div>
+                        <span>
+                            <b>
+                                {$profile->nickname}
+                            </b>
+                        </span>
+                    </div>
+                    <div>
+                        <span>
+                            {$profile->name|noescape}
+                        </span>
+                    </div>
+                </div>
+                <div class="nav_option_whoToFollow_profile_follow">
+                    <a onclick="zhabbler.followFromRec({$profile->userID});">
+                        {$language['follow']}
+                    </a>
+                </div>
+            </div>
+            {/foreach}
+        </div>
+    </div>
+    {/if}
     <footer>
         <div class="copl">
             <span>
@@ -55,7 +112,7 @@
             <a class="footer-elem" href="/help/privacy">
                 {$language['policy_privacy']}
             </a>
-            <a class="footer-elem" href="https://github.com/zhabbler">
+            <a class="footer-elem" href="https://github.com/zhabbler/zhabbler">
                 GitHub
             </a>
             <a class="footer-elem" href="javascript:void(zhabbler.chooseLanguage());">

@@ -16,7 +16,7 @@ $(document).ready(function(){
     $(document).on("click", ".load_more_btn_searched", function(e){
         var btn = $(this);
         btn.prop("disabled", true);
-        btn.prepend('<span class="button_loader"></span>');
+        btn.prepend('<div class="new_btn_loader"><div class="loader"><div class="loader_part loader_part_1"></div><div class="loader_part loader_part_2"></div><div class="loader_part loader_part_3"></div></div></div>');
         $.post("/api/Posts/search_posts", {last_id:0, query:query}, function(data){
             $("#Searched .loader").remove();
             $("#Searched").append(data);
