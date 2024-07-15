@@ -97,7 +97,7 @@
     </div>
     {if !empty($post->zhabTags)}
     <div class="postTags">
-        {(new Web\Models\Posts())->show_tags_html($user->token, $post->zhabTags)|noescape}
+        {(new Web\Models\Posts())->show_tags_html((isset($user) ? $user->token : ""), $post->zhabTags)|noescape}
     </div>
     {/if}
     <div class="postActions">

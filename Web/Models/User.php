@@ -55,17 +55,6 @@ class User
         return ($GLOBALS['db']->fetch("SELECT * FROM users WHERE userID = ?", $id)->reason == '' ? false : true);
     }
 
-    public function check_users(): void
-    {
-        foreach($GLOBALS['db']->fetchAll("SELECT * FROM users WHERE reason = ''") as $user){
-            if($user->activated != 1 && $user->joined != date("Y-m-d")){
-                (new Sessions())->removeSessions($user->token);
-                $GLOBALS['db']->query("DELETE FROM users WHERE userID = ?", $user->userID);
-                $GLOBALS['db']->query("DELETE FROM emails WHERE emailFor = ?", $user->userID);
-            }
-        }
-    }
-
     public function search_users(string $query, int $lastID = 0): void
     {
         header('Content-Type: application/json');
@@ -120,6 +109,58 @@ class User
         }
     }
     
+    public function password_reset(string $email): void
+    {
+        header('Content-Type: application/json');
+        $result = ["error" => null];
+        if(!empty($GLOBALS['config']['smtp']['host']) && !empty($GLOBALS['config']['smtp']['username']) && !empty($GLOBALS['config']['smtp']['email']) && !empty($GLOBALS['config']['smtp']['password'])){
+            if(!(new Strings())->is_empty($email)){
+                if($GLOBALS['db']->query("SELECT * FROM users WHERE email = ? AND activated = 1", $email)->getRowCount() > 0){
+                    $user = $GLOBALS['db']->fetch("SELECT * FROM users WHERE email = ?", $email);
+                    (new Emails())->createEmail(1, $user->userID);
+                }
+                $result = ["warning" => $this->locale["password_reset_email_sent"]];
+            }else{
+                $result = ["error" => $this->locale["some_fields_are_empty"]];
+            }
+        }else{
+            $result = ["error" => "SMTP is not set. Check your configuration file."];
+        }
+        die(json_encode($result));
+    }
+
+    public function password_reset_change(string $code, string $password, string $repassword): void
+    {
+        header('Content-Type: application/json');
+        $result = ["error" => null];
+        if((new Emails())->checkEmailExistence(1, $code)){
+            $email = (new Emails())->getEmail(1, $code);
+            if($email->activated == 1){
+                if($password == $repassword){
+                    if(!(new Strings())->is_empty($password)){
+                        if(strlen($password) < 8){
+                            $result = ["error" => $this->locale["error_small_password"]];
+                        }else{
+                            (new Sessions())->removeSessions($email->token);
+                            $password_hashed = password_hash($password, PASSWORD_DEFAULT);
+                            $GLOBALS['db']->query("DELETE FROM emails WHERE emailType = ? AND emailFor = ?", 1, $email->userID);
+                            $GLOBALS['db']->query("UPDATE users SET password = ? WHERE token = ?", $password_hashed, $email->token);
+                        }
+                    }else{
+                        $result = ["error" => $this->locale["some_fields_are_empty"]];
+                    }
+                }else{
+                    $result = ["error" => $this->locale["passwords_doesnt_match"]];
+                }
+            }else{
+                $result = ["error" => "Account is not activated."];
+            }
+        }else{
+            $result = ["error" => $this->locale["email_code_error"]];
+        }
+        die(json_encode($result));
+    }
+
     public function change_confidential_settings(string $token, int $liked, int $following, int $questions): void
     {
         $liked = ($liked == 1 ? 1 : 0);
@@ -241,6 +282,18 @@ class User
     {
         return $GLOBALS['db']->fetchAll("SELECT * FROM users WHERE activated = 1 AND reason = '' AND rateLimitCounter > 0 ORDER BY rand() LIMIT 4");
     }
+
+    public function recommended_profiles(string $token): array
+    {
+        $user = $this->get_user_by_token($token);
+        $result = [];
+        foreach($this->random_profiles() as $profile){
+            if($user->userID != $profile->userID && !(new Follow())->check_follow_existence($user->token, $profile->userID)){
+                $result[] = $profile;
+            }
+        }
+        return $result;
+    }
     
     public function change_email(string $email, string $password, string $token): void
     {
@@ -274,7 +327,7 @@ class User
         $result = ["error" => NULL];
         if($user->activated == 1){
             if(password_verify($password, $user->password)){
-                if(strlen($password) < 8){
+                if(strlen($new_password) < 8){
                     $result = ["error" => $this->locale['error_small_password']];
                 }else{
                     (new Sessions())->removeSessions($token);

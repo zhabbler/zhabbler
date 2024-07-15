@@ -65,7 +65,7 @@ function openMessages(nickname){
     $.post("/api/User/get_user_by_nickname", {nickname:nickname}, function(data){
         $(".main_messages_im").attr("data-convo", nickname);
         $(".main_messages_im_person_image img").attr("src", data.profileImage);
-        $(".main_messages_im_person_info span").text(data.name);
+        $(".main_messages_im_person_info span").html(data.name);
         $(".main_messages_write_message_element").attr("onclick", `sendMessage('${data.nickname}')`);
         $(".main_messages_write_message_element input[type='file']").attr("onchange", `sendImage(this, '${data.nickname}')`);
         $(".main_messages_write_message_textarea textarea").attr("onkeydown", `sendbyenter('${data.nickname}', event)`);
@@ -75,15 +75,47 @@ function openMessages(nickname){
     }
     getMessages(nickname);
 }
+function deleteMessage(id, delete_msg = false){
+    if(delete_msg == false){
+        $("#app").prepend(`<div class="popup popup_choose_alert popup_do_not_close">
+            <div>
+                <div>
+                    <h1>
+                        ${locale['do_u_want_to_delete_message']}
+                    </h1>
+                </div>
+                <div style="display: flex;">
+                    <div class="button button_gray" onclick="$('.popup:first').remove();" style="margin:0 auto;">
+                        ${locale['cancel']}
+                    </div>
+                    <div class="button" onclick="$('.popup:first').remove();deleteMessage(${id}, true);" style="margin:0 auto;">
+                        ${locale['delete']}
+                    </div>
+                </div>
+            </div>
+        </div>`);
+        return false;
+    }
+    $.post("/api/Messages/delete_message", {id:id}, function(){
+        $(`#msg${id}`).remove();
+        conn.send(JSON.stringify({to:$(".main_messages_im").data("convo"), by:user.nickname, deleted:true}));
+    });
+}
 function getMessages(nickname){
     $.post("/api/Messages/get_messages", {to:nickname}, function(data){
         $(".main_messages_im_msgs").html('');
         $(data).each(function(i, item){
-            if(item.image != ''){
-                $(".main_messages_im_msgs").append(`<div class="main_messages_im_msg${(item.nickname == user.nickname ? " main_messages_im_msg_b_u" : "")}">
+            messagecontent = (item.image != '' ? `<img src="${item.image}">` : `<span>${item.message}</span>`);
+            if(item.nickname == user.nickname){
+                $(".main_messages_im_msgs").append(`<div class="main_messages_im_msg main_messages_im_msg_b_u" id="msg${item.id}">
+                    <div class="main_messages_im_msg_btns">
+                        <div class="main_messages_im_msg_btn" onclick="deleteMessage(${item.id});">
+                            <i class='bx bx-trash' ></i>
+                        </div>
+                    </div>
                     <div class="main_messages_im_msg_itself">
                         <div>
-                            <img src="${item.image}">
+                            ${messagecontent}
                         </div>
                         <div id="datetimestamp">
                             <small>
@@ -93,10 +125,10 @@ function getMessages(nickname){
                     </div>
                 </div>`);
             }else{
-                $(".main_messages_im_msgs").append(`<div class="main_messages_im_msg${(item.nickname == user.nickname ? " main_messages_im_msg_b_u" : "")}">
+                $(".main_messages_im_msgs").append(`<div class="main_messages_im_msg">
                     <div class="main_messages_im_msg_itself">
                         <div>
-                            <span>${item.message}</span>
+                            ${messagecontent}
                         </div>
                         <div id="datetimestamp">
                             <small>
@@ -123,7 +155,7 @@ function sendMessage(nickname){
             $(".main_messages_im_msgs").append(`<div class="main_messages_im_msg main_messages_im_msg_b_u main_messages_im_msg_sending">
                     <div class="main_messages_im_msg_itself">
                         <div>
-                            <span>${$(`.main_messages_write_message_textarea textarea`).val()}</span>
+                            <span>${$(`.main_messages_write_message_textarea textarea`).val().replace(/<[^>]*>?/gm, '')}</span>
                         </div>
                         <div id="datetimestamp">
                             <small>

@@ -5,6 +5,8 @@ $Router = (new Utilities\Router());
 $Router->add("GET", "/", "IndexPresenter");
 $Router->add("GET", "/register", "RegisterPresenter");
 $Router->add("GET", "/login", "LoginPresenter");
+$Router->add("GET", "/password_reset", "PasswordResetPresenter");
+$Router->add("GET", "/password_reset/{code}", "PasswordResetPresenter");
 $Router->add("GET", "/dashboard", "DashboardPresenter");
 $Router->add("GET", "/help/{page}", "HelpPresenter");
 $Router->add("GET", "/search", "SearchPresenter");
@@ -261,6 +263,18 @@ $Router->add("GET", "/api/Messages/get_conversations", "", function(){
 	header('Content-Type: application/json');
 	if(isset($_COOKIE['zhabbler_session']))
 		echo(json_encode((new Web\Models\Messages())->get_conversations($GLOBALS['session']->sessionToken)));
+});
+$Router->add("POST", "/api/Messages/delete_message", "", function(){
+	if(isset($_COOKIE['zhabbler_session']))
+		(new Web\Models\Messages())->delete_message($GLOBALS['session']->sessionToken, (int)$_POST['id']);
+});
+$Router->add("POST", "/api/Account/password_reset", "", function(){
+	if(!isset($_COOKIE['zhabbler_session']))
+		(new Web\Models\User())->password_reset($_POST['email']);
+});
+$Router->add("POST", "/api/Account/password_reset_change", "", function(){
+	if(!isset($_COOKIE['zhabbler_session']))
+		(new Web\Models\User())->password_reset_change($_POST['code'], $_POST['password'], $_POST['repassword']);
 });
 // Public APIs
 $Router->add("ANY", "/developer/api/{func}", "PublicAPIPresenter");

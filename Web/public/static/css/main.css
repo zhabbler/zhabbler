@@ -123,7 +123,6 @@ body{
     min-width: 580px;
     max-width: 580px;
     min-height: 100vh;
-    animation: fadeIn .2s;
 }
 .nav_options{
     width: 320px;
@@ -301,7 +300,7 @@ body{
     width: fill-available;
     width: -webkit-fill-available;
     width: -moz-available;
-    padding: 8px;
+    padding: 6px;
     border-radius: 8px;
     outline: 0;
     border: 0;
@@ -313,12 +312,14 @@ body{
     background-repeat: no-repeat;
     padding-left: 35px!important;
     transition: all .3s;
+    border: 2px solid transparent;
 }
 .nav_options_searchbar input::placeholder, .input_search::placeholder{
     color:rgba(255, 255, 255, .5);
 }
 .nav_options_searchbar input:focus, .input_search:focus{
     background-color: #fff;
+    border: 2px solid #13b552;
     color:#000;
     background-position: 5px;
     background-repeat: no-repeat;
@@ -519,6 +520,7 @@ a:hover{
     width: 100vw;
     height: 100vh;
     position: fixed!important;
+    overflow: auto;
     top:0;
     z-index: 2048;
     background-color:rgba(0, 0, 0, .5);
@@ -767,6 +769,7 @@ hr{
 }
 .popup .post{
     width: 540px;
+    margin: auto;
 }
 .dropdown_section{
     display: flex;
@@ -971,7 +974,7 @@ hr{
     display: block;
 }
 #pC_sS{
-    min-height: 320px;
+    min-height: 250px;
     overflow: auto;
 }
 .s_media_selection:hover{
@@ -1207,14 +1210,6 @@ form .postContent .photo-- img, form .postContent .video-- video{
     width: 300px;
     z-index: 999999;
 }
-@keyframes error {
-    from{
-        transform: translateY(80px);
-    }
-    to{
-        transform: translateY(0vh);
-    }
-}
 .errors .error{
     background-color: rgb(255, 61, 61);
     color:#fff;
@@ -1227,7 +1222,7 @@ form .postContent .photo-- img, form .postContent .video-- video{
     text-align: center;
     font-size: 14px;
     overflow: hidden;
-    animation: error .2s;
+    animation: fadeIn .2s linear;
     margin-bottom: 20px;
 }
 .errors .error::before{
@@ -2231,10 +2226,6 @@ footer .copl{
 .postAuthorPointsToRepostGray{
     color:#999;
 }
-#PopupContainer{
-    max-height: calc(100vh - 40px)!important;
-    overflow: auto;
-}
 .postAuthorProfileImageReposted i{
     margin: 0px!important;
 }
@@ -2465,7 +2456,7 @@ footer .copl{
 }
 #realPostContent{
     overflow: hidden;
-    max-height: 400px;
+    max-height: 800px;
 }
 .repost_fr_rps_post_author .repost_fr_rps_post_author_pfp img{
     width: 28px;
@@ -2499,6 +2490,16 @@ footer .copl{
 }
 .repost_fr_rps_post_content_view_post a:hover{
     text-decoration: none!important;
+}
+.main_messages_im_msg_itself_btn_dropdown{
+    position: absolute!important;
+    font-size: 24px;
+    right: 0;
+    top: 0;
+    padding: 4px;
+    z-index: 1024;
+    display: flex;
+    cursor: pointer;
 }
 .load_more_btn, .load_more_btn_exp, .load_more_btn_profile, .load_more_btn_profile_following, .load_more_btn_liked_profile, .load_more_btn_searched{
     margin: 16px auto;
@@ -2900,7 +2901,6 @@ footer .copl{
     display: flex;
     align-items: center;
     flex-wrap: wrap;
-    margin-bottom: 10px;
 }
 .write_post_tags .write_post_tag{
     display: flex;
@@ -2999,7 +2999,7 @@ footer .copl{
 }
 .postReadMore{
     position: absolute!important;
-    top: 383px;
+    top: 782px;
     padding: 10px;
     width: 100%;
     text-align: center;
@@ -3011,6 +3011,7 @@ footer .copl{
     background-color: rgba(255, 255, 255, .5);
     backdrop-filter: blur(32px);
     user-select: none;
+    box-sizing: border-box;
 }
 .postReadMore:active{
     outline: auto;
@@ -3101,6 +3102,7 @@ footer .copl{
 }
 .main_messages_convos .main_messages_convo .main_messages_convo_image img{
     width: 42px;
+    height: 42px;
     display: block;
     border-radius: 8px;
 }
@@ -3265,4 +3267,180 @@ footer .copl{
     color:#fff;
     background-color: #13b552;
     border-radius: 100%;
+}
+.main_messages_im_msg_btns{
+    display: flex;
+    align-items: center;
+    opacity: 0;
+    transition: all .2s linear;
+}
+.main_messages_im_msg:hover .main_messages_im_msg_btns{
+    opacity: 1;
+    transform: scale(1);
+}
+.main_messages_im_msg_b_u .main_messages_im_msg_btns .main_messages_im_msg_btn{
+    margin-left: 0px;
+    margin-right: 10px;
+}
+.main_messages_im_msg_btns .main_messages_im_msg_btn{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: rgba(255, 255, 255, .5);
+    font-size: 24px;
+    margin-left: 10px;
+    cursor: pointer;
+}
+.main_messages_im_msg_btns .main_messages_im_msg_btn:hover{
+    color: #fff;
+}
+.nav_options_req_search{
+    position: absolute!important;
+    width: 304px;
+    max-height: 70vh;
+    height: fit-content;
+    background-color: #fff;
+    z-index: 64;
+    margin: 8px;
+    border-radius: 8px;
+    color: #000;
+    overflow: auto;
+}
+.nav_options_req_search .nav_options_req_search_tt{
+    padding: 0 12px;
+    color:#666;
+    height: 35px;
+    display: flex;
+    align-items: center;
+    font-size: .875rem;
+}
+.nav_options_req_search .nav_options_req_search_recent_s{
+    display: flex;
+    align-items: center;
+    background-color: #fff;
+    height: 40px;
+    padding: 0 8px;
+    cursor: pointer;
+    color:#000;
+    text-decoration: none!important;
+    border: 2px solid transparent;
+}
+.nav_options_req_search .nav_options_req_search_recent_s:hover{
+    background-color: #eee;
+}
+.nav_options_req_search .nav_options_req_search_recent_s i{
+    font-size: 24px;
+    color: rgba(0, 0, 0, .5);
+    margin-right: 5px;
+    display: block;
+}
+.nav_options_req_search_recent_s_avatar{
+    width: 32px;
+    height: 32px;
+    border-radius: 4px;
+    margin-right: 10px;
+}
+.navbar_top .nav_options_req_search{
+    top: 44px;
+    margin: 0px!important;
+    left: 0;
+    width: 400px;
+}
+.popup-post-uie{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+@keyframes prepended_fade_ppub {
+    from{
+        opacity: 0;
+        transform: translateY(-24px);
+    }
+    to{
+        opacity: 1;
+        transform: translateY(0px);
+    }
+}
+.popup-post-uie .popup-post-uie-btn{
+    opacity: 0;
+    text-align: center;
+    color:#fff;
+    cursor: pointer;
+    margin-right: 5em;
+    animation-fill-mode: forwards!important;
+    animation: prepended_fade_ppub .4s;
+}
+.popup-post-uie .popup-post-uie-btn:nth-child(2){
+    animation-delay: 25ms;
+}
+.popup-post-uie .popup-post-uie-btn:nth-child(3){
+    animation-delay: 50ms;
+}
+.popup-post-uie .popup-post-uie-btn:nth-child(4){
+    animation-delay: 75ms;
+}
+.popup-post-uie .popup-post-uie-btn:nth-child(5){
+    animation-delay: 100ms;
+    margin-right: 0em!important;
+}
+.popup-post-uie .popup-post-uie-btn .popup-post-uie-btn-round{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #fff;
+    color:#000;
+    font-size: 42px;
+    width: 100px;
+    height: 100px;
+    border-radius: 9999px;
+    margin-bottom: 10px;
+    transform: scale(1);
+}
+.popup-post-uie .popup-post-uie-btn .popup-post-uie-btn-round i{
+    font-size: 56px;
+}
+@keyframes popup-post-uie-btn-round{
+    0% {
+        transform: scale(1.1);
+    }
+    30% {
+        transform: scale(1.1)rotate(15deg);
+    }
+    60% {
+        transform: scale(1.1)rotate(-15deg);
+    }
+    90% {
+        transform: scale(1.1);
+    }
+    to{
+        transform: scale(1.1);
+    }
+}
+.popup-post-uie .popup-post-uie-btn:hover .popup-post-uie-btn-round{
+    animation: popup-post-uie-btn-round 1s ease-in-out infinite;
+}
+.popup-post-uie .popup-post-uie-btn .popup-post-uie-btn-txt{
+    transform: scale(1);
+}
+.popup-post-uie .popup-post-uie-btn:hover .popup-post-uie-btn-txt{
+    transform: scale(1.2);
+}
+#postEditor .post .postAuthor{
+    border-bottom: 1px solid #eee;
+}
+#postEditor .post .postActions{
+    padding-top: 10px!important;
+}
+.new_btn_loader{
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute!important;
+    background-color: rgba(0, 0, 0, .5);
+}
+.new_btn_loader .loader{
+    transform: scale(.5);
 }

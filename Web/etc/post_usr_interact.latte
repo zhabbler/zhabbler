@@ -1,3 +1,4 @@
+{if !isset($_GET['popup'])}
 <div class="post post_usr_interact" id="PopupContainer">
     <section class="post_usr_interact_el" onclick="zhabbler.openEditor('text');">
         <div>
@@ -30,3 +31,57 @@
         </div>
     </section>
 </div>
+{else}
+<div id="PopupContainer" class="popup-post-uie">
+    <div class="popup-post-uie-btn" onclick="zhabbler.openEditor('text');">
+        <div class="popup-post-uie-btn-round">
+            <span>Aa</span>
+        </div>
+        <div class="popup-post-uie-btn-txt">
+            <span>
+                {$language['text']}
+            </span>
+        </div>
+    </div>
+    <div class="popup-post-uie-btn" onclick="zhabbler.openEditor('photo');">
+        <div class="popup-post-uie-btn-round" style="background-color:#ff4242;">
+            <i class='bx bxs-camera'></i>
+        </div>
+        <div class="popup-post-uie-btn-txt">
+            <span>
+                {$language['photo']}
+            </span>
+        </div>
+    </div>
+    <div class="popup-post-uie-btn" onclick="zhabbler.openEditor('p', {$language['something_somebody_else_said_here']}, `class='content_quote'`);">
+        <div class="popup-post-uie-btn-round" style="background-color:#ff8c00;">
+            <i class='bx bxs-quote-alt-left' ></i>
+        </div>
+        <div class="popup-post-uie-btn-txt">
+            <span>
+                {$language['quote']}
+            </span>
+        </div>
+    </div>
+    <div class="popup-post-uie-btn" onclick="zhabbler.openEditor('p', {$language['frog_croak_croak']}, `class='content_dialogue'`);">
+        <div class="popup-post-uie-btn-round" style="background-color:#009dff;">
+            <i class='bx bxs-conversation' ></i>
+        </div>
+        <div class="popup-post-uie-btn-txt">
+            <span>
+                {$language['dialog']}
+            </span>
+        </div>
+    </div>
+    <div class="popup-post-uie-btn" onclick="zhabbler.openEditor('video');">
+        <div class="popup-post-uie-btn-round" style="background-color:#ff4deb;">
+            <i class='bx bxs-video-recording' ></i>
+        </div>
+        <div class="popup-post-uie-btn-txt">
+            <span>
+                {$language['video']}
+            </span>
+        </div>
+    </div>
+</div>
+{/if}
