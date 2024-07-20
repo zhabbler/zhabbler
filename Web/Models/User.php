@@ -20,15 +20,19 @@ class User
     {
         header('Content-Type: application/json');
         $file = (new Files())->upload_image($file, false);
-        $user = $this->get_user_by_token($token);
-        if($user->activated == 1){
-            if($file['error'] == null && !empty($file['url'])){
-                $GLOBALS['db']->query("UPDATE users SET profileImage = ? WHERE token = ?", $file['url'], $token);
-                if($user->profileImage != '/static/images/no_avatar_1900.png')
-                    unlink("{$_SERVER['DOCUMENT_ROOT']}/Web/public{$user->profileImage}");
+        if($file['error'] == null){
+            $filename = "/uploads/zhabbler_avatar_".(new Strings())->random_string(128).".jpeg";
+            (new Files())->thumbnail_avatar_crop($_SERVER['DOCUMENT_ROOT']."/Web/public/".$file['url'], $_SERVER['DOCUMENT_ROOT']."/Web/public$filename");
+            $user = $this->get_user_by_token($token);
+            if($user->activated == 1){
+                if($file['error'] == null && !empty($file['url'])){
+                    $GLOBALS['db']->query("UPDATE users SET profileImage = ? WHERE token = ?", $filename, $token);
+                    if($user->profileImage != '/static/images/no_avatar_1900.png')
+                        unlink("{$_SERVER['DOCUMENT_ROOT']}/Web/public{$user->profileImage}");
+                }
             }
         }
-        die(json_encode($file));
+        die(json_encode((!isset($filename) ? $file : ["url" => $filename])));
     }
 
     public function ban_user(string $nickname, string $token, string $reason): void
