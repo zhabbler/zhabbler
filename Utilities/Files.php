@@ -16,7 +16,7 @@ class Files
 				$image_name = (new Strings())->random_string(128).$image_extension;
 				move_uploaded_file($file['tmp_name'], $_SERVER['DOCUMENT_ROOT']."/Web/public/uploads/".$image_name);
 				$imageTitleForJPG = 'zhabbler_'.(new Strings())->random_string(128).'.jpeg';
-				$this->convertImage($_SERVER['DOCUMENT_ROOT']."/Web/public/uploads/$image_name", $_SERVER['DOCUMENT_ROOT']."/Web/public/uploads/$imageTitleForJPG", 100);
+				$this->convertImage($_SERVER['DOCUMENT_ROOT']."/Web/public/uploads/$image_name", $_SERVER['DOCUMENT_ROOT']."/Web/public/uploads/$imageTitleForJPG", 50);
 				$result = ["error" => null, "url" => "/uploads/$imageTitleForJPG"];
 			}
 		}
@@ -25,6 +25,29 @@ class Files
 			die(json_encode($result));
 		}
 		return $result;
+	}
+
+	public function thumbnail_avatar_crop(string $path, string $output): void
+	{
+		list($width, $height) = getimagesize($path);
+		$myImage = imagecreatefromjpeg($path);
+
+		if($width > $height){
+		  $y = 0;
+		  $x = ($width - $height) / 2;
+		  $smallestSide = $height;
+		}else{
+		  $x = 0;
+		  $y = ($height - $width) / 2;
+		  $smallestSide = $width;
+		}
+
+		$thumbSize = 250;
+		$thumb = imagecreatetruecolor($thumbSize, $thumbSize);
+		imagecopyresampled($thumb, $myImage, 0, 0, (int)$x, (int)$y, $thumbSize, $thumbSize, $smallestSide, $smallestSide);
+
+		imagejpeg($thumb, $output);
+		unlink($path);
 	}
 
 	public function upload_video(?array $file, bool $json_result = true): array
