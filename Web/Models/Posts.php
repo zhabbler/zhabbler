@@ -263,8 +263,8 @@ class Posts
                         $mention_user_info = (new User())->get_user_by_nickname($nickname);
                         (new Notifications())->addNotify(3, $token, $mention_user_info->userID, "/zhab/".$post->zhabURLID);
                     }
-                    (new Notifications())->addNotify(1, $token, $post->userID, "/zhab/".$post->zhabURLID);
                 }
+                (new Notifications())->addNotify(1, $token, $post->userID, "/zhab/".$post->zhabURLID);
             }
         }
     }
