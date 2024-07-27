@@ -9,6 +9,7 @@ final class PublicAPIPresenter
     public function load(array $params = []): void
     {
         header('Content-Type: application/json');
+        header('Access-Control-Allow-Origin: *');
         switch($params['func']){
             case "get_user_by_token":
                 (new User())->get_user_by_token_json($_GET['token']);

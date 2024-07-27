@@ -1,3 +1,39 @@
+<div id="ContextMenuTextConfig" style="display: none;">
+    <div class="context_menu">
+        <button class="context_menu_element" onclick='document.execCommand("bold",false,null);'>
+            <b>{$language['bold']}</b>
+        </button>
+        <button class="context_menu_element" onclick='document.execCommand("italic",false,null);'>
+            <i>{$language['italic']}</i>
+        </button>
+        <button class="context_menu_element" onclick='document.execCommand("underline",false,null);'>
+            <u>{$language['underline']}</u>
+        </button>
+        <button class="context_menu_element" id="createLink">
+            {$language['add_url_link']}
+        </button>
+        <button class="context_menu_element" onclick="document.execCommand('unlink', false, null);">
+            {$language['remove_url_link']}
+        </button>
+        <button class="context_menu_element" onclick="$('#ContextMenuTextConfig .colors').fadeToggle(200);">
+            {$language['text_color']}
+        </button>
+    </div>
+    <div class="colors" style="display: none;">
+        <div>
+            <button class="color" style="background-color: #000000;"></button>
+            <button class="color" style="background-color: #ff4242;"></button>
+            <button class="color" style="background-color: #ff8800;"></button>
+            <button class="color" style="background-color: #fff700;"></button>
+        </div>
+        <div>
+            <button class="color" style="background-color: #009f00;"></button>
+            <button class="color" style="background-color: #009dff;"></button>
+            <button class="color" style="background-color: #0026ff;"></button>
+            <button class="color" style="background-color: #9900ff;"></button>
+        </div>
+    </div>
+</div>
 <form class="post" id="PopupContainer">
     <div class="postAuthor">
         <a href="/profile/{$user->nickname}" class="postAuthorProfileImage">

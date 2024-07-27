@@ -23,6 +23,30 @@ $(document).ready(function(){
     $(document).on("click", ".write_post_tag:not(.write_post_tag_add_input):not(.write_post_tag_add)", function(){
         $(this).remove();
     });
+    $(document).on("click", "#ContextMenuTextConfig .color", function(){
+        document.execCommand('styleWithCSS', false, true);
+        document.execCommand('foreColor', false, $(this).css("background-color"));
+    });
+    $(document).on("click", ".popup:first form", function(){
+        $("#ContextMenuTextConfig").fadeOut(200);
+    });
+    $(document).on("contextmenu", ".popup:first form .postContent", function(e){
+        $("#ContextMenuTextConfig").css({"top":e.clientY, "left":e.clientX});
+        $("#ContextMenuTextConfig").fadeToggle(200);
+        e.stopPropagation();
+        return false;
+    });
+    $(document).on('click', '#createLink', function(){
+        let userLink = prompt("URL");
+        if(userLink !== '' && userLink){
+            if(/http/i.test(userLink)){
+                document.execCommand('createLink', false, userLink);
+            }else{
+                userLink = "http://" + userLink;
+                document.execCommand('createLink', false, userLink);
+            }
+        }
+    });
 });
 const add_tag = (tag) => {
     tag = tag.replace(/<[^>]*>?/gm, '');

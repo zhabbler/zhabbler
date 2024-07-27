@@ -49,7 +49,7 @@
                                 <span>{(new Web\Models\Follow())->get_followers_count($profile->nickname)} {$language['followers']}</span>
                             </div>
                             {/if}
-                            <div>
+                            <div style="padding: 0 20px;">
                                 <span>{$profile->biography|breakLines}</span>
                             </div>
                         </div>
