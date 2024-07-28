@@ -4,8 +4,12 @@ $(document).ready(function(){
             zhabbler.insertIntoEditorContent('p', locale['go_ahead_put_smth']);
         }
     });
-    $(document).on("click", ".ui__btn__image__delete", function(){
-        $(`.photo--[data-src="${$(this).data("src")}"]`).remove();
+    $(document).on("click", ".ui__btn__delete", function(){
+        if($(`.photo--[data-src="${$(this).data("src")}"]`).length > 0){
+			$(`.photo--[data-src="${$(this).data("src")}"]`).remove();
+		}else{
+			$(`.video--[data-src="${$(this).data("src")}"]`).remove();
+		}
     });
     $(document).on("click", ".write_post_tag_add", function(){
         $(this).replaceWith(`<input class="write_post_tag write_post_tag_add_input" style="width: 4px;" maxlength="32" oninput="this.style.width = (this.scrollWidth - 30) + 'px';" type="text">`);
