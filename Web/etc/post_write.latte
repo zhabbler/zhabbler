@@ -166,7 +166,7 @@
         </div>
     </div>
     {/if}
-    <div id="pC_sS" ondrop="return false;">
+    <div id="pC_sS" ondrop="return false;" onpaste="event.preventDefault();document.execCommand('inserttext', false, event.clipboardData.getData('text/plain'));">
         <div class="postContent" data-text="*звук сверчков*" contenteditable="true">
             <h1 data-text="{$language['heading']}" contenteditable="true"></h1>
             <p data-text="{$language['go_ahead_put_smth']}" contenteditable="true"></p>
