@@ -1,7 +1,3 @@
-document.querySelector('[contenteditable]').addEventListener('paste', function (event) {
-    event.preventDefault();
-    document.execCommand('inserttext', false, event.clipboardData.getData('text/plain'));
-});
 $(document).ready(function(){
     $(document).on("input", ".popup:first form .postContent", function(){
         if($(this).html().trim().length == 0){
