@@ -66,29 +66,17 @@
                             </div>
                         </section>
                     </div>
-                    <form method="post" data-reload="1" action="/api/Personalization/update_personalization_config">
+                    <form method="post" data-reload="1" action="/api/Personalization/change_color_pallete">
                         <section class="settings_section">
                             <div class="settings_section_title">
-                                <span>{$language['background_url_settings']}</span>
+                                <span>{$language['color_pallete']}</span>
                             </div>
                             <div class="settings_section_content">
-                                <input type="text" class="input" name="background_url" placeholder="URL" value="{$personalization_config->personalizationURL}">
-                            </div>
-                        </section>
-                        <section class="settings_section">
-                            <div class="settings_section_title">
-                                <span>{$language['accent_color_settings']}</span>
-                            </div>
-                            <div class="settings_section_content">
-                                <input type="color" class="input_color" name="accent_color" value="{$personalization_config->personalizationAccent}">
-                            </div>
-                        </section>
-                        <section class="settings_section">
-                            <div class="settings_section_title">
-                                <span>{$language['background_color_settings']}</span>
-                            </div>
-                            <div class="settings_section_content">
-                                <input type="color" class="input_color" name="background_color" value="{$personalization_config->personalizationBackgroundColor}">
+                                <select name="color_pallete" class="input">
+                                    <option value="none">{$language['true_green']}</option>
+                                    <option value="ghost" {((new Web\Models\Personalization())->get_personalization_config($user->userID)->personalizationPallete == "ghost" ? "selected" : "")}>{$language['ghost']}</option>
+                                    <option value="black" {((new Web\Models\Personalization())->get_personalization_config($user->userID)->personalizationPallete == "black" ? "selected" : "")}>{$language['dark']}</option>
+                                </select>
                             </div>
                         </section>
                         <section class="settings_section">

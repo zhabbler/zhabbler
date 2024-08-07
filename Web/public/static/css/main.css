@@ -90,16 +90,16 @@ body{
     font-weight: 900;
 }
 .navbar_logotype:hover, .navbar_top_logotype:hover{
-    background: linear-gradient(to right, #13b552, #007bff, #ff3f3f, #13b552);
+    background: linear-gradient(to right, #13b552, #52a5ff, #ff8383, #c2bc4e, #13b552);
     -webkit-background-clip: text;
             background-clip: text;
     -webkit-text-fill-color: transparent;
 }
 .navbar_top_logotype:hover{
-    animation: logo_anim 45s infinite linear;
+    animation: logo_anim 20s infinite linear;
 }
 .navbar_logotype:hover{
-    animation: logo_anim 20s infinite linear;
+    animation: logo_anim 10s infinite linear;
 }
 @keyframes logo_anim {
     0% {
@@ -135,7 +135,15 @@ body{
     padding: 8px 16px;
     min-height: 25px;
     cursor: pointer;
+    font-weight: 500;
     color:#a7aeb9;
+}
+.navbar_element .navbar_element_right_el{
+    margin-left: auto;
+    transition: all .2s;
+}
+.navbar_element .navbar_element_right_el i{
+    font-size: 24px;
 }
 .navbar_element .navbar_element_icon{
     display: flex;
@@ -469,7 +477,7 @@ a:hover{
 .postContent{
     padding: 16px;
     word-break: break-word;
-    padding-top: 5px;
+    padding-top: 0px;
 }
 .postContent h1, .postContent h2, .postContent h3, .postContent h4, .postContent h5, .postContent h6{
     font-weight: 500;
@@ -946,9 +954,6 @@ hr{
 }
 .s_media_selections{
     background-color: #ddd;
-    display: flex;
-    align-items: center;
-    justify-content: center;
     height: 200px;
     border-top: 2px dashed #999;
     margin-top: 15px;
@@ -1210,11 +1215,21 @@ form .postContent .photo-- img, form .postContent .video-- video{
     width: 300px;
     z-index: 999999;
 }
+@keyframes error_new {
+    from{
+        opacity: 0;
+        transform: translateY(12px);
+    }
+    to{
+        opacity: 1;
+        transform: translateY(0px);
+    }
+}
 .errors .error{
     background-color: rgb(255, 61, 61);
     color:#fff;
     padding: 15px;
-    border-radius: 2px;
+    border-radius: 5px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1222,11 +1237,13 @@ form .postContent .photo-- img, form .postContent .video-- video{
     text-align: center;
     font-size: 14px;
     overflow: hidden;
-    animation: fadeIn .2s linear;
+    animation: error_new .2s;
     margin-bottom: 20px;
 }
-.errors .error::before{
-    content: ""
+.error i{
+    display: block;
+    font-size: 20px;
+    margin-right: 5px;
 }
 .error-warn{
     background-color: #ff7800!important;
@@ -1235,24 +1252,6 @@ form .postContent .photo-- img, form .postContent .video-- video{
 .error-success{
     background-color: #13b552!important;
     color:#fff!important;
-}
-@keyframes bar_quit {
-    from{
-        width: 100%;
-    }
-    to{
-        width: 0%;
-    }
-}
-.errors .error::before{
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    height: 6px;
-    background-color: #fff;
-    width: 100%;
-    animation: bar_quit 10s linear;
-    content: '';
 }
 .nav_options{
     height: 100vh;
@@ -1411,14 +1410,12 @@ form .postContent .photo-- img, form .postContent .video-- video{
     overflow: unset!important;
 }
 .navbar_extended{
-    height: 0px;
-    overflow: hidden;
-    transition: all .2s;
+    display: none;
     border-top: 1px solid transparent;
 }
 .navbar_extended_show{
-    height: 176px;
-    border-top: 1px solid rgba(255,255,255,.5)!important;
+    display: block;
+    border-top: 1px solid rgba(255,255,255,.2)!important;
 }
 hr{
     height: 1px;
@@ -2015,7 +2012,7 @@ input[type=checkbox]::before{
 }
 @keyframes navbar_element_bubble{
     from{
-        transform: translateX(45px);
+        transform: translateX(16px);
     }
     to{
         transform: translateX(0px);
@@ -2033,7 +2030,7 @@ input[type=checkbox]::before{
     overflow: auto;
     border-radius: 4px;
     color:#000;
-    animation: navbar_element_bubble .2s;
+    animation: fadeIn .2s;
 }
 .navbar_element_bubble .input{
     width: calc(100% - 20px);
@@ -2285,7 +2282,7 @@ footer .copl{
 }
 @keyframes navbar_element_bubble_top {
     from{
-        transform: translateY(32px);
+        transform: translateY(-16px);
         opacity: 0;
     }
     to{
@@ -2627,6 +2624,8 @@ footer .copl{
     display: flex;
     align-items: center;
     justify-content: center;
+    color: #13b552;
+    border: 2px solid #13b552;
 }
 .select_search.select_search_selected{
     color: #fff!important;
@@ -2696,7 +2695,6 @@ footer .copl{
     width: -webkit-fill-available;
     width: fill-available;
     width: -moz-available;
-    height: calc(100% - 35px);
     resize: none;
 }
 .postQuestion{
@@ -3208,6 +3206,7 @@ footer .copl{
     border-radius: 8px;
     padding: 10px;
     overflow: hidden;
+    color:#fff;
     max-width: 300px;
     border-bottom-left-radius: 0px;
 }
@@ -3445,3 +3444,4 @@ footer .copl{
 .new_btn_loader .loader{
     transform: scale(.5);
 }
+.select_search.select_search_selected{background-color: #13b552;}

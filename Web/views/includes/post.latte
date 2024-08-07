@@ -1,4 +1,4 @@
-<div class="post" id="post{$post->zhabURLID}" data-realid="{$post->zhabID}">
+<div class="post" id="post{(isset($mini_type) ? '' : $post->zhabURLID)}" data-realid="{$post->zhabID}">
     <div class="postAuthor">
         <a href="/profile/{$post->nickname}" class="postAuthorProfileImage">
             <img src="{$post->profileImage}" alt="Изображение">
@@ -22,6 +22,7 @@
                 {$language['reposted']}
             </span>
         {/if}
+        {if !isset($mini_type)}
         <div class="postAuthorMoreActions">
             <div class="postAuthorMoreActionsBtn" id="DropdownListener" data-dropdown="#dropdown_{$post->zhabURLID}">
                 <i class='bx bx-dots-horizontal-rounded'></i>
@@ -60,6 +61,7 @@
                 {/if}
             </div>
         </div>
+        {/if}
     </div>
     {if $post->zhabRepliedTo != ''}
     {(new Web\Models\Posts())->get_repost($post->zhabURLID)|noescape}
@@ -95,13 +97,14 @@
             {$language['show_more']}
         </div>
     </div>
-    {if !empty($post->zhabTags)}
+    {if !empty($post->zhabTags) && !isset($mini_type)}
     <div class="postTags">
         {(new Web\Models\Posts())->show_tags_html((isset($user) ? $user->token : ""), $post->zhabTags)|noescape}
     </div>
     {/if}
     <div class="postActions">
         {if isset($user)}
+        {if !isset($mini_type)}
         <div class="postActionsLikes" id="Likes{$post->zhabURLID}" onclick="zhabbler.change_likes_counter_to_close({$post->zhabURLID});$('#responds' + {$post->zhabURLID}).toggle();$('#responds' + {$post->zhabURLID} + ` .postRespondsTabLikes`).click();">
             <div id="likesCounter">
                 <b>{$post->zhabLikes}</b> {$language['liked']}
@@ -111,6 +114,13 @@
                 {$language['close']}
             </div>
         </div>
+        {else}
+        <div class="postActionsLikes" onclick="goToPage('/zhab/' + {$post->zhabURLID});">
+            <div>
+                <b>{$post->zhabLikes}</b> {$language['liked']}
+            </div>
+        </div>
+        {/if}
         {else}
         <div class="postActionsLikes" onclick="goToPage('/login');">
             <div id="likesCounter">
@@ -123,9 +133,15 @@
                 <i class='bx bx-share'></i>
             </div>
             {if isset($user)}
+            {if isset($mini_type)}
+            <div class="postAction" id="LabelEventer" onclick="goToPage('/zhab/' + {$post->zhabURLID});" data-label="{$language['responds']}">
+                <i class='bx bx-comment'></i>
+            </div>
+            {else}
             <div class="postAction" id="LabelEventer" onclick="zhabbler.comments({$post->zhabURLID});" data-label="{$language['responds']}">
                 <i class='bx bx-comment'></i>
             </div>
+            {/if}
             {if $post->zhabWhoCanRepost != 1}
             <div class="postAction" id="LabelEventer" onclick="zhabbler.repost({$post->zhabURLID})" data-label="{$language['repost']}">
                 <i class='bx bx-repost'></i>
@@ -153,6 +169,7 @@
             {/if}
         </div>
     </div>
+    {if !isset($mini_type)}
     <div class="postResponds" id="responds{$post->zhabURLID}" style="display: none;">
         <div class="postRespondsTabs">
             <div class="postRespondsTab postRespondsTabActive postRespondsTabComment" id="showSection" onclick="zhabbler.comments({$post->zhabURLID}, false);" data-postid="{$post->zhabURLID}" data-section="commentsSection">
@@ -211,5 +228,6 @@
             </div>
         </div>
     </div>
+    {/if}
 </div>
 <script>checkPostsAttachments();</script>

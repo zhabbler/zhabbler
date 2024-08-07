@@ -22,7 +22,7 @@ class Posts
         	$this->user = (new User())->get_user_by_token((new Sessions())->get_session($_COOKIE['zhabbler_session'])->sessionToken);
     }
 
-    public function get_posts_by_user(int $lastID, string $nickname, string $token): array
+    public function get_posts_by_user(int $lastID, string $nickname, string $token): void
     {
         $profile = (new User())->get_user_by_nickname($nickname);
         if($lastID != 0){
@@ -44,7 +44,7 @@ class Posts
         die($output);
     }
 
-    public function get_posts_by_user_json(int $lastID, string $nickname, string $token): array
+    public function get_posts_by_user_json(int $lastID, string $nickname, string $token): void
     {
         header('Content-Type: application/json');
         $profile = (new User())->get_user_by_nickname($nickname);
@@ -78,7 +78,7 @@ class Posts
         return ($profile->hideLiked != 1 ? $GLOBALS['db']->query("SELECT * FROM zhabs LEFT JOIN users ON userID = zhabBy LEFT JOIN likes ON likeTo = zhabURLID WHERE likeBy = ? AND reason = ''", $profile->userID)->getRowCount() : 0);
     }
 
-    public function get_liked_posts(int $lastID, string $nickname, string $token): array
+    public function get_liked_posts(int $lastID, string $nickname, string $token): void
     {
         $user = (new User())->get_user_by_token($token);
         $profile = (new User())->get_user_by_nickname($nickname);
@@ -144,7 +144,7 @@ class Posts
         }
     }
     
-    public function search_posts(int $lastID, string $query, string $token): array
+    public function search_posts(int $lastID, string $query, string $token): void
     {
         $user = (new User())->get_user_by_token($token);
         $query = (new Strings())->convert($query);
@@ -182,7 +182,7 @@ class Posts
         return $GLOBALS['db']->query("SELECT * FROM zhabs WHERE zhabContent LIKE ?", "%$query%")->getRowCount();
     }
 
-    public function get_posts_by_followings(int $lastID, string $token): array
+    public function get_posts_by_followings(int $lastID, string $token): void
     {
         $user = (new User())->get_user_by_token($token);
         if($lastID != 0){
@@ -198,6 +198,24 @@ class Posts
         die($output);
     }
 
+    public function popular_today_post(string $token): string
+    {
+        if($GLOBALS['config']['application']['unlogged_posts_view'] == 0 && empty($token))
+            return "";
+        if(!empty($token))
+            $user = (new User())->get_user_by_token($token);
+        if($GLOBALS['db']->query("SELECT * FROM zhabs LEFT JOIN users ON userID = zhabBy WHERE zhabUploaded = ? AND zhabLikes > 1 ORDER BY zhabLikes DESC LIMIT 1", date("Y-m-d"))->getRowCount() != 0){
+            $post = $GLOBALS['db']->fetch("SELECT * FROM zhabs LEFT JOIN users ON userID = zhabBy WHERE zhabUploaded = ? ORDER BY zhabLikes DESC LIMIT 1", date("Y-m-d"));
+            $post->zhabContent = strip_tags($post->zhabContent, ["p", "h1", "h2", "h3", "h4", "h5", "h6", "img", "video", "span", "a", "b", "i", "u"]);
+            $params = ["post" => $post, "language" => $this->locale, "mini_type" => true];
+            if(isset($user))
+                $params += ["user" => $user];
+            return $this->latte->renderToString($_SERVER['DOCUMENT_ROOT']."/Web/views/includes/post.latte", $params);
+        }else{
+            return "";
+        }
+    }
+
     public function get_posts_by_followings_count(string $token){
         $user = (new User())->get_user_by_token($token);
         return $GLOBALS['db']->query("SELECT * FROM zhabs LEFT JOIN users ON userID = zhabBy LEFT JOIN follows ON followTo = zhabBy WHERE followBy = ? AND reason = '' ORDER BY zhabID", $user->userID)->getRowCount();
@@ -208,6 +226,10 @@ class Posts
         $user = (new User())->get_user_by_token($token);
         $post = $this->get_post($id);
         if($post->zhabBy == $user->userID || $user->admin == 1){
+            $srcs = (new Strings())->get_imgs_video_src($post->zhabContent);
+            foreach($srcs as $src){
+                unlink($_SERVER['DOCUMENT_ROOT'].'/Web/public'.parse_url($src)['path']);
+            }
             $GLOBALS['db']->query("DELETE FROM comments WHERE commentTo = ?", $id);
             $GLOBALS['db']->query("DELETE FROM likes WHERE likeTo = ?", $id);
             $GLOBALS['db']->query("DELETE FROM zhabs WHERE zhabURLID = ?", $id);
@@ -448,6 +470,7 @@ class Posts
                 $result = ["liked" => true];
             }
         }
+        $result += ["likes_count" => $this->get_post($id)->zhabLikes];
         die(json_encode($result));
     }
 

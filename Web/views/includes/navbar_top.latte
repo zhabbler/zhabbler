@@ -3,7 +3,9 @@
     <span>{$language['email_top_warn']}</span>
 </div>
 {/if}
-{(isset($user) ? (isset($profile) ? (new Web\Models\Personalization())->loadup($profile->userID) : (new Web\Models\Personalization())->loadup($user->userID)) : "")|noescape}
+{if isset($user) && !empty((new Web\Models\Personalization())->get_personalization_config($user->userID)->personalizationPallete)}
+<link rel="stylesheet" href="/static/css/pallete/{(new Web\Models\Personalization())->get_personalization_config($user->userID)->personalizationPallete}_p.css">
+{/if}
 <nav class="mobile_nav">
     <a href="/" class="mobile_nav_element">
         <i class='bx bxs-home'></i>

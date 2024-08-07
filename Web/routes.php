@@ -62,11 +62,11 @@ $Router->add("POST", "/api/Account/login", "", function(){
 });
 $Router->add("POST", "/api/Files/upload_image", "", function(){
 	if(isset($_COOKIE['zhabbler_session']))
-		(new Utilities\Files())->upload_image($_FILES['image']);
+		(new Utilities\Files())->upload_image($_FILES['image'], true);
 });
 $Router->add("POST", "/api/Files/upload_video", "", function(){
 	if(isset($_COOKIE['zhabbler_session']))
-		(new Utilities\Files())->upload_video($_FILES['video']);
+		(new Utilities\Files())->upload_video($_FILES['video'], true);
 });
 $Router->add("POST", "/api/Account/change_profile_image", "", function(){
 	if(isset($_COOKIE['zhabbler_session']))
@@ -145,9 +145,9 @@ $Router->add("POST", "/api/Personalization/change_navbar_style", "", function(){
 	if(isset($_COOKIE['zhabbler_session']))
 		(new Web\Models\Personalization())->change_navbar_style($GLOBALS['session']->sessionToken, (int)$_POST['which']);
 });
-$Router->add("POST", "/api/Personalization/update_personalization_config", "", function(){
+$Router->add("POST", "/api/Personalization/change_color_pallete", "", function(){
 	if(isset($_COOKIE['zhabbler_session']))
-		(new Web\Models\Personalization())->add_personalization_config($GLOBALS['session']->sessionToken, 1, $_POST['accent_color'], $_POST['background_color'], $_POST['background_url']);
+		(new Web\Models\Personalization())->change_color_pallete($GLOBALS['session']->sessionToken, $_POST['color_pallete']);
 });
 $Router->add("POST", "/api/Posts/get_reposts", "", function(){
 	(new Web\Models\Posts())->get_reposts($_POST['id']);

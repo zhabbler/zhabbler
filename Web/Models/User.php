@@ -99,6 +99,11 @@ class User
         return ($GLOBALS['db']->query("SELECT * FROM users WHERE nickname = ? AND reason = ''", $nickname)->getRowCount() > 0 ? true : false);
     }
 
+    public function check_user_existence_by_token(string $token): bool
+    {
+        return ($GLOBALS['db']->query("SELECT * FROM users WHERE token = ? AND reason = ''", $token)->getRowCount() > 0 ? true : false);
+    }
+
     public function report(string $token, string $to): void
     {
         $user = $this->get_user_by_token($token);
@@ -416,7 +421,7 @@ class User
                         "joined" => date("Y-m-d"),
                         "activated" => ($GLOBALS['config']['application']['email_verification'] == 1 ? 0 : 1)
                     ]);
-                    (new Personalization())->add_personalization_config($token, false, "#13b552", "#00391e");
+                    (new Personalization())->add_personalization_config($token);
                     $user = $GLOBALS['db']->fetch("SELECT * FROM users WHERE token = ?", $token);
                     if($user->activated == 1){
                         if(!$ignore_config){

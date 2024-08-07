@@ -60,3 +60,10 @@ $(document).ready(function(){
         return false;
     })
 })
+window.addEventListener('scroll', function() {
+    var scrolledTo = window.scrollY + window.innerHeight;
+    var isReachBottom = document.body.scrollHeight === Math.round(scrolledTo);
+    if(isReachBottom){
+        $(".load_more_btn_profile_following").click();
+    }
+});

@@ -96,6 +96,14 @@
         </div>
     </div>
     {/if}
+    {if (new Web\Models\Posts())->popular_today_post((isset($user) ? $user->token : "")) != ''}
+    <div>
+        <h1 class="h1tp">
+            {$language['popular_today']}
+        </h1>
+        {(new Web\Models\Posts())->popular_today_post((isset($user) ? $user->token : ""))|noescape}
+    </div>
+    {/if}
     <footer>
         <div class="copl">
             <span>

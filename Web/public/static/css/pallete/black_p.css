@@ -1,0 +1,182 @@
+body, .tabs, .navbar_top{
+    background: #000000!important;
+}
+.button_gray{
+    background-color: #333!important;
+    color: #999!important;
+}
+.post{
+    background: #222!important;
+    color: #fff!important;
+}
+.post .postAuthor:hover{
+    background: #333!important;
+}
+.postAuthorPointsToAuthor, .dropdown_section_part input, .dropdown_section_part select, .postRespondsRespondItself{
+    color: #fff!important;
+}
+.dropdown, .dropdown .dropdown_element{
+    background: #444!important;
+}
+.dropdown .dropdown_element:hover{
+    background-color: #333!important;
+}
+.write_post_tags .write_post_tag{
+    background-color: #333!important;
+    color: #999!important;
+}
+.write_post_tags .write_post_tag:hover{
+    color: #aaa!important;
+}
+.postContent[contentEditable=true]:empty:not(:focus):before, .postContent[contentEditable=true] *:empty:not(:focus):not(i):before{
+    color: rgba(255,255,255,.5)!important;
+}
+.s_media_selections{
+    background-color: #444!important;
+    border-top: 2px dashed #666!important;
+    border-bottom: 2px dashed #666!important;
+}
+.s_media_selection{
+    color:#999!important;
+}
+.s_media_selection:hover{
+    color:#ccc!important;
+}
+.postActionsLikes{
+    border: 1px solid #666!important;
+    color: #999!important;
+}
+.postActionsLikes b{
+    color: #fff!important;
+}
+.postActionsLikesOpenedResponds {
+    background-color: #666!important;
+    color:#fff!important;
+}
+.postResponds{
+    border-top: 1px solid #444!important;
+}
+.postRespondsTabs{
+    border-bottom: 1px solid #444!important;
+}
+.postRespondsRespondTextarea{
+    background-color: #333!important;
+    color:#fff!important;
+}
+.postRespondsRespondTextarea textarea{
+    color:#fff!important;
+}
+.postRespondsRespondItself a{
+    color:#fff!important;
+}
+.profile_main{
+    background-color: #333!important;
+    color:#fff!important;
+}
+.profile_main_container{
+    background-color: #222!important;
+}
+.profile_main_container .post{
+    border: 1px solid #333!important;
+}
+.ariaLabelVisible{
+    background-color: rgba(255,255,255,.5)!important;
+    color:#000!important;
+}
+.ariaLabelVisible::after{
+    border-top: 8px solid rgba(255,255,255,.5)!important;
+}
+.navbar_element_bubble{
+    background-color: #333!important;
+    color:#fff!important;
+}
+.navbar_element_bubble_header{
+    border-bottom: 1px solid #666;
+}
+.input{
+    background-color: #333;
+    border: 1px solid #666;
+    color:#fff;
+}
+.input:focus::placeholder{
+    color:rgba(255, 255, 255, .5);
+}
+.settings_main{
+    background-color: #222;
+    color: #fff;
+}
+.profile_main_info_editable input:read-only, .profile_main_info_editable textarea:read-only{
+    background-color: #222;
+    color:#fff;
+}
+.choose_navbar_st{
+    background-color: #444;
+    border: 1px solid #666;
+}
+.choose_navbar_st:hover{
+    border: 1px solid #555;
+}
+.navbar_settings_styles input[type="radio"]:checked+label{
+    background-color: #778ea6;
+    border: 1px solid #306bab;
+}
+.navbar_element_bubble_pseudo_elem{
+    color:#ccc;
+}
+.navbar_element_bubble_pseudo_elem b{
+    color: #fff;
+}
+.navbar_element_bubble_title{
+    background-color: #555;
+    color: #999;
+}
+.profile_main_pics_pfp{
+    background-color: #222!important;
+}
+.tags_followed_pg .tags_followed_pg_itself .tag_pg_add{
+    background-color: rgba(255, 255, 255, .5);
+}
+.popup_container{
+    background-color: #333;
+    color:#fff;
+}
+.popup_container_bottom_actions{
+    border-top: 1px solid #555;
+}
+.input_tags{
+    background-image: none!important;
+    padding-left: 10px;
+}
+.input_tags_searched{
+    background-color: #333;
+    box-shadow: 0 0 10px 0 rgba(255, 255, 255, .2);
+}
+.input_tags_searched .input_tags_searched_tag .tag_ii{
+    color: #fff;
+}
+.popup_tags .popup_tag{
+    color: #ccc;
+    border: 1px solid #ccc;
+}
+.main_messages_im .main_messages_im_person, .main_messages_write_message{
+    background-color: #000;
+}
+.user_row{
+    color:#fff;
+}
+#postEditor .post .postAuthor{
+    border-bottom: 1px solid #444;
+}
+.postAuthorReposted{
+    border-top: 1px solid #444;
+}
+hr{
+    background-color: rgba(255, 255, 255, .1);
+}
+.settings_section{
+    border-bottom: 1px solid rgba(255, 255, 255, .2);
+}
+.popupContentPseudoInput{
+    background-color: #232323!important;
+    color:#fff;
+}

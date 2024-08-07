@@ -7,7 +7,7 @@ class Files
 	{
 		$result = ["error" => NULL, "url" => NULL];
 		if(!empty($file['name'][0])){
-			if($file['size'] > 5242880){
+			if($file['size'] > 1073741824){
 				$result = ["error" => "File size is too big", "url" => NULL];
 			}else if(!exif_imagetype($file['tmp_name'])){
 				$result = ["error" => "File is not an image", "url" => NULL];

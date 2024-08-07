@@ -490,6 +490,7 @@ class Zhabbler{
         }
         $.post("/api/Posts/delete_post", {id:id}, function(){
             $(`#post${id}`).remove();
+            zhabbler.addSuccess(locale['post_deleted']);
         });
     }
     replyComment(to, by){
@@ -722,8 +723,10 @@ class Zhabbler{
     showExtended(){
         if($(".navbar_extended").hasClass("navbar_extended_show")){
             $(".navbar_extended").removeClass("navbar_extended_show");
+            $(".navbar_element_right_el").css("rotate", "");
         }else{
             $(".navbar_extended").addClass("navbar_extended_show");
+            $(".navbar_element_right_el").css("rotate", "180deg");
         }
     }
     loadPreloaders(){
@@ -737,7 +740,7 @@ class Zhabbler{
         if($(".errors").length == 0){
             $("#app").prepend("<div class='errors'></div>");
         }
-        $(".errors").append(`<div class="error">${val}</div>`);
+        $(".errors").append(`<div class="error"><i class='bx bxs-error-circle'></i><span>${val}</span></div>`);
         setTimeout(() => {
             $(".error:first").fadeOut(200);
             setTimeout(() => {
@@ -752,7 +755,7 @@ class Zhabbler{
         if($(".errors").length == 0){
             $("#app").prepend("<div class='errors'></div>");
         }
-        $(".errors").append(`<div class="error error-warn">${val}</div>`);
+        $(".errors").append(`<div class="error error-warn"><i class='bx bxs-error'></i><span>${val}</span></div>`);
         setTimeout(() => {
             $(".error:first").fadeOut(200);
             setTimeout(() => {
@@ -767,7 +770,7 @@ class Zhabbler{
         if($(".errors").length == 0){
             $("#app").prepend("<div class='errors'></div>");
         }
-        $(".errors").append(`<div class="error error-success">${val}</div>`);
+        $(".errors").append(`<div class="error error-success"><i class='bx bxs-check-circle' ></i><span>${val}</span></div>`);
         setTimeout(() => {
             $(".error:first").fadeOut(200);
             setTimeout(() => {
@@ -783,18 +786,19 @@ class Zhabbler{
             if(data.liked == true){
                 element.find("i").removeClass("bx-heart");
                 element.find("i").addClass("bxs-heart");
-                $(`#Likes${id} b`).html(Number($(`#Likes${id} b`).text()) + 1);
+                $(`#Likes${id} b`).html(data.likes_count);
             }else{
                 element.find("i").addClass("bx-heart");
                 element.find("i").removeClass("bxs-heart");
-                $(`#Likes${id} b`).html(Number($(`#Likes${id} b`).text()) - 1);
+                $(`#Likes${id} b`).html(data.likes_count);
             }
         })
     }
     addVideoSelection(){
-        if($(".s_media_selections").length == 0){
+        if($(".s_media_selections").length == 0 && $("#pC_sS .postContent video").length < 10){
             if($(".video-- .loader").length == 0){
                 $("#pC_sS").append(`<div class="s_media_selections" contenteditable="false">
+                    <div style="display: flex;align-items: center;justify-content: center;height:155px;">
             <label class="s_media_selection">
                 <div>
                     <i class='bx bx-video-plus' ></i>
@@ -816,6 +820,10 @@ class Zhabbler{
                     </span>
                 </div>
             </div>
+            </div>
+            <p style="text-align:center;font-size:14px;color:#666;">
+                ${locale['video_limit']}
+            </p>
         </div>`);
             }else{
                 zhabbler.addError(locale["photo_loader_error"]);
@@ -823,9 +831,10 @@ class Zhabbler{
         }
     }
     addPhotoSelection(){
-        if($(".s_media_selections").length == 0){
+        if($(".s_media_selections").length == 0 && $("#pC_sS .postContent img").length < 15){
             if($(".photo-- .loader").length == 0){
                 $("#pC_sS").append(`<div class="s_media_selections" contenteditable="false">
+                    <div style="display: flex;align-items: center;justify-content: center;height:155px;">
             <label class="s_media_selection">
                 <div>
                     <i class='bx bx-image-add' ></i>
@@ -847,6 +856,10 @@ class Zhabbler{
                     </span>
                 </div>
             </div>
+            </div>
+            <p style="text-align:center;font-size:14px;color:#666;">
+                ${locale['photo_limit']}
+            </p>
         </div>`);
             }else{
                 zhabbler.addError(locale["photo_loader_error"]);
@@ -1022,25 +1035,31 @@ const cookie = new Cookie();
 window.addEventListener('popstate', function (event) {
     console.log(`location: ${document.location}, state: ${JSON.stringify(history.state)}`,);
     togo = `${document.location} #app`;
+    if($('.errors').length > 0){
+        $('.errors .error').css("animation", "none");
+        errors = $('.errors').html();
+    }
     $('html,body').scrollTop(0);
     $("body").load(togo, function(){
         zhabbler.loadPreloaders();
-        opened_msgs.forEach(function(element){
-            zhabbler.openIM(element, true);
-        });
+        $("#app").prepend(`<div class='errors'>${errors}</div>`);
+        errors = '';
     });
 }, false);
 const goToPage = (href) => {
     if(!isValidUrl(href)){
         console.log(`location: ${document.location}, state: ${JSON.stringify(history.state)}`,);
         togo = `${href} #app`;
+        if($('.errors').length > 0){
+            $('.errors .error').css("animation", "none");
+            errors = $('.errors').html();
+        }
         $('html,body').scrollTop(0);
         $("body").load(togo, function(){
             window.history.pushState({page:page_id++}, 'Жабблер', href);
             zhabbler.loadPreloaders();
-            opened_msgs.forEach(function(element){
-                zhabbler.openIM(element, true);
-            });
+            $("#app").prepend(`<div class='errors'>${errors}</div>`);
+            errors = '';
         });
     }else{
         window.location.href = href;
@@ -1067,6 +1086,9 @@ const isValidUrl = (urlString) => {
     return !!urlPattern.test(urlString);
 }
 const checkPostsAttachments = () => {
+    $("img").each(function(){
+        $(this).attr('loading', 'lazy');
+    })
     $(".post .postContent img").each(function(){
         elem = $(this);
         if(typeof elem.attr("src") !== 'undefined' && elem.attr("src") !== false){
