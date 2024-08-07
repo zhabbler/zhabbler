@@ -180,3 +180,7 @@ hr{
     background-color: #232323!important;
     color:#fff;
 }
+.mobile_nav{
+    background: #000;
+    border-top: 1px solid rgba(255, 255, 255, .2);
+}
