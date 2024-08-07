@@ -86,7 +86,7 @@
             </div>
         </div>
     {/if}
-    <div class="postContent" id="realPostContent">
+    <div class="postContent" id="realPostContent" style="{(isset($mini_type) ? 'max-height:200px;' : '')|noescape}">
         {if $post->zhabContains == 1}
         <div class="postContentWarning" onclick="$(this).remove();">
             {$language['spoilers_warning_post']}
