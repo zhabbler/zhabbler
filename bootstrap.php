@@ -10,8 +10,11 @@ function autoload(): void
         require $file;
     }
     $files = glob($_SERVER['DOCUMENT_ROOT'].(str_starts_with($_SERVER['REQUEST_URI'], "/developer/api/") ? "/ZhabblerAPI/*.php" : "/Web/Models/*.php"));
+    require $_SERVER['DOCUMENT_ROOT']."/ZhabblerAPI/RateLimit.php";
     foreach ($files as $file) {
-        require $file;
+        if($file != $_SERVER['DOCUMENT_ROOT']."/ZhabblerAPI/RateLimit.php"){
+            require $file;
+        }
     }
 }
 
