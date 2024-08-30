@@ -1,0 +1,104 @@
+.mobile_nav, .popupContentPseudoInput, .input_tags_searched, .s_media_selections, .navbar_element_bubble_title, .main_messages_convos .main_messages_convo.main_messages_convo_active, .popup_container, .main_messages_im .main_messages_im_person, .main_messages_write_message, .popup-post-uie .popup-post-uie-btn .popup-post-uie-btn-round, .navbar_element_bubble, .profile_main, .profile_main_container, .dropdown, .error-success, .profile_main_info_editable .nickname_input, .profile_main_info_editable .biography_input, .profile_main_info_editable input:read-only, .profile_main_info_editable textarea:read-only, .profile_main_info_editable .h2_input, .profile_main_pics_pfp, input[type=checkbox]:checked, body, .tabs, .navbar_top, .post, .postRespondsRespondTextarea, .dropdown .dropdown_element, .button, .write_post_tags .write_post_tag, .settings_main, .input, postAuthorProfileImageReposted{
+    background: #8ACE00!important;
+}
+.main_messages_im_msgs .main_messages_im_msg .main_messages_im_msg_itself{
+    background: #8ACE00;
+    color:#000;
+}
+.s_media_selections{
+    border-top: 2px dashed #000;
+    border-bottom: 2px dashed #000;
+}
+*, .navbar_logotype, .navbar_top_logotype{
+    font-family: "Arial Narrow", Arial, sans-serif!important;
+    font-stretch: condensed!important;
+}
+#app{color:#000;}
+.navbar_logotype, .navbar_top_logotype{
+    font-weight: 100;
+    color:#000;
+}
+.navbar_logotype:hover, .navbar_top_logotype:hover{
+    background: #000;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+.tabs .tab, .alert-msgs-con{
+    color:rgba(0,0,0,.5)!important;
+}
+.tabs .tab_active{
+    border-bottom: 2px solid #000!important;
+    color:#000!important;
+}
+.write_post_tag, .postTags a, .nav_options_whoToFollow_profile .nav_options_whoToFollow_profile_information b, .verifed_icon, .button, a, .post_usr_interact_el_icon, .error-success, .postTags a.active_tag_s, .navbar_element, .navbar_element_profile .navbar_element_title, .popup-post-uie-btn-txt, .tools_P_tool i, .navbar_element_bubble_title, .navbar_top_container_element, .navbar_top_container_element:hover, .input_tags_searched .input_tags_searched_tag{
+    color:#000!important;
+}
+.post, .postRespondsRespondTextarea, .button, .write_post_tags .write_post_tag, .input, .profile_main_container .post, .popup_container, .popup-post-uie-btn-round{
+    border: 1px solid #000;
+}
+.post .postAuthor:hover{
+    background-color: rgba(0,0,0,.05);
+}
+.postActionsLikes{
+    border: 1px solid rgba(0,0,0,.5);
+    color:#000!important;
+}
+.postActionsLikesOpenedResponds{
+    background-color: transparent;
+}
+.bubble_nve_warning, .profile_no_posts, .postAuthorMoreActionsBtn, .popup_choose_alert, .tags_followed_pg_btn, .settings_main_subtitle, .settings_main_title, .main_messages_convos .main_messages_convo.main_messages_convo_active .main_messages_convo_info, .main_messages_convos .main_messages_convo .main_messages_convo_info b, .postAction, .postRespondsTab, .post_smth_is_empty, .no_follows, .nav_options_tab small, .postAuthorPointsToRepostGray, .main_messages_write_message .main_messages_write_message_textarea textarea, footer .copl, .main_messages_convos .main_messages_convos_top .main_messages_convos_elements .main_messages_convos_element:hover, .main_messages_write_message_element:hover{
+    color:#000;
+}
+.navbar_top, .settings_section, .main_messages_convos .main_messages_convo, .main_messages_im .main_messages_im_person, .postRespondsTabs, #postEditor .post .postAuthor, .tabs, .profile_tabs, .profile_tab_active, .navbar_element_bubble_header, .main_messages_convos .main_messages_convos_top{
+    border-bottom: 1px solid #000!important;
+}
+.postResponds, .postAuthorReposted, .main_messages_write_message, .popup_container_bottom_actions, .mobile_nav{
+    border-top: 1px solid #000!important;
+}
+.main_messages_convos{
+    border-right: 1px solid #000!important;
+}
+hr{
+    background-color: rgba(0, 0, 0, .5);
+}
+.lang_choose:hover{
+    background-color: rgba(0,0,0,.2);
+}
+.popup{
+    background-color: rgba(138, 206, 0, .5);
+}
+.loader .loader_part{
+    background-color: #000;
+}
+.nav_options_searchbar input, .input_search, .inbox_msg_empty_here{
+    background-color: rgba(0, 0, 0, .5);
+}
+.nav_options_searchbar input:focus, .input_search:focus{
+    border: 2px solid #000;
+}
+input[type=checkbox], .error-success, .profile_main, .settings_main{
+    border: 1px solid #000;
+}
+.main, .main_messages_write_message .main_messages_write_message_textarea{
+    border-left: 1px solid #000;
+    border-right: 1px solid #000;
+}
+.nav_options_whoToFollow_profile, .main_messages_im_msgs .main_messages_im_msg #datetimestamp, .main_messages_convos .main_messages_convos_top .main_messages_convos_elements .main_messages_convos_element, .main_messages_write_message_element, .main_messages_convos .main_messages_convo .main_messages_convo_info{
+    color:rgba(0,0,0,.5);
+}
+.input_tags{
+    padding-left: 10px!important;
+}
+.add_tags_popup .button, .input_tags_searched{
+    border: 1px solid #000!important;
+}
+.tags_followed_pg .tags_followed_pg_itself .tag_pg{
+    background: rgba(0, 0, 0, .2);
+}
+.postQuestionItself{
+    background-color: #abff00!important;
+}
+.postQuestionItself::after{
+    border-left: 12px solid #abff00;
+}

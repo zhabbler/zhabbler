@@ -19,7 +19,7 @@ class RateLimit{
 		$counter = $this->get_rate_limit_counter($token);
 		$this->database->query("UPDATE users SET rateLimitCounter = rateLimitCounter + 1 WHERE token = ?", $token);
 		if($counter >= 128){
-			$this->database->query("UPDATE users SET reason = 'You have exceeded the rate limit of 64!' WHERE token = ?", $token);
+			$this->database->query("UPDATE users SET reason = 'You have exceeded the rate limit of 128!' WHERE token = ?", $token);
 		}
 	}
 }

@@ -3,6 +3,9 @@ $(".zhabblerPlayer").ready(function(){
     $(document).on("click", "#PlayBtn", function(){
         $(this).attr("id", "PauseBtn");
         $(`.zhabblerPlayer[data-player='${$(this).data("play")}'] video`).get(0).play();
+        if($(`.zhabblerPlayer[data-player='${$(this).data("play")}'] .zhabblerPlayerBigPlayBtn`).length > 0){
+            $(`.zhabblerPlayer[data-player='${$(this).data("play")}'] .zhabblerPlayerBigPlayBtn`).remove();
+        }
     });
     $(document).on("click", "#PauseBtn", function(){
         $(this).attr("id", "PlayBtn");

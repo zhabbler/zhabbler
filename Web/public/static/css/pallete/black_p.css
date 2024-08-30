@@ -133,7 +133,7 @@ body, .tabs, .navbar_top{
 .profile_main_pics_pfp{
     background-color: #222!important;
 }
-.tags_followed_pg .tags_followed_pg_itself .tag_pg_add{
+.tags_followed_pg .tags_followed_pg_itself .tag_pg_add, .tags_followed_pg .tags_followed_pg_itself .tag_pg{
     background-color: rgba(255, 255, 255, .5);
 }
 .popup_container{
@@ -183,4 +183,13 @@ hr{
 .mobile_nav{
     background: #000;
     border-top: 1px solid rgba(255, 255, 255, .2);
+}
+.postQuestionItself{
+    background-color: #333;
+}
+.postQuestionItselfAuthor{
+    color: #999;
+}
+.postQuestionItself::after {
+    border-left: 12px solid #333;
 }

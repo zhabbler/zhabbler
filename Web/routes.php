@@ -1,7 +1,13 @@
 <?php
+$Router = (new Utilities\Router());
+// Public APIs
+$Router->add("ANY", "/developer/api/{class}/{func}", "ZhabblerAPIPresenter");
+$Router->add("GET", "/developer/api/", "", function(){
+    header("Location: https://zhabbler.github.io/docs/");
+});
+
 if(isset($_COOKIE['zhabbler_session']))
 	$GLOBALS['session'] = (new Web\Models\Sessions())->get_session($_COOKIE['zhabbler_session']);
-$Router = (new Utilities\Router());
 $Router->add("GET", "/", "IndexPresenter");
 $Router->add("GET", "/register", "RegisterPresenter");
 $Router->add("GET", "/login", "LoginPresenter");
@@ -276,8 +282,6 @@ $Router->add("POST", "/api/Account/password_reset_change", "", function(){
 	if(!isset($_COOKIE['zhabbler_session']))
 		(new Web\Models\User())->password_reset_change($_POST['code'], $_POST['password'], $_POST['repassword']);
 });
-// Public APIs
-$Router->add("ANY", "/developer/api/{func}", "PublicAPIPresenter");
 
 // 404
 $Router->add("ANY", "/404", "NotFoundPresenter");

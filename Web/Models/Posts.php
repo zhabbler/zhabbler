@@ -38,7 +38,7 @@ class Posts
                 $params += ["user" => $user];
             }
             $params += ["post" => $post];
-            $post->zhabContent = strip_tags($post->zhabContent, ["p", "h1", "h2", "h3", "h4", "h5", "h6", "img", "video", "span", "a", "b", "i", "u"]);
+            $post->zhabContent = strip_tags($post->zhabContent, ["p", "h1", "h2", "h3", "h4", "h5", "h6", "img", "video", "span", "a", "b", "i", "u", "br"]);
             $output .= $this->latte->renderToString($_SERVER['DOCUMENT_ROOT']."/Web/views/includes/post.latte", $params);
         }
         die($output);
@@ -60,7 +60,7 @@ class Posts
         }
         $output = [];
         foreach($posts as $post){
-            $post->zhabContent = strip_tags($post->zhabContent, ["p", "h1", "h2", "h3", "h4", "h5", "h6", "img", "video", "span", "a", "b", "i", "u"]);
+            $post->zhabContent = strip_tags($post->zhabContent, ["p", "h1", "h2", "h3", "h4", "h5", "h6", "img", "video", "span", "a", "b", "i", "u", "br"]);
             $output[] = ["postID" => $post->zhabID, "postBy" => $post->nickname, "postContent" => $post->zhabContent, "liked" => $post->zhabLikes, "uploaded" => (string)$post->zhabUploaded];
         }
         die(json_encode($output));
@@ -90,7 +90,7 @@ class Posts
         $output = "";
         if($user->userID == $profile->userID || $profile->hideLiked != 1){
             foreach($posts as $post){
-                $post->zhabContent = strip_tags($post->zhabContent, ["p", "h1", "h2", "h3", "h4", "h5", "h6", "img", "video", "span", "a", "b", "i", "u"]);
+                $post->zhabContent = strip_tags($post->zhabContent, ["p", "h1", "h2", "h3", "h4", "h5", "h6", "img", "video", "span", "a", "b", "i", "u", "br"]);
                 $output .= $this->latte->renderToString($_SERVER['DOCUMENT_ROOT']."/Web/views/includes/post.latte", ["post" => $post, "user" => $user, "language" => $this->locale]);
             }
         }
@@ -137,7 +137,7 @@ class Posts
             }
             $output = "";
             foreach($posts as $post){
-                $post->zhabContent = strip_tags($post->zhabContent, ["p", "h1", "h2", "h3", "h4", "h5", "h6", "img", "video", "span", "a", "b", "i", "u"]);
+                $post->zhabContent = strip_tags($post->zhabContent, ["p", "h1", "h2", "h3", "h4", "h5", "h6", "img", "video", "span", "a", "b", "i", "u", "br"]);
                 $output .= $this->latte->renderToString($_SERVER['DOCUMENT_ROOT']."/Web/views/includes/post.latte", ["post" => $post, "user" => $user, "language" => $this->locale]);
             }
             die($output);
@@ -155,7 +155,7 @@ class Posts
         }
         $output = "";
         foreach($posts as $post){
-            $post->zhabContent = strip_tags($post->zhabContent, ["p", "h1", "h2", "h3", "h4", "h5", "h6", "img", "video", "span", "a", "b", "i", "u"]);
+            $post->zhabContent = strip_tags($post->zhabContent, ["p", "h1", "h2", "h3", "h4", "h5", "h6", "img", "video", "span", "a", "b", "i", "u", "br"]);
             $output .= $this->latte->renderToString($_SERVER['DOCUMENT_ROOT']."/Web/views/includes/post.latte", ["post" => $post, "user" => $user, "language" => $this->locale]);
         }
         die($output);
@@ -192,7 +192,7 @@ class Posts
         }
         $output = "";
         foreach($posts as $post){
-            $post->zhabContent = strip_tags($post->zhabContent, ["p", "h1", "h2", "h3", "h4", "h5", "h6", "img", "video", "span", "a", "b", "i", "u"]);
+            $post->zhabContent = strip_tags($post->zhabContent, ["p", "h1", "h2", "h3", "h4", "h5", "h6", "img", "video", "span", "a", "b", "i", "u", "br"]);
             $output .= $this->latte->renderToString($_SERVER['DOCUMENT_ROOT']."/Web/views/includes/post.latte", ["post" => $post, "user" => $user, "language" => $this->locale]);
         }
         die($output);
@@ -206,7 +206,7 @@ class Posts
             $user = (new User())->get_user_by_token($token);
         if($GLOBALS['db']->query("SELECT * FROM zhabs LEFT JOIN users ON userID = zhabBy WHERE zhabUploaded = ? AND zhabLikes > 1 ORDER BY zhabLikes DESC LIMIT 1", date("Y-m-d"))->getRowCount() != 0){
             $post = $GLOBALS['db']->fetch("SELECT * FROM zhabs LEFT JOIN users ON userID = zhabBy WHERE zhabUploaded = ? ORDER BY zhabLikes DESC LIMIT 1", date("Y-m-d"));
-            $post->zhabContent = strip_tags($post->zhabContent, ["p", "h1", "h2", "h3", "h4", "h5", "h6", "img", "video", "span", "a", "b", "i", "u"]);
+            $post->zhabContent = strip_tags($post->zhabContent, ["p", "h1", "h2", "h3", "h4", "h5", "h6", "img", "video", "span", "a", "b", "i", "u", "br"]);
             $params = ["post" => $post, "language" => $this->locale, "mini_type" => true];
             if(isset($user))
                 $params += ["user" => $user];
@@ -275,7 +275,7 @@ class Posts
                 $GLOBALS['db']->query("INSERT INTO comments", [
                     "commentBy" => $user->userID,
                     "commentTo" => $id,
-                    "commentContent" => preg_replace('!(http|ftp|scp)(s)?:\/\/[a-zA-Z0-9.?&_/]+!', "<a href=\"\\0\">\\0</a>", $comment),
+                    "commentContent" => $comment,
                     "commentAdded" => date("Y-m-d H:i:s")
                 ]);
                 preg_match_all('/(^|\s)(@\w+)/', $comment, $result);
@@ -322,7 +322,7 @@ class Posts
             $user = (new User())->get_user_by_token($token);
         }
         foreach($posts as $post){
-            $post->zhabContent = strip_tags($post->zhabContent, ["p", "h1", "h2", "h3", "h4", "h5", "h6", "img", "video", "span", "a", "b", "i", "u"]);
+            $post->zhabContent = strip_tags($post->zhabContent, ["p", "h1", "h2", "h3", "h4", "h5", "h6", "img", "video", "span", "a", "b", "i", "u", "br"]);
             $params = ["post" => $post, "language" => $this->locale];
             if(isset($user)){
                 $params += ["user" => $user];
@@ -342,7 +342,7 @@ class Posts
         }
         $output = [];
         foreach($posts as $post){
-            $post->zhabContent = strip_tags($post->zhabContent, ["p", "h1", "h2", "h3", "h4", "h5", "h6", "img", "video", "span", "a", "b", "i", "u"]);
+            $post->zhabContent = strip_tags($post->zhabContent, ["p", "h1", "h2", "h3", "h4", "h5", "h6", "img", "video", "span", "a", "b", "i", "u", "br"]);
             $output[] = ["postID" => $post->zhabID, "postBy" => $post->nickname, "postContent" => $post->zhabContent, "liked" => $post->zhabLikes, "uploaded" => (string)$post->zhabUploaded];
         }
         die(json_encode($output));
@@ -350,13 +350,13 @@ class Posts
 
     public function get_all_popular_posts(string $token): void
     {
-        $posts = $GLOBALS['db']->fetchAll("SELECT * FROM zhabs LEFT JOIN users ON userID = zhabBy WHERE reason = '' ORDER BY zhabLikes DESC LIMIT 24");
+        $posts = $GLOBALS['db']->fetchAll("SELECT * FROM zhabs LEFT JOIN users ON userID = zhabBy WHERE reason = '' ORDER BY zhabLikes DESC LIMIT 14");
         $output = "";
         if($token != ''){
             $user = (new User())->get_user_by_token($token);
         }
         foreach($posts as $post){
-            $post->zhabContent = strip_tags($post->zhabContent, ["p", "h1", "h2", "h3", "h4", "h5", "h6", "img", "video", "span", "a", "b", "i", "u"]);
+            $post->zhabContent = strip_tags($post->zhabContent, ["p", "h1", "h2", "h3", "h4", "h5", "h6", "img", "video", "span", "a", "b", "i", "u", "br"]);
             $params = ["post" => $post, "language" => $this->locale];
             if(isset($user)){
                 $params += ["user" => $user];
@@ -374,7 +374,7 @@ class Posts
             $user = (new User())->get_user_by_token($token);
         $comments = [];
         foreach($comments_rows as $comment){
-            $comments[] = ["commentID" => $comment->commentID, "profileImage" => $comment->profileImage, "nickname" => $comment->nickname, "belongs" => (isset($user) ? ($user->nickname == $comment->nickname ? 1 : $user->admin) : 0), "commentContent" => preg_replace('/(^|\s)@([\w.]+)/', '$1<a href="/profile/$2" id="mention">@$2</a>', $comment->commentContent), "commentTo" => $comment->commentTo, "commentAdded" => $this->convert_date((string)$comment->commentAdded)];
+            $comments[] = ["commentID" => $comment->commentID, "profileImage" => $comment->profileImage, "nickname" => $comment->nickname, "belongs" => (isset($user) ? ($user->nickname == $comment->nickname ? 1 : $user->admin) : 0), "commentContent" => preg_replace('/(^|\s)@([\w.]+)/', '$1<a href="/profile/$2" id="mention">@$2</a>', preg_replace('!(http|ftp|scp)(s)?:\/\/[a-zA-Z0-9.?&_/]+!', "<a href=\"\\0\">\\0</a>", $comment->commentContent)), "commentTo" => $comment->commentTo, "commentAdded" => $this->convert_date((string)$comment->commentAdded)];
         }
         die(json_encode($comments));
     }
@@ -433,7 +433,7 @@ class Posts
             </a>
         </div>' : '').'
         <div class="postContent" id="realPostContent" onclick="goToPage(`/zhab/'.$reposted->zhabURLID.'`);">
-        '.strip_tags($reposted->zhabContent, ["p", "h1", "h2", "h3", "h4", "h5", "h6", "img", "video", "span", "a", "b", "i", "u"]).'
+        '.strip_tags($reposted->zhabContent, ["p", "h1", "h2", "h3", "h4", "h5", "h6", "img", "video", "span", "a", "b", "i", "u", "br"]).'
         </div>
         <div class="postAuthor postAuthorReposted">
             <a href="/profile/'.$post->nickname.'" class="postAuthorProfileImage">
@@ -533,7 +533,7 @@ class Posts
         header('Content-Type: application/json');
     	$post_prepared = (new Strings())->prepare_post_text($post);
     	$result = ["error" => null];
-    	$urlid = (is_null($urlid) ? (new Strings())->random_string(72) : $urlid);
+    	$urlid = (is_null($urlid) ? (new Strings())->random_string(12) : $urlid);
         $contains = ($contains == 1 ? 1 : 0);
         if($this->user->activated != 1){
             $result = ["error" => $this->locale['you_need_to_activate_account']];

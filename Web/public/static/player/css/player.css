@@ -1,14 +1,11 @@
 .zhabblerPlayer{
     overflow: hidden;
     font-family: "Helvetica Neue","HelveticaNeue",Helvetica,Arial,sans-serif;
-    background-color: #333;
+    background-color: #000;
     position: relative;
     display: flex;
     align-items: center;
     justify-content: center;
-}
-.zhabblerPlayer, .zhabblerPlayer *{
-    transition: all .1s;
 }
 .zhabblerPlayer video{
     height: 100%;
@@ -33,12 +30,10 @@
     display: block;
     cursor: pointer;
 }
-.zhabblerPlayer:hover .zhabblerPlayerControls .zhabblerPlayerControl{
+.zhabblerPlayer .zhabblerPlayerControls .zhabblerPlayerControl{
     margin: 0 10px!important;
-    margin-left: 0px;
-    margin-right: 0px;
 }
-.zhabblerPlayer:hover .zhabblerPlayerControls{
+.zhabblerPlayer .zhabblerPlayerControls{
     height: 42px;
 }
 .zhabblerPlayer .zhabblerPlayerControls .zhabblerPlayerControl:hover{
@@ -54,16 +49,10 @@
 .zhabblerPlayer .zhabblerPlayerControls #PauseBtn::before{
     content: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" class="w-6 h-6"><path fill-rule="evenodd" d="M6.75 5.25a.75.75 0 0 1 .75-.75H9a.75.75 0 0 1 .75.75v13.5a.75.75 0 0 1-.75.75H7.5a.75.75 0 0 1-.75-.75V5.25Zm7.5 0A.75.75 0 0 1 15 4.5h1.5a.75.75 0 0 1 .75.75v13.5a.75.75 0 0 1-.75.75H15a.75.75 0 0 1-.75-.75V5.25Z" clip-rule="evenodd" /></svg>');
 }
-.zhabblerPlayer .zhabblerPlayerControls #FullScreenBtn{
-    margin-right: -24px;
-}
-.zhabblerPlayer .zhabblerPlayerControls #PlayBtn, .zhabblerPlayer .zhabblerPlayerControls #PauseBtn{
-    margin-left: -24px;
-}
 .zhabblerPlayer .zhabblerPlayerControls #FullScreenBtn::before{
     content: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="white" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3.75v4.5m0-4.5h4.5m-4.5 0L9 9M3.75 20.25v-4.5m0 4.5h4.5m-4.5 0L9 15M20.25 3.75h-4.5m4.5 0v4.5m0-4.5L15 9m5.25 11.25h-4.5m4.5 0v-4.5m0 4.5L15 15" /></svg>');
 }
-.zhabblerPlayer:hover .zhabblerPlayerControls .zhabblerPlayerBar{
+.zhabblerPlayer .zhabblerPlayerControls .zhabblerPlayerBar{
     border-radius: 9999px;
 }
 .zhabblerPlayer .zhabblerPlayerControls .zhabblerPlayerBar{
@@ -71,11 +60,17 @@
     height: 5px;
     background-color: rgba(255, 255, 255, .5);
     width: 100%;
-    border-radius: 0px;
     overflow: hidden;
     cursor: pointer;
 }
+.zhabblerPlayer .zhabblerPlayerControls{
+    transform: translateY(42px);
+    transition: transform .2s;
+}
 .zhabblerPlayer:hover .zhabblerPlayerControls{
+    transform: translateY(0px);
+}
+.zhabblerPlayer .zhabblerPlayerControls{
     background: linear-gradient(to bottom, transparent, rgba(0, 0, 0, .5));
     height: 42px;
 }
@@ -85,7 +80,7 @@
 .zhabblerPlayer .zhabblerPlayerControls .zhabblerPlayerBar .zhabblerPlayerBarActive{
     height: 100%;
     width: 0%;
-    background-color: #13b552;
+    background-color: #fff;
 }
 .zhabblerPlayer .zhabblerPlayerLoader {
     position: absolute!important;
@@ -110,10 +105,6 @@
 }
 .zhabblerPlayer .zhabblerDurs{
     color:#fff;
-    display: none;
-}
-.zhabblerPlayer:hover .zhabblerDurs{
-    display: block;
     font-size: 12px;
 }
 .zhabblerPlayer .zhabblerDurs span{

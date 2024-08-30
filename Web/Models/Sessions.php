@@ -63,7 +63,7 @@ class Sessions
 	
 	public function create(string $token): string
 	{
-		if($GLOBALS['db']->query("SELECT * FROM users WHERE token = ?", $token)->getRowCount() > 0){
+		if($GLOBALS['db']->query("SELECT * FROM users WHERE token = ? AND activated = 1 AND reason = ''", $token)->getRowCount() > 0){
 			$ip = $_SERVER['REMOTE_ADDR'];
 			$ua = $_SERVER['HTTP_USER_AGENT'];
 			if(!(new Strings())->is_empty($ip) && !(new Strings())->is_empty($ua)){

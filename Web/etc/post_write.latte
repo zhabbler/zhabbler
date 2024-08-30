@@ -132,7 +132,7 @@
             </a>
         </div>
         <div class="postContent" id="realPostContent">
-           {strip_tags($reposted->zhabContent, "<p><h1><h2><h3><h4><h5><h6><img><b><i><u><a><span>")|noescape}
+           {strip_tags($reposted->zhabContent, "<p><h1><h2><h3><h4><h5><h6><img><b><i><u><a><span><video>")|noescape}
         </div>
         <div class="postAuthor postAuthorReposted">
             <a href="/profile/{$user->nickname}" class="postAuthorProfileImage">
