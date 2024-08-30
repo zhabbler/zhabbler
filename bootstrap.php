@@ -9,7 +9,7 @@ function autoload(): void
     foreach ($files as $file) {
         require $file;
     }
-    $files = glob($_SERVER['DOCUMENT_ROOT']."/Web/Models/*.php");
+    $files = glob($_SERVER['DOCUMENT_ROOT'].(str_starts_with($_SERVER['REQUEST_URI'], "/developer/api/") ? "/ZhabblerAPI/*.php" : "/Web/Models/*.php"));
     foreach ($files as $file) {
         require $file;
     }
@@ -38,7 +38,7 @@ autoload();
 require $_SERVER['DOCUMENT_ROOT']."/vendor/autoload.php";
 $GLOBALS['config'] = Nette\Neon\Neon::decodeFile($_SERVER['DOCUMENT_ROOT'].'/config.neon');
 
-if($GLOBALS['config']['application']['debug'] == 1){
+if(!str_starts_with($_SERVER['REQUEST_URI'], "/developer/api/") && $GLOBALS['config']['application']['debug'] == 1){
     Tracy\Debugger::enable();
     Tracy\Debugger::$logDirectory = __DIR__ . '/log';
 }else{
@@ -46,7 +46,7 @@ if($GLOBALS['config']['application']['debug'] == 1){
     ini_set('display_errors', 0);
 }
 
-if(!isset($_COOKIE['zhabbler_language'])){
+if(!str_starts_with($_SERVER['REQUEST_URI'], "/developer/api/") && !isset($_COOKIE['zhabbler_language'])){
     (new Web\Entities\Localization())->set_language($GLOBALS['config']['application']['default_language']);
     header("Location: ".$_SERVER['REQUEST_URI']);
     die;
