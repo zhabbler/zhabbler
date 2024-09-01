@@ -16,7 +16,7 @@ class Posts extends RateLimit
         $output = [];
         foreach($posts as $post){
             $post->zhabContent = strip_tags($post->zhabContent, ["p", "h1", "h2", "h3", "h4", "h5", "h6", "img", "video", "span", "a", "b", "i", "u"]);
-            $output[] = ["id" => $post->zhabID, "userID" => $post->userID, "nickname" => $post->nickname, "profileImage" => (empty($_SERVER['HTTPS']) ? 'http' : 'https') . "://$_SERVER[HTTP_HOST]".$post->profileImage, "postContent" => $post->zhabContent, "liked" => $post->zhabLikes, "uploaded" => (string)$post->zhabUploaded];
+            $output[] = ["id" => $post->zhabID, "post_id" => $post->zhabURLID, "userID" => $post->userID, "nickname" => $post->nickname, "profileImage" => (empty($_SERVER['HTTPS']) ? 'http' : 'https') . "://$_SERVER[HTTP_HOST]".$post->profileImage, "postContent" => $post->zhabContent, "liked" => $post->zhabLikes, "uploaded" => (string)$post->zhabUploaded];
         }
         return $output;
     }
@@ -26,7 +26,7 @@ class Posts extends RateLimit
         $result = [];
         if($GLOBALS['db']->query("SELECT * FROM zhabs LEFT JOIN users ON userID = zhabBy WHERE zhabURLID = ? AND reason = ''", $id)->getRowCount() > 0){
             $post = $GLOBALS['db']->fetch("SELECT * FROM zhabs LEFT JOIN users ON userID = zhabBy WHERE zhabURLID = ? AND reason = ''", $id);
-            $result[] = ["id" => $post->zhabID, "userID" => $post->userID, "nickname" => $post->nickname, "profileImage" => (empty($_SERVER['HTTPS']) ? 'http' : 'https') . "://$_SERVER[HTTP_HOST]".$post->profileImage, "postContent" => $post->zhabContent, "liked" => $post->zhabLikes, "uploaded" => (string)$post->zhabUploaded, "disabled_comments" => $post->zhabWhoCanComment];         
+            $result[] = ["id" => $post->zhabID, "post_id" => $post->zhabURLID, "userID" => $post->userID, "nickname" => $post->nickname, "profileImage" => (empty($_SERVER['HTTPS']) ? 'http' : 'https') . "://$_SERVER[HTTP_HOST]".$post->profileImage, "postContent" => $post->zhabContent, "liked" => $post->zhabLikes, "uploaded" => (string)$post->zhabUploaded];     
         }else{
             $result = ["error" => "Failed to find a post"];
         }
