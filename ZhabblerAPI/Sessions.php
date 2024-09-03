@@ -62,9 +62,9 @@ class Sessions
                 $tempUser = $GLOBALS['db']->fetch("SELECT * FROM users WHERE email = ?", $email);
                 if(password_verify($password, $tempUser->password)){
                     if($tempUser->activated != 1){
-                        $result = ["warning" => $this->locale['need_to_verify_email']];
+                        $result = ["warning" => "Verify email to continue"];
                     }else if(!empty($tempUser->reason)){
-                        $result = ["warning" => $this->locale['login_error_banned_user'].$tempUser->reason];
+                        $result = ["warning" => "Banned user"];
                     }else{
                         $session = $this->create($tempUser->token);
                         if($session != "ERROR"){
@@ -74,13 +74,13 @@ class Sessions
                         }
                     }
                 }else{
-                    $result = ["error" => $this->locale['incorrect_password']];
+                    $result = ["error" => "Incorrect password!"];
                 }
             }else{
-                $result = ["error" => $this->locale['user_does_not_exists']];
+                $result = ["error" => "User with this email does not exists!"];
             }
         }else{
-            $result = ["error" => $this->locale['some_fields_are_empty']];
+            $result = ["error" => "Email and/or password are/is empty"];
         }
         return $result;
     }
