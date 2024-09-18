@@ -132,7 +132,7 @@
             </a>
         </div>
         <div class="postContent" id="realPostContent">
-           {strip_tags($reposted->zhabContent, "<p><h1><h2><h3><h4><h5><h6><img><b><i><u><a><span><video>")|noescape}
+           {strip_tags($reposted->zhabContent, "<p><h1><h2><h3><h4><h5><h6><img><b><i><u><a><span><video><br>")|noescape}
         </div>
         <div class="postAuthor postAuthorReposted">
             <a href="/profile/{$user->nickname}" class="postAuthorProfileImage">
@@ -166,7 +166,7 @@
         </div>
     </div>
     {/if}
-    <div id="pC_sS" ondrop="return false;" onpaste="event.preventDefault();document.execCommand('inserttext', false, event.clipboardData.getData('text/plain'));">
+    <div id="pC_sS" ondrop="return false;" onpaste="pastetools(event);">
         <div class="postContent" data-text="*звук сверчков*" contenteditable="true">
             <h1 data-text="{$language['heading']}" contenteditable="true"></h1>
             <p data-text="{$language['go_ahead_put_smth']}" contenteditable="true"></p>

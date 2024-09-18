@@ -904,28 +904,56 @@ class Zhabbler{
             <img src="${URL.createObjectURL(file)}"/>
             </div>`);
             var formData = new FormData();
-            formData.append('image', file);
-            $.ajax({
-              url: "/api/Files/upload_image",
-              type: "POST",
-              data: formData,
-              enctype: 'multipart/form-data',
-              processData: false,
-              contentType: false
-            }).done(function(data){
-                if(data.error != null){
+            if(file.type == 'image/gif'){
+                formData.append('gif', file);
+                $.ajax({
+                url: "/api/Files/upload_gif",
+                type: "POST",
+                data: formData,
+                enctype: 'multipart/form-data',
+                processData: false,
+                contentType: false
+                }).done(function(data){
+                    if(data.error != null){
+                        $(".photo--:last").remove();
+                        zhabbler.addError(locale['something_went_wrong']);
+                    }else{
+                        $(".photo--:last img").attr("src", data.url);
+                        $(".photo--:last").attr("data-src", data.url);
+                        $(".photo--:last .ui__btn__delete").attr("data-src", data.url);
+                        $(".photo--:last .loader").remove();
+                    }
+                }).fail(function(data){
                     $(".photo--:last").remove();
                     zhabbler.addError(locale['something_went_wrong']);
-                }else{
-                    $(".photo--:last img").attr("src", data.url);
-                    $(".photo--:last").attr("data-src", data.url);
-                    $(".photo--:last .ui__btn__delete").attr("data-src", data.url);
-                    $(".photo--:last .loader").remove();
-                }
-            }).fail(function(data){
+                });
+            }else if(file.type == 'image/jpeg' || file.type == 'image/jpg' || file.type == 'image/png' || file.type == 'image/bmp'){
+                formData.append('image', file);
+                $.ajax({
+                url: "/api/Files/upload_image",
+                type: "POST",
+                data: formData,
+                enctype: 'multipart/form-data',
+                processData: false,
+                contentType: false
+                }).done(function(data){
+                    if(data.error != null){
+                        $(".photo--:last").remove();
+                        zhabbler.addError(locale['something_went_wrong']);
+                    }else{
+                        $(".photo--:last img").attr("src", data.url);
+                        $(".photo--:last").attr("data-src", data.url);
+                        $(".photo--:last .ui__btn__delete").attr("data-src", data.url);
+                        $(".photo--:last .loader").remove();
+                    }
+                }).fail(function(data){
+                    $(".photo--:last").remove();
+                    zhabbler.addError(locale['something_went_wrong']);
+                });
+            }else{
                 $(".photo--:last").remove();
                 zhabbler.addError(locale['something_went_wrong']);
-            });
+            }
         }
     }
     insertIntoEditorContentVideo(element){
@@ -1055,6 +1083,7 @@ const goToPage = (href) => {
             errors = $('.errors').html();
         }
         $('html,body').scrollTop(0);
+        $('.main').html('<div class="loader loader_cpa"><div class="loader_part loader_part_1"></div><div class="loader_part loader_part_2"></div><div class="loader_part loader_part_3"></div></div>');
         $("body").load(togo, function(){
             window.history.pushState({page:page_id++}, 'Жабблер', href);
             zhabbler.loadPreloaders();

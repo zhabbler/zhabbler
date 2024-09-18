@@ -70,6 +70,10 @@ $Router->add("POST", "/api/Files/upload_image", "", function(){
 	if(isset($_COOKIE['zhabbler_session']))
 		(new Utilities\Files())->upload_image($_FILES['image'], true);
 });
+$Router->add("POST", "/api/Files/upload_gif", "", function(){
+	if(isset($_COOKIE['zhabbler_session']))
+		(new Utilities\Files())->upload_gif($_FILES['gif']);
+});
 $Router->add("POST", "/api/Files/upload_video", "", function(){
 	if(isset($_COOKIE['zhabbler_session']))
 		(new Utilities\Files())->upload_video($_FILES['video'], true);
@@ -84,7 +88,7 @@ $Router->add("POST", "/api/Account/change_profile_cover", "", function(){
 });
 $Router->add("POST", "/api/Account/update_user_info", "", function(){
 	if(isset($_COOKIE['zhabbler_session']))
-		(new Web\Models\User())->update_user_info($GLOBALS['session']->sessionToken, $_POST['name'], $_POST['nickname'], $_POST['biography']);
+		(new Web\Models\User())->update_user_info($GLOBALS['session']->sessionToken, $_POST['name'], $_POST['nickname'], $_POST['biography'], $_POST['accent'], $_POST['background']);
 });
 $Router->add("POST", "/api/User/search_users", "", function(){
 	(new Web\Models\User())->search_users($_POST['query'], (int)$_POST['last_id']);
