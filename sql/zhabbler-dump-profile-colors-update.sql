@@ -1,0 +1,1 @@
+ALTER TABLE `users` ADD `accentColor` VARCHAR(7) NOT NULL AFTER `askQuestions`, ADD `backgroundColor` VARCHAR(7) NOT NULL AFTER `accentColor`;
