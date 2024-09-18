@@ -52,10 +52,85 @@ $(document).ready(function(){
         }
     });
 });
+const pastetools = (event) => {
+    event.preventDefault();
+    document.execCommand('inserttext', false, event.clipboardData.getData('text/plain'));
+    var items = (event.clipboardData || event.originalEvent.clipboardData).items;
+    for (index in items) {
+        var item = items[index];
+        if (item.kind === 'file') {
+            if($(".photo-- .loader").length == 0 && $("#pC_sS .postContent img").length < 15){
+                var file = item.getAsFile();
+                $(".s_media_selections").remove();
+                $(".popup:first form #pC_sS .postContent").append(`<div contenteditable="false" class="photo--">
+                <div class="loader">
+                    <div class="loader_part loader_part_1"></div>
+                    <div class="loader_part loader_part_2"></div>
+                    <div class="loader_part loader_part_3"></div>
+                </div>
+                <div class="ui__btn__delete"><i class='bx bx-x'></i></div>
+                <div class="ui__handle"><i class='bx bxs-hand'></i></div>
+                <img src="${URL.createObjectURL(file)}"/>
+                </div>`);
+                var formData = new FormData();
+                if(file.type == 'image/gif'){
+                    formData.append('gif', file);
+                    $.ajax({
+                    url: "/api/Files/upload_gif",
+                    type: "POST",
+                    data: formData,
+                    enctype: 'multipart/form-data',
+                    processData: false,
+                    contentType: false
+                    }).done(function(data){
+                        if(data.error != null){
+                            $(".photo--:last").remove();
+                            zhabbler.addError(locale['something_went_wrong']);
+                        }else{
+                            $(".photo--:last img").attr("src", data.url);
+                            $(".photo--:last").attr("data-src", data.url);
+                            $(".photo--:last .ui__btn__delete").attr("data-src", data.url);
+                            $(".photo--:last .loader").remove();
+                        }
+                    }).fail(function(data){
+                        $(".photo--:last").remove();
+                        zhabbler.addError(locale['something_went_wrong']);
+                    });
+                }else if(file.type == 'image/jpeg' || file.type == 'image/jpg' || file.type == 'image/png' || file.type == 'image/bmp'){
+                    formData.append('image', file);
+                    $.ajax({
+                    url: "/api/Files/upload_image",
+                    type: "POST",
+                    data: formData,
+                    enctype: 'multipart/form-data',
+                    processData: false,
+                    contentType: false
+                    }).done(function(data){
+                        if(data.error != null){
+                            $(".photo--:last").remove();
+                            zhabbler.addError(locale['something_went_wrong']);
+                        }else{
+                            $(".photo--:last img").attr("src", data.url);
+                            $(".photo--:last").attr("data-src", data.url);
+                            $(".photo--:last .ui__btn__delete").attr("data-src", data.url);
+                            $(".photo--:last .loader").remove();
+                        }
+                    }).fail(function(data){
+                        $(".photo--:last").remove();
+                        zhabbler.addError(locale['something_went_wrong']);
+                    });
+                }else{
+                    $(".photo--:last").remove();
+                    zhabbler.addError(locale['something_went_wrong']);
+                }
+            }
+        }
+    }
+}
 const add_tag = (tag) => {
     tag = tag.replace(/<[^>]*>?/gm, '');
-    if(tag.replace(/\s+/g, '') != "" && $(`.write_post_tag[data-tag="${tag.replace(/[^a-zA-Zа-яА-Я0-9]/g, '')}"]`).length == 0){
-        tag = tag.replace(/[^a-zA-Zа-яА-Я0-9]/g, '');
+    if(tag.replace(/\s+/g, '') != "" && $(`.write_post_tag[data-tag="${tag.replace(/[^a-zA-Zа-яА-ЯЁё0-9]/g, '')}"]`).length == 0){
+        tag = tag.replace(/[^a-zA-Zа-яА-ЯЁё0-9]/g, '');
         $(".write_post_tag_add_input").replaceWith(`<div class="write_post_tag" data-tag="${tag}">#<span>${tag}</span><i class='bx bx-x'></i></div>`);
     }else{
         $(".write_post_tag_add_input").remove();

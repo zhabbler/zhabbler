@@ -208,7 +208,7 @@ class User
         return ($GLOBALS['db']->query("SELECT * FROM users WHERE userID = ? AND reason = ''", $id)->getRowCount() > 0 ? true : false);
     }
 
-    public function update_user_info(string $token, string $name, string $nickname, string $biography): void
+    public function update_user_info(string $token, string $name, string $nickname, string $biography, string $accent, string $background): void
     {
         header('Content-Type: application/json');
         $name = (new Strings())->convert($name);
@@ -226,8 +226,10 @@ class User
                     $result = ["error" => $this->locale['error_nickname_symbols']];
                 }else if($nickname != $user->nickname && $GLOBALS['db']->query("SELECT * FROM users WHERE nickname = ?", $nickname)->getRowCount() > 0){
                     $result = ["error" => $this->locale['error_nickname_is_used']];
+                }else if(!ctype_xdigit(str_replace('#', '', $accent)) || !ctype_xdigit(str_replace('#', '', $background))){
+                    $result = ["error" => "Error with hex colors"];
                 }else{
-                    $GLOBALS['db']->query("UPDATE users SET name = ?, nickname = ?, biography = ? WHERE token = ?", $name, $nickname, $bio, $token);
+                    $GLOBALS['db']->query("UPDATE users SET name = ?, nickname = ?, biography = ?, accentColor = ?, backgroundColor = ? WHERE token = ?", $name, $nickname, $bio, $accent, $background, $token);
                 }
             }else{
                 $result = ["error" => $this->locale["some_fields_are_empty"]];

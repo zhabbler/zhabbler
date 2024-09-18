@@ -12,6 +12,7 @@ class Settings{
             $(".biography_input").attr("placeholder", locale["no_biography"]);
         }
 		$(".title_fade_buttons .button_gray").toggle();
+        $(".profile_main_info_editable_colors").toggle();
 	}
 	change_profile_image(element){
         const file = element.files[0];
@@ -72,7 +73,7 @@ class Settings{
         }
     }
     save_changes(){
-        $.post("/api/Account/update_user_info", {name:$(".h2_input").val(), nickname:$(".nickname_input").val(), biography:$(".biography_input").val()}, function(data){
+        $.post("/api/Account/update_user_info", {name:$(".h2_input").val(), nickname:$(".nickname_input").val(), biography:$(".biography_input").val(), accent:$("#accent_color").val(), background:$("#background_color").val()}, function(data){
             if(data.error != null){
                 zhabbler.addError(data.error);
             }else{
@@ -90,6 +91,11 @@ $(document).ready(function(){
             });
         }
     });
+    $(document).on("input", "#background_color", function(){
+        $(".profile_main_info_editable").css("background", $(this).val());
+        $(".profile_main_pics").css("background", $(this).val());
+        $(".profile_main_pics_pfp").css("background", $(this).val());
+    })
     $(document).on("change", "#questions_io", function(){
         settings.change_conf_set();
     });

@@ -75,6 +75,27 @@ body, .tabs, .navbar_top{
 .navbar_top_container_element{
     color: rgba(0, 0, 0, .6)!important;
 }
+.button, input[type=checkbox]:checked, .postAuthorProfileImageReposted{
+    background-color: rgba(102, 117, 134, 1);
+}
+.popup-post-uie .popup-post-uie-btn .popup-post-uie-btn-round{
+    background-color: #ddd;
+}
+a, .button_outline{
+    color:rgba(102, 117, 134, 1);
+}
+.tabs .tab_active{
+    border-bottom: 2px solid rgba(102, 117, 134, 1);
+}
+.profile_tabs, .profile_tab_active{
+    border-bottom: 1px solid rgba(102, 117, 134, 1);
+}
+.nav_options_searchbar input:focus, .input_search:focus, .button_outline{
+    border: 2px solid rgba(102, 117, 134, 1);
+}
+.navbar_top_container_element.navbar_top_container_element_active, .navbar_element_active{
+    color:#000!important;
+}
 .navbar_top{
     border-bottom: 1px solid rgba(0, 0, 0, .1);
 }

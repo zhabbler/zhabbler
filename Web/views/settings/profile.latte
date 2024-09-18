@@ -62,14 +62,14 @@
                             </button>
                         </div>
                     </div>
-                    <div class="profile_main_pics">
+                    <div class="profile_main_pics"{(!empty($user->backgroundColor) ? ' style="background:'.$user->backgroundColor.';"' : '')|noescape}>
                         <div class="profile_main_pics_cover" style="background-image: url('{$user->profileCover}');">
                             <label class="settings_profile_uploader_images_btn" style="display:none;">
                                 <input type="file" name="cover" onchange="settings.change_profile_cover(this);" accept="image/*" hidden>
                                 <i class="bx bxs-pencil"></i>
                             </label>
                         </div>
-                        <div class="profile_main_pics_pfp">
+                        <div class="profile_main_pics_pfp"{(!empty($user->backgroundColor) ? ' style="background:'.$user->backgroundColor.';"' : '')|noescape}>
                             <label class="settings_profile_uploader_images_btn" style="display:none;">
                                 <input type="file" name="avatar" onchange="settings.change_profile_image(this);" accept="image/*" hidden>
                                 <i class="bx bxs-pencil"></i>
@@ -77,7 +77,7 @@
                             <img src="{$user->profileImage}">
                         </div>
                     </div>
-                    <div class="profile_main_info profile_main_info_editable">
+                    <div class="profile_main_info profile_main_info_editable"{(!empty($user->backgroundColor) ? ' style="background:'.$user->backgroundColor.';"' : '')|noescape}>
                         <div>
                             <input type="text" class="h2_input" value="{$user->name|noescape}" readonly>
                         </div>
@@ -86,6 +86,24 @@
                         </div>
                         <div>
                             <textarea type="text" class="biography_input" placeholder="{$language['no_biography']}" readonly>{$user->biography}</textarea>
+                        </div>
+                        <div class="profile_main_info_editable_colors" style="display:none;">
+                            <label for="accent_color" class="profile_main_info_editable_color_label">
+                                <div class="profile_main_info_editable_color_label_color_input">
+                                    <input type="color" name="accent" id="accent_color" value="{(!empty($user->accentColor) ? $user->accentColor : '#13b552')|noescape}">
+                                </div>
+                                <div class="profile_main_info_editable_color_label_str">
+                                    {$language['accent']}
+                                </div>
+                            </label>
+                            <label for="background_color" class="profile_main_info_editable_color_label">
+                                <div class="profile_main_info_editable_color_label_color_input">
+                                    <input type="color" name="background" id="background_color" value="{(!empty($user->backgroundColor) ? $user->backgroundColor : '#ffffff')|noescape}">
+                                </div>
+                                <div class="profile_main_info_editable_color_label_str">
+                                    {$language['background']}
+                                </div>
+                            </label>
                         </div>
                     </div>
                     <div>

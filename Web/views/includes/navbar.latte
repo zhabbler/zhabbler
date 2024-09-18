@@ -3,7 +3,7 @@
     <li class="navbar_logotype">
         {$language['zhabbler']}
     </li>
-    <li class="navbar_element" href="/">
+    <li class="navbar_element{($_SERVER['REQUEST_URI'] == '/' || str_starts_with($_SERVER['REQUEST_URI'], '/dashboard')  ? ' navbar_element_active' : '')|noescape}" href="/">
         <div class="navbar_element_icon">
             <i class="bx bxs-home"></i>
         </div>
@@ -14,7 +14,7 @@
         </div>
     </li>
     {if !isset($_COOKIE['zhabbler_session'])}
-    <li class="navbar_element" href="/login">
+    <li class="navbar_element{($_SERVER['REQUEST_URI'] == '/login' || $_SERVER['REQUEST_URI'] == '/register'  ? ' navbar_element_active' : '')|noescape}" href="/login">
         <div class="navbar_element_icon">
             <i class='bx bxs-user'></i>
         </div>
@@ -50,7 +50,7 @@
             </span>
         </div>
     </li>
-    <li class="navbar_element" href="/messages">
+    <li class="navbar_element{($_SERVER['REQUEST_URI'] == '/messages'  ? ' navbar_element_active' : '')|noescape}" href="/messages">
         <div class="navbar_element_icon">
             <i class='bx bxs-message-square-dots'></i>
         </div>
@@ -63,7 +63,7 @@
             </span>
         </div>
     </li>
-    <li class="navbar_element" href="/inbox">
+    <li class="navbar_element{($_SERVER['REQUEST_URI'] == '/inbox'  ? ' navbar_element_active' : '')|noescape}" href="/inbox">
         <div class="navbar_element_icon">
             <i class='bx bxs-envelope' ></i>
         </div>
@@ -142,7 +142,7 @@
         </li>
     </div>
     {if $user->activated == 1}
-    <li class="navbar_element" href="/settings/account">
+    <li class="navbar_element{(str_starts_with($_SERVER['REQUEST_URI'], '/settings') ? ' navbar_element_active' : '')|noescape}" href="/settings/account">
         <div class="navbar_element_icon">
             <i class='bx bxs-cog' ></i>
         </div>

@@ -7,7 +7,7 @@
 <link rel="stylesheet" href="/static/css/pallete/{(new Web\Models\Personalization())->get_personalization_config($user->userID)->personalizationPallete}_p.css">
 {/if}
 <nav class="mobile_nav">
-    <a href="/" class="mobile_nav_element">
+    <a href="/" class="mobile_nav_element" >
         <i class='bx bxs-home'></i>
     </a>
     {if isset($user)}
@@ -78,19 +78,19 @@
             </div>
         </form>
         <div class="navbar_top_container_elements_icons">
-            <a href="/dashboard" class="navbar_top_container_element">
+            <a href="/dashboard" class="navbar_top_container_element{($_SERVER['REQUEST_URI'] == '/' || str_starts_with($_SERVER['REQUEST_URI'], '/dashboard')  ? ' navbar_top_container_element_active' : '')|noescape}">
                 <i class="bx bxs-home"></i>
             </a>
             <a href="/dashboard/explore" class="navbar_top_container_element">
                 <i class="bx bxs-compass"></i>
             </a>
-            <a href="/inbox" class="navbar_top_container_element">
+            <a href="/inbox" class="navbar_top_container_element{($_SERVER['REQUEST_URI'] == '/inbox'  ? ' navbar_top_container_element_active' : '')|noescape}">
                 {if (new Web\Models\Inbox())->getUnreadCountOfMsgs($user->token) > 0}
                     <div class="navbar_top_container_element_counter">{(new Web\Models\Inbox())->getUnreadCountOfMsgs($user->token)}</div>
                 {/if}
                 <i class="bx bxs-envelope"></i>
             </a>
-            <a href="/messages" class="navbar_top_container_element">
+            <a href="/messages" class="navbar_top_container_element{($_SERVER['REQUEST_URI'] == '/messages'  ? ' navbar_top_container_element_active' : '')|noescape}">
                 {if (new Web\Models\Messages())->get_count_of_unread_messages($user->token) > 0}
                     <div class="navbar_top_container_element_counter">{(new Web\Models\Messages())->get_count_of_unread_messages($user->token)}</div>
                 {/if}
