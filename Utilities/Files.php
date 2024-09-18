@@ -27,19 +27,37 @@ class Files
 		return $result;
 	}
 
+	public function upload_gif(array $file): void
+	{
+		header('Content-Type: application/json');
+		$result = ["error" => null, "url" => null];
+		if($file['type'] == 'image/gif'){
+			if($file['size'] <= 4000000){
+				$file_name = 'zhabbler_animated_'.(new Strings())->random_string(128).'.gifv';
+				move_uploaded_file($file['tmp_name'], $_SERVER['DOCUMENT_ROOT']."/Web/public/uploads/$file_name");
+				$result = ["error" => null, "url" => "/uploads/$file_name"];
+			}else{
+				$result = ["error" => "File size is too big.", "url" => null];
+			}
+		}else{
+			$result = ["error" => "File is not a GIF.", "url" => null];
+		}
+		die(json_encode($result));
+	}
+	
 	public function thumbnail_avatar_crop(string $path, string $output): void
 	{
 		list($width, $height) = getimagesize($path);
 		$myImage = imagecreatefromjpeg($path);
 
 		if($width > $height){
-		  $y = 0;
-		  $x = ($width - $height) / 2;
-		  $smallestSide = $height;
+			$y = 0;
+			$x = ($width - $height) / 2;
+			$smallestSide = $height;
 		}else{
-		  $x = 0;
-		  $y = ($height - $width) / 2;
-		  $smallestSide = $width;
+			$x = 0;
+			$y = ($height - $width) / 2;
+			$smallestSide = $width;
 		}
 
 		$thumbSize = 250;
