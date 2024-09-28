@@ -2473,7 +2473,7 @@ footer .copl{
 }
 #realPostContent{
     overflow: hidden;
-    max-height: 800px;
+    max-height: 2000px;
 }
 .repost_fr_rps_post_author .repost_fr_rps_post_author_pfp img{
     width: 28px;
@@ -3023,7 +3023,7 @@ footer .copl{
 }
 .postReadMore{
     position: absolute!important;
-    top: 782px;
+    top: 1970px;
     padding: 10px;
     width: 100%;
     text-align: center;
