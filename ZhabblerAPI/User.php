@@ -8,7 +8,7 @@ class User
     {
         if($GLOBALS['db']->query("SELECT * FROM users WHERE token = ? AND activated = 1 AND reason = ''", $token)->getRowCount() > 0){
             $user = $GLOBALS['db']->fetch("SELECT * FROM users WHERE token = ? AND activated = 1 AND reason = ''", $token);
-            $result = ["id" => $user->userID, "nickname" => $user->nickname, "name" => $user->name, "biography" => $user->biography, "profileImage" => (empty($_SERVER['HTTPS']) ? 'http' : 'https') . "://$_SERVER[HTTP_HOST]".$user->profileImage, "profileCover" => $user->profileCover, "email" => $user->email, "token" => $user->token];
+            $result = ["id" => $user->userID, "nickname" => $user->nickname, "name" => $user->name, "biography" => $user->biography, "profileImage" => (empty($_SERVER['HTTPS']) ? 'http' : 'https') . "://$_SERVER[HTTP_HOST]".$user->profileImage, "profileCover" => (empty($_SERVER['HTTPS']) ? 'http' : 'https') . "://$_SERVER[HTTP_HOST]".$user->profileCover, "email" => $user->email, "token" => $user->token];
         }else{
             $result = ["error" => "User does not exists."];
         }
@@ -19,7 +19,7 @@ class User
     {
         if($GLOBALS['db']->query("SELECT * FROM users WHERE nickname = ? AND activated = 1 AND reason = ''", $nickname)->getRowCount() > 0){
             $user = $GLOBALS['db']->fetch("SELECT * FROM users WHERE nickname = ? AND activated = 1 AND reason = ''", $nickname);
-            $result = ["id" => $user->userID, "nickname" => $user->nickname, "name" => $user->name, "biography" => $user->biography, "profileImage" => $user->profileImage, "profileCover" => $user->profileCover];
+            $result = ["id" => $user->userID, "nickname" => $user->nickname, "name" => $user->name, "biography" => $user->biography, "profileImage" => (empty($_SERVER['HTTPS']) ? 'http' : 'https') . "://$_SERVER[HTTP_HOST]".$user->profileImage, "profileCover" => (empty($_SERVER['HTTPS']) ? 'http' : 'https') . "://$_SERVER[HTTP_HOST]".$user->profileCover];
         }else{
             $result = ["error" => "User does not exists."];
         }
