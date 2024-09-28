@@ -1153,47 +1153,30 @@ const isValidUrl = (urlString) => {
     return !!urlPattern.test(urlString);
 }
 const checkPostsAttachments = () => {
-    // $("img").each(function(){
-    //     $(this).attr('loading', 'lazy');
-    // })
-    // $(".post .postContent img").each(function(){
-    //     elem = $(this);
-    //     if(typeof elem.attr("src") !== 'undefined' && elem.attr("src") !== false){
-    //         if(elem.attr("src").replace(/\s/g,'') != ""){
-    //             $.get(elem.attr("src")).fail(function(){
-    //                 elem.attr("src", "/static/images/image_corrupted.png");
-    //             });
-    //         }else{
-    //             elem.attr("src", "/static/images/image_corrupted.png");
-    //         }
-    //     }else{
-    //         elem.attr("src", "/static/images/image_corrupted.png");
-    //     }
-    // });
-    // $(".post .postContent video:not(.zhabblerPlayerVideo)").each(function(){
-    //     uniqueid = makeid(32);
-    //     $(this).replaceWith(`<div class="zhabblerPlayer" data-player="${uniqueid}">
-    //     <div class="zhabblerPlayerBigPlayBtn" data-play="${uniqueid}"></div>
-    //     <div class="zhabblerPlayerControls">
-    //         <div class="zhabblerPlayerControl zhabblerPlayerControlPlayPause" id="PlayBtn" data-play="${uniqueid}"></div>
-    //         <div class="zhabblerDurs">
-    //             <span id="active">
-    //                 00:00
-    //             </span>
-    //         </div>
-    //         <div class="zhabblerPlayerBar" data-play="${uniqueid}">
-    //             <div class="zhabblerPlayerBarActive"></div>
-    //         </div>
-    //         <div class="zhabblerDurs">
-    //             <span id="nonactive">
-    //                 00:00
-    //             </span> 
-    //         </div>
-    //         <div class="zhabblerPlayerControl" id="FullScreenBtn" data-play="${uniqueid}"></div>
-    //     </div>
-    //     <video data-play="${uniqueid}" class="zhabblerPlayerVideo" ontimeupdate="videotimeupdate($(this));" src="${$(this).attr("src")}"></video>
-    // </div>`);
-    // });
+    $(".post .postContent video:not(.zhabblerPlayerVideo)").each(function(){
+        uniqueid = makeid(32);
+        $(this).replaceWith(`<div class="zhabblerPlayer" data-player="${uniqueid}">
+        <div class="zhabblerPlayerBigPlayBtn" data-play="${uniqueid}"></div>
+        <div class="zhabblerPlayerControls">
+            <div class="zhabblerPlayerControl zhabblerPlayerControlPlayPause" id="PlayBtn" data-play="${uniqueid}"></div>
+            <div class="zhabblerDurs">
+                <span id="active">
+                    00:00
+                </span>
+            </div>
+            <div class="zhabblerPlayerBar" data-play="${uniqueid}">
+                <div class="zhabblerPlayerBarActive"></div>
+            </div>
+            <div class="zhabblerDurs">
+                <span id="nonactive">
+                    00:00
+                </span> 
+            </div>
+            <div class="zhabblerPlayerControl" id="FullScreenBtn" data-play="${uniqueid}"></div>
+        </div>
+        <video data-play="${uniqueid}" class="zhabblerPlayerVideo" ontimeupdate="videotimeupdate($(this));" src="${$(this).attr("src")}"></video>
+    </div>`);
+    });
 }
 async function copyPostURL(id) {
     try {
