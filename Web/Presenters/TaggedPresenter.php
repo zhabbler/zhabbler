@@ -21,6 +21,7 @@ final class TaggedPresenter
             $session = (new Sessions())->get_session($_COOKIE['zhabbler_session']);
             $user = (new User())->get_user_by_token($session->sessionToken);
             $params += ["user" => $user];
+            $params['tagged'] = urldecode($params['tagged']);
             $this->latte->render($_SERVER['DOCUMENT_ROOT']."/Web/views/tagged.latte", $params);
         }else{
             header("Location: /login");
