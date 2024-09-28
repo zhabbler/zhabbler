@@ -158,6 +158,24 @@ $(document).ready(function(){
     $(document).on("focusin", ".nav_options_searchbar input", function(){
         $(".nav_options_req_search").fadeIn(200);
     });
+    $(document).on("mouseover", ".postBoxEventL", function(){
+        if($(`#boxinfo_${$(this).data('box')}`).css('display') == 'none'){
+            $(`#boxinfo_${$(this).data('box')}`).fadeIn(200);
+            $(`#boxinfo_${$(this).data('box')}`).css('transform', 'scale(1)');
+        }
+    });
+    $(document).on("mouseout", ".postAuthorBoxInfo", function(){
+        if(!$(this).is(":hover")){
+            $(this).fadeOut(200);
+            $(this).css('transform', '');
+        }
+    });
+    $(document).on("mouseout", ".postBoxEventL", function(){
+        if(!$(`#boxinfo_${$(this).data('box')}`).is(":hover") && !$(this).is(":hover")){
+            $(`#boxinfo_${$(this).data('box')}`).fadeOut(200);
+            $(`#boxinfo_${$(this).data('box')}`).css('transform', '');
+        }
+    });
     $(document).on("keyup", ".nav_options_searchbar input", function(){
         let result = '';
         if($(this).val() != ""){
@@ -175,7 +193,7 @@ $(document).ready(function(){
                     result += `<div class="nav_options_req_search_tt"><span>${locale['tags']}</span></div>`;
                     for(let i=0;i<6;i++){
                         if(i+1 <= data.length){
-                            result += `<a href="/search?q=${data[i]["tag"]}" class="nav_options_req_search_recent_s">
+                            result += `<a href="/tagged/${data[i]["tag"]}" class="nav_options_req_search_recent_s">
                                 <i class='bx bx-hash'></i>
                                 <span>
                                     ${data[i]["tag"]}
@@ -402,9 +420,9 @@ class Zhabbler{
     }
     scrollFTags(pos){
         if(pos == 'right'){
-            $("#FollowedTagsMTPg").animate({scrollLeft:"+=510"}, 250);
+            $("#FollowedTagsMTPg").animate({scrollLeft:"+=180"}, 250);
         }else{
-            $("#FollowedTagsMTPg").animate({scrollLeft:"-=510"}, 250);
+            $("#FollowedTagsMTPg").animate({scrollLeft:"-=180"}, 250);
         }
         setTimeout(() => {
             if(document.getElementById("FollowedTagsMTPg").scrollLeft == (document.getElementById("FollowedTagsMTPg").scrollWidth - document.getElementById("FollowedTagsMTPg").offsetWidth)){
@@ -545,7 +563,7 @@ class Zhabbler{
                 $.each(data, function(i, data){
                     query_results += `<div class="messages_bubble_person" onclick="zhabbler.openIM('${data.nickname}');">
                         <div class="messages_bubble_person_profile_picture">
-                            <img src="${data.profileImage}" alt="Изображение">
+                            <img src="${data.profileImage}" alt="Image">
                         </div>
                         <div class="messages_bubble_person_info">
                             <div>
@@ -984,6 +1002,11 @@ class Zhabbler{
                     $(".video--:last").remove();
                     zhabbler.addError(locale['something_went_wrong']);
                 }else{
+                    $.get(data.url).fail(function(){
+                        $(".video--:last").remove();
+                        zhabbler.addError(locale['something_went_wrong']);
+                        return false;
+                    });
                     $(".video--:last video").attr("src", data.url);
                     $(".video--:last").attr("data-src", data.url);
                     $(".video--:last .ui__btn__delete").attr("data-src", data.url);
@@ -1032,6 +1055,21 @@ class Zhabbler{
                 whatToDo(execute, placeholder, attributes);
             });
         }
+    }
+    openEditorWithTagged(tagged){
+        $(".popup").remove();
+        $("#app").prepend(`<div class="popup popup_do_not_close" id="postEditor">
+            <div class="loader">
+                <div class="loader_part loader_part_1"></div>
+                <div class="loader_part loader_part_2"></div>
+                <div class="loader_part loader_part_3"></div>
+            </div>
+        </div>`); 
+        $.get("/etc/post_write", function(data){
+            $(".popup:first").html(data);
+            $(".popup:first form #pC_sS .postContent").sortable({handle: ".ui__handle"});
+            $(".write_post_tags").html(`<div class="write_post_tag" data-tag="${tagged}">#<span>${tagged}</span><i class="bx bx-x"></i></div><div class="write_post_tag write_post_tag_add">+</div>`)
+        });
     }
 }
 class Cookie{
@@ -1115,47 +1153,47 @@ const isValidUrl = (urlString) => {
     return !!urlPattern.test(urlString);
 }
 const checkPostsAttachments = () => {
-    $("img").each(function(){
-        $(this).attr('loading', 'lazy');
-    })
-    $(".post .postContent img").each(function(){
-        elem = $(this);
-        if(typeof elem.attr("src") !== 'undefined' && elem.attr("src") !== false){
-            if(elem.attr("src").replace(/\s/g,'') != ""){
-                $.get(elem.attr("src")).fail(function(){
-                    elem.attr("src", "/static/images/image_corrupted.png");
-                });
-            }else{
-                elem.attr("src", "/static/images/image_corrupted.png");
-            }
-        }else{
-            elem.attr("src", "/static/images/image_corrupted.png");
-        }
-    });
-    $(".post .postContent video:not(.zhabblerPlayerVideo)").each(function(){
-        uniqueid = makeid(32);
-        $(this).replaceWith(`<div class="zhabblerPlayer" data-player="${uniqueid}">
-        <div class="zhabblerPlayerBigPlayBtn" data-play="${uniqueid}"></div>
-        <div class="zhabblerPlayerControls">
-            <div class="zhabblerPlayerControl zhabblerPlayerControlPlayPause" id="PlayBtn" data-play="${uniqueid}"></div>
-            <div class="zhabblerDurs">
-                <span id="active">
-                    00:00
-                </span>
-            </div>
-            <div class="zhabblerPlayerBar" data-play="${uniqueid}">
-                <div class="zhabblerPlayerBarActive"></div>
-            </div>
-            <div class="zhabblerDurs">
-                <span id="nonactive">
-                    00:00
-                </span> 
-            </div>
-            <div class="zhabblerPlayerControl" id="FullScreenBtn" data-play="${uniqueid}"></div>
-        </div>
-        <video data-play="${uniqueid}" class="zhabblerPlayerVideo" ontimeupdate="videotimeupdate($(this));" src="${$(this).attr("src")}"></video>
-    </div>`);
-    });
+    // $("img").each(function(){
+    //     $(this).attr('loading', 'lazy');
+    // })
+    // $(".post .postContent img").each(function(){
+    //     elem = $(this);
+    //     if(typeof elem.attr("src") !== 'undefined' && elem.attr("src") !== false){
+    //         if(elem.attr("src").replace(/\s/g,'') != ""){
+    //             $.get(elem.attr("src")).fail(function(){
+    //                 elem.attr("src", "/static/images/image_corrupted.png");
+    //             });
+    //         }else{
+    //             elem.attr("src", "/static/images/image_corrupted.png");
+    //         }
+    //     }else{
+    //         elem.attr("src", "/static/images/image_corrupted.png");
+    //     }
+    // });
+    // $(".post .postContent video:not(.zhabblerPlayerVideo)").each(function(){
+    //     uniqueid = makeid(32);
+    //     $(this).replaceWith(`<div class="zhabblerPlayer" data-player="${uniqueid}">
+    //     <div class="zhabblerPlayerBigPlayBtn" data-play="${uniqueid}"></div>
+    //     <div class="zhabblerPlayerControls">
+    //         <div class="zhabblerPlayerControl zhabblerPlayerControlPlayPause" id="PlayBtn" data-play="${uniqueid}"></div>
+    //         <div class="zhabblerDurs">
+    //             <span id="active">
+    //                 00:00
+    //             </span>
+    //         </div>
+    //         <div class="zhabblerPlayerBar" data-play="${uniqueid}">
+    //             <div class="zhabblerPlayerBarActive"></div>
+    //         </div>
+    //         <div class="zhabblerDurs">
+    //             <span id="nonactive">
+    //                 00:00
+    //             </span> 
+    //         </div>
+    //         <div class="zhabblerPlayerControl" id="FullScreenBtn" data-play="${uniqueid}"></div>
+    //     </div>
+    //     <video data-play="${uniqueid}" class="zhabblerPlayerVideo" ontimeupdate="videotimeupdate($(this));" src="${$(this).attr("src")}"></video>
+    // </div>`);
+    // });
 }
 async function copyPostURL(id) {
     try {

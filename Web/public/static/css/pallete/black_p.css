@@ -105,10 +105,6 @@ body, .tabs, .navbar_top{
     background-color: #222;
     color: #fff;
 }
-.profile_main_info_editable input:read-only, .profile_main_info_editable textarea:read-only{
-    background-color: #222;
-    color:#fff;
-}
 .choose_navbar_st{
     background-color: #444;
     border: 1px solid #666;
@@ -129,9 +125,6 @@ body, .tabs, .navbar_top{
 .navbar_element_bubble_title{
     background-color: #555;
     color: #999;
-}
-.profile_main_pics_pfp{
-    background-color: #222!important;
 }
 .tags_followed_pg .tags_followed_pg_itself .tag_pg_add, .tags_followed_pg .tags_followed_pg_itself .tag_pg{
     background-color: rgba(255, 255, 255, .5);
@@ -192,4 +185,7 @@ hr{
 }
 .postQuestionItself::after {
     border-left: 12px solid #333;
+}
+.nav_options_tagged .nav_options_tagged_info{
+    background-color: rgba(255, 255, 255, .15);
 }

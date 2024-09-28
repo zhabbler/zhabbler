@@ -42,15 +42,9 @@
                         {(new Web\Models\Posts())->followed_tag_count($_GET['q'])} {$language['followers']}
                     </div>
                     <div class="dFaIcjSc">
-                    {if !(new Web\Models\Posts())->check_followed_tag($user->token, $_GET['q'])}
-                        <button class="button" onclick="zhabbler.addTagsPopup({$_GET['q']});">
-                            {$language['follow']}
+                        <button class="button" onclick="goToPage('/tagged/' + {$_GET['q']});">
+                            {$language['go_to_tag']}
                         </button>
-                    {else}
-                        <button class="button button_outline" onclick="zhabbler.addTagsPopup();">
-                            {$language['unfollow']}
-                        </button>
-                    {/if}
                     </div>
                 </div>
                 {/if}

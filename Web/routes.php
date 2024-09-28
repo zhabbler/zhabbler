@@ -15,6 +15,7 @@ $Router->add("GET", "/password_reset", "PasswordResetPresenter");
 $Router->add("GET", "/password_reset/{code}", "PasswordResetPresenter");
 $Router->add("GET", "/dashboard", "DashboardPresenter");
 $Router->add("GET", "/help/{page}", "HelpPresenter");
+$Router->add("GET", "/tagged/{tagged}", "TaggedPresenter");
 $Router->add("GET", "/search", "SearchPresenter");
 $Router->add("GET", "/profile/{nickname}", "ProfilePresenter");
 $Router->add("GET", "/profile/{nickname}/{section}", "ProfilePresenter");
@@ -164,6 +165,13 @@ $Router->add("POST", "/api/Posts/get_reposts", "", function(){
 });
 $Router->add("POST", "/api/User/report", "", function(){
 	(new Web\Models\User())->report($GLOBALS['session']->sessionToken, $_POST['nickname']);
+});
+$Router->add("POST", "/api/Posts/get_posts_by_tag", "", function(){
+	(new Web\Models\Posts())->get_posts_by_tag((int)$_POST['last_id'], (isset($_COOKIE['zhabbler_session']) ? $GLOBALS['session']->sessionToken : ""), $_POST['tag']);
+});
+$Router->add("POST", "/api/Posts/get_posts_by_tag_count", "", function(){
+	echo((new Web\Models\Posts())->get_posts_by_tag_count($_POST['tag']));
+	die;
 });
 $Router->add("POST", "/api/Posts/get_all_posts", "", function(){
 	(new Web\Models\Posts())->get_all_posts((int)$_POST['last_id'], (isset($_COOKIE['zhabbler_session']) ? $GLOBALS['session']->sessionToken : ""));

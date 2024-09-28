@@ -1,16 +1,32 @@
 <div class="post" id="post{(isset($mini_type) ? '' : $post->zhabURLID)}" data-realid="{$post->zhabID}">
     <div class="postAuthor">
-        <a href="/profile/{$post->nickname}" class="postAuthorProfileImage">
-            <img src="{$post->profileImage}" alt="Изображение">
-            {if $post->zhabRepliedTo != ""}
-                <div class="postAuthorProfileImageReposted">
-                    <i class='bx bx-repost'></i>
-                </div>
-            {/if}
-        </a>
-        <a href="/profile/{$post->nickname}" class="postAuthorPointsToAuthor">
-            {$post->nickname}
-        </a>
+        {var $uniqueidbx = uniqid()}
+        <div class="postAuthorBoxInfo" id="boxinfo_{$uniqueidbx}" onclick="goToPage('/profile/' + {$post->nickname});" style="background-color:{$post->backgroundColor|noescape};display: none;">
+            <div class="postAuthorBoxInfoTopBar">
+                <div><span>{$post->nickname}</span></div>
+            </div>
+            <div class="postAuthorBoxInfoCover" style="background-image: url('{$post->profileCover}');"></div>
+            <div class="postAuthorBoxInfoPFP">
+                <img src="{$post->profileImage}" style="border-color:{$post->backgroundColor|noescape}">
+            </div>
+            <div class="postAuthorBoxInfoName">
+                <h2>{$post->name}</h2>
+            </div>
+            <div class="postAuthorBoxInfoBiography">
+                <span>{$post->biography}</span>
+            </div>
+        </div>
+        <div class="postBoxEventL" data-box="{$uniqueidbx}" style="display: flex;align-items: center;">
+            <a href="/profile/{$post->nickname}" class="postAuthorProfileImage">
+                <img src="{$post->profileImage}" alt="Image">
+                {if $post->zhabRepliedTo != ""}
+                    <div class="postAuthorProfileImageReposted">
+                        <i class='bx bx-repost'></i>
+                    </div>
+                {/if}
+            </a>
+            <a href="/profile/{$post->nickname}" class="postAuthorPointsToAuthor">{$post->nickname}</a>
+        </div>
         {if $post->verifed == 1}<i class='bx bxs-badge-check verifed_icon'></i>{/if}
         {if isset($user) && $post->zhabBy != $user->userID}
         <a class="FollowLink" data-id="{$post->zhabBy}">
@@ -92,7 +108,7 @@
             {$language['spoilers_warning_post']}
         </div>
         {/if}
-        {$post->zhabContent|noescape}
+        {(new Utilities\Strings())->check_srcs_of_media($post->zhabURLID, $post->zhabContent)|noescape}
         <div class="postReadMore" onclick="zhabbler.showMore({$post->zhabURLID});">
             {$language['show_more']}
         </div>

@@ -11,7 +11,7 @@
                 <span>{$language['tags_u_followed']}</span>
             </div>
             {foreach (new Web\Models\Posts())->get_followed_tags($user->token) as $tag}
-            <a href="/search?q={$tag->followedTag}" class="nav_options_req_search_recent_s">
+            <a href="/tagged/{$tag->followedTag}" class="nav_options_req_search_recent_s">
                 <i class='bx bx-hash'></i>
                 <span>
                     {$tag->followedTag}
@@ -22,6 +22,44 @@
         </div>
     </div>
     {/if}
+    {if isset($tagged)}
+    <section class="nav_options_tagged">
+        {if (new Web\Models\Posts())->get_popular_image_of_tag($tagged) != ''}
+        <div class="nav_options_tagged_background" onclick="goToPage('/zhab/' + {(new Web\Models\Posts())->get_data_from_popular_image_of_tag_post($tagged)->zhabURLID})" style="background-image: url({(new Web\Models\Posts())->get_popular_image_of_tag($tagged)});">
+            <div class="nav_options_tagged_background_info">
+                <div class="nav_options_tagged_background_info_user">
+                    <span>
+                        {$language['posted_by']}
+                    </span>
+                    <img src="{(new Web\Models\Posts())->get_data_from_popular_image_of_tag_post($tagged)->profileImage}" class="nav_options_tagged_background_info_user_ava">
+                </div>
+            </div>
+        </div>
+        {/if}
+        <div class="nav_options_tagged_info">
+            <div class="nav_options_tagged_info_tag">
+                <span>#{$tagged}</span>
+            </div>
+            <div class="nav_options_tagged_info_followers">
+                <span><strong>{(new Web\Models\Posts())->followed_tag_count($tagged)}</strong> {$language['followers']}</span>
+            </div>
+            <div class="nav_options_tagged_info_buttons">
+                {if !(new Web\Models\Posts())->check_followed_tag($user->token, $tagged)}
+                    <button class="button" onclick="zhabbler.addTagsPopup({$tagged});">
+                        {$language['follow']}
+                    </button>
+                {else}
+                    <button class="button button_outline" onclick="zhabbler.addTagsPopup();">
+                        {$language['unfollow']}
+                    </button>
+                {/if}
+                <button class="button" onclick="zhabbler.openEditorWithTagged({$tagged});">
+                    {$language['new_post']}
+                </button>
+            </div>
+        </div>
+    </section>
+    {else}
     {if !isset($user) && count((new Web\Models\User())->random_profiles()) != 0}
     <div class="nav_options_whoToFollow">
         <div>
@@ -103,6 +141,7 @@
         </h1>
         {(new Web\Models\Posts())->popular_today_post((isset($user) ? $user->token : ""))|noescape}
     </div>
+    {/if}
     {/if}
     <footer>
         <div class="copl">

@@ -21,33 +21,20 @@
         {include 'includes/navbar_top.latte'}
         <div class="container">
             {include 'includes/navbar.latte'}
-            <main class="main login_main">
-                <form method="post" data-reload="2" data-location="/dashboard" action="/api/Account/password_reset">
-                    <div class="logotype_font">
-                        {$language['zhabbler']}
+            <main class="main">
+                <div id="TaggedPosts">
+                    <div class="loader">
+                        <div class="loader_part loader_part_1"></div>
+                        <div class="loader_part loader_part_2"></div>
+                        <div class="loader_part loader_part_3"></div>
                     </div>
-                    <div>
-                        <div class="input_place">
-                            <input autocomplete="off" type="email" placeholder="{$language['email']}" name="email" class="input">
-                        </div>
-                        <div class="input_place">
-                            <button type="submit" class="button">
-                                {$language['reset_password']}
-                            </button>
-                        </div>
-                        <div class="input_place">
-                            <button type="button" onclick="goToPage('/login')" class="button button_gray">
-                                {$language['back']}
-                            </button>
-                        </div>
-                    </div>
-                </form>
+                </div>
             </main>
             {include 'includes/nav_options.latte'}
         </div>
+        <preloader>var tagged = "{$tagged}";</preloader>
+        <preloader src="/static/js/tagged_posts.js"></preloader>
         <preloader src="/static/player/js/zhabblerplayer.js"></preloader>
-        <preloader>var background = "{$background}";</preloader>
-        <preloader src="/static/js/random_backgrounds.js"></preloader>
     </div>
     <script src="/static/node_modules/jquery/dist/jquery.min.js"></script>
     <script src="/static/node_modules/jquery-ui/dist/jquery-ui.min.js"></script>

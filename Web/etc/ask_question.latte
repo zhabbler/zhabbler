@@ -1,7 +1,7 @@
 <form class="post" id="PopupContainer">
     <div class="postAuthor" id="currentUserPostAuthor">
         <a href="/profile/{$user->nickname}" class="postAuthorProfileImage">
-            <img src="{$user->profileImage}" alt="Изображение">
+            <img src="{$user->profileImage}" alt="Image">
         </a>
         <a href="/profile/{$user->nickname}" class="postAuthorPointsToAuthor">
             {$user->nickname}
@@ -9,7 +9,7 @@
     </div>
     <div class="postAuthor" id="anonymousPostAuthor" style="display: none">
         <a href="#" class="postAuthorProfileImage">
-            <img src="/static/images/anon_avatar.png" alt="Изображение">
+            <img src="/static/images/anon_avatar.png" alt="Image">
         </a>
         <a href="#" class="postAuthorPointsToAuthor">
             {$language['anonymous']}

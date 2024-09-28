@@ -37,7 +37,7 @@
 <form class="post" id="PopupContainer">
     <div class="postAuthor">
         <a href="/profile/{$user->nickname}" class="postAuthorProfileImage">
-            <img src="{$user->profileImage}" alt="Изображение">
+            <img src="{$user->profileImage}" alt="Image">
             {if isset($reposted)}
             <div class="postAuthorProfileImageReposted">
                 <i class='bx bx-repost'></i>
@@ -125,7 +125,7 @@
     <div>
         <div class="postAuthor postAuthorReposted">
             <a href="/profile/{$reposted->nickname}" class="postAuthorProfileImage">
-                <img src="{$reposted->profileImage}" alt="Изображение">
+                <img src="{$reposted->profileImage}" alt="Image">
             </a>
             <a href="/profile/{$reposted->nickname}" class="postAuthorPointsToAuthor">
                 {$reposted->nickname}
@@ -136,7 +136,7 @@
         </div>
         <div class="postAuthor postAuthorReposted">
             <a href="/profile/{$user->nickname}" class="postAuthorProfileImage">
-                <img src="{$user->profileImage}" alt="Изображение">
+                <img src="{$user->profileImage}" alt="Image">
                 <div class="postAuthorProfileImageReposted">
                     <i class='bx bx-repost'></i>
                 </div>

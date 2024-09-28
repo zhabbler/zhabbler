@@ -58,12 +58,12 @@
                             </button>
                             <div class="tags_followed_pg_itself" id="FollowedTagsMTPg">
                                 {foreach (new Web\Models\Posts())->get_followed_tags($user->token) as $tag}
-                                <div class="tag_pg" onclick="goToPage('/search?q=' + {$tag->followedTag})">
-                                    #{$tag->followedTag}
+                                <div class="tag_pg" onclick="goToPage('/tagged/' + {$tag->followedTag})" style="background-image: url({(new Web\Models\Posts())->get_popular_image_of_tag($tag->followedTag)});">
+                                    <div class="tag_pg_tag">#{$tag->followedTag}</div>
                                 </div>
                                 {/foreach}
                                 <div class="tag_pg tag_pg_add" onclick="zhabbler.addTagsPopup();">
-                                    <i class='bx bx-plus'></i>
+                                    <div class="tag_pg_tag"><i class='bx bx-plus'></i></div>
                                 </div>
                             </div>
                             <button class="tags_followed_pg_btn tags_followed_pg_btn_right" onclick="zhabbler.scrollFTags('right');" {(count((new Web\Models\Posts())->get_followed_tags($user->token)) == 0 ? 'style="display:none;"' : '')|noescape}>

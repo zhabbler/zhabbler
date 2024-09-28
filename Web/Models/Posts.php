@@ -43,7 +43,7 @@ class Posts
         }
         die($output);
     }
-
+    
     public function get_posts_by_user_json(int $lastID, string $nickname, string $token): void
     {
         header('Content-Type: application/json');
@@ -293,12 +293,12 @@ class Posts
 
     public function get_comment(string $id): Nette\Database\Row
     {
-        return $GLOBALS['db']->fetch("SELECT * FROM comments WHERE commentID = ?", $id);
+        return $GLOBALS['db']->fetch("SELECT * FROM comments LEFT JOIN users ON userID = commentBy WHERE reason = '' AND commentID = ?", $id);
     }
 
     public function get_all_posts_count(): int
     {
-        return $GLOBALS['db']->query("SELECT * FROM zhabs")->getRowCount();
+        return $GLOBALS['db']->query("SELECT * FROM zhabs LEFT JOIN users ON userID = zhabBy WHERE reason = ''")->getRowCount();
     }
 
     public function convert_date(string $date): string
@@ -308,6 +308,33 @@ class Posts
         $year = date_parse($date)['year'];
         $months = [$this->locale['january'], $this->locale['february'], $this->locale['march'], $this->locale['april'], $this->locale['may'], $this->locale['june'], $this->locale['july'], $this->locale['august'], $this->locale['september'], $this->locale['october'], $this->locale['november'], $this->locale['december']];
         return $day." ".$months[$month - 1]." ".$year;
+    }
+
+    public function get_posts_by_tag_count(string $tag): int
+    {
+        return $GLOBALS['db']->query("SELECT * FROM zhabs LEFT JOIN users ON userID = zhabBy WHERE reason = '' AND FIND_IN_SET(?, zhabTags)", $tag)->getRowCount();
+    }
+
+    public function get_posts_by_tag(int $lastID, string $token, string $tag): void
+    {
+        if($lastID != 0){
+            $posts = $GLOBALS['db']->fetchAll("SELECT * FROM zhabs LEFT JOIN users ON userID = zhabBy WHERE zhabID < ? AND reason = '' AND FIND_IN_SET(?, zhabTags) ORDER BY zhabID DESC LIMIT 7", $lastID, $tag);
+        }else{
+            $posts = $GLOBALS['db']->fetchAll("SELECT * FROM zhabs LEFT JOIN users ON userID = zhabBy WHERE reason = '' AND FIND_IN_SET(?, zhabTags) ORDER BY zhabID DESC LIMIT 7", $tag);
+        }
+        $output = "";
+        if($token != ''){
+            $user = (new User())->get_user_by_token($token);
+        }
+        foreach($posts as $post){
+            $post->zhabContent = strip_tags($post->zhabContent, ["p", "h1", "h2", "h3", "h4", "h5", "h6", "img", "video", "span", "a", "b", "i", "u", "br"]);
+            $params = ["post" => $post, "language" => $this->locale];
+            if(isset($user)){
+                $params += ["user" => $user];
+            }
+            $output .= $this->latte->renderToString($_SERVER['DOCUMENT_ROOT']."/Web/views/includes/post.latte", $params);
+        }
+        die($output);
     }
 
     public function get_all_posts(int $lastID, string $token): void
@@ -426,7 +453,7 @@ class Posts
             }
             $result .= ($reposted->zhabRepliedTo == '' || !$this->check_post_existence($reposted->zhabRepliedTo) ? '<div class="postAuthor postAuthorReposted">
             <a href="/profile/'.$reposted->nickname.'" class="postAuthorProfileImage">
-                <img src="'.$reposted->profileImage.'" alt="Изображение">
+                <img src="'.$reposted->profileImage.'" alt="Image">
             </a>
             <a href="/profile/'.$reposted->nickname.'" class="postAuthorPointsToAuthor">
                 '.$reposted->nickname.'
@@ -437,7 +464,7 @@ class Posts
         </div>
         <div class="postAuthor postAuthorReposted">
             <a href="/profile/'.$post->nickname.'" class="postAuthorProfileImage">
-                <img src="'.$post->profileImage.'" alt="Изображение">
+                <img src="'.$post->profileImage.'" alt="Image">
                 <div class="postAuthorProfileImageReposted">
                     <i class="bx bx-repost"></i>
                 </div>
@@ -497,9 +524,9 @@ class Posts
         $result = "";
         foreach($tags_array as $key => $tag){
             if(isset($user)){
-                $result .= '<a href="/search?q='.$tag.'" '.($GLOBALS['db']->query("SELECT * FROM followed_tags WHERE followedTag = ? AND followedTagBy = ?", $tag, $user->userID)->getRowCount() > 0 ? 'class="active_tag_s"' : '').'>#'.$tag.'</a>';
+                $result .= '<a href="/tagged/'.$tag.'" '.($GLOBALS['db']->query("SELECT * FROM followed_tags WHERE followedTag = ? AND followedTagBy = ?", $tag, $user->userID)->getRowCount() > 0 ? 'class="active_tag_s"' : '').'>#'.$tag.'</a>';
             }else{
-                $result .= '<a href="/search?q='.$tag.'">#'.$tag.'</a>';
+                $result .= '<a href="/tagged/'.$tag.'">#'.$tag.'</a>';
             }
         }
         return $result;
@@ -526,6 +553,27 @@ class Posts
     {
         $user = (new User())->get_user_by_token($token);
         return $GLOBALS['db']->fetchAll("SELECT * FROM followed_tags WHERE followedTagBy = ?", $user->userID);
+    }
+
+    public function get_popular_image_of_tag(string $tag): string
+    {
+        if($this->check_tag_existence($tag)){
+            $post = $GLOBALS['db']->fetch("SELECT * FROM zhabs WHERE FIND_IN_SET(?, zhabTags) AND zhabContains != 1 ORDER BY zhabLikes DESC", $tag);
+            return (new Strings())->get_img_src($post->zhabContent);
+        }
+    }
+
+    public function get_data_from_popular_image_of_tag_post(string $tag): Nette\Database\Row
+    {
+        if($this->check_tag_existence($tag)){
+            return $GLOBALS['db']->fetch("SELECT * FROM zhabs LEFT JOIN users ON userID = zhabBy WHERE FIND_IN_SET(?, zhabTags) AND zhabContains != 1 ORDER BY zhabLikes DESC", $tag);
+        }
+    }
+
+    public function get_popular_image_of_random_tag(): string
+    {
+        $tag = $GLOBALS['db']->fetch("SELECT * FROM tags ORDER BY rand()")->tag;
+        return ($GLOBALS['db']->query("SELECT * FROM zhabs WHERE FIND_IN_SET(?, zhabTags) AND zhabLikes > 0 AND zhabContains != 1", $tag)->getRowCount() > 0 ? $this->get_popular_image_of_tag($tag) : "");
     }
 
     public function add(string $post, string $urlid = null, int $contains, int $who_comment, int $who_repost, string $repost = "", string $question = "", string $tags = ""): void

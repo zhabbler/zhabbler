@@ -1,6 +1,7 @@
 <?php declare(strict_types=1);
 namespace Web\Presenters;
 use Web\Entities\Localization;
+use Web\Models\Posts;
 use Latte;
 #[\AllowDynamicProperties]
 final class LoginPresenter
@@ -15,7 +16,8 @@ final class LoginPresenter
     {
         $params += ["language" => $GLOBALS['language']];
         if(!isset($_COOKIE['zhabbler_session'])){
-            $params += ["password_reseting" => (!empty($GLOBALS['config']['smtp']['host']) && !empty($GLOBALS['config']['smtp']['username']) && !empty($GLOBALS['config']['smtp']['email']) && !empty($GLOBALS['config']['smtp']['password']) ? true : false)];
+            $background = (new Posts())->get_popular_image_of_random_tag();
+            $params += ["password_reseting" => (!empty($GLOBALS['config']['smtp']['host']) && !empty($GLOBALS['config']['smtp']['username']) && !empty($GLOBALS['config']['smtp']['email']) && !empty($GLOBALS['config']['smtp']['password']) ? true : false), "background" => $background];
             $this->latte->render($_SERVER['DOCUMENT_ROOT']."/Web/views/login.latte", $params);
         }else{
             header("Location: /dashboard");

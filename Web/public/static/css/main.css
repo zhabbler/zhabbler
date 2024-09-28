@@ -14,6 +14,8 @@
         font-size: 12px!important;
         text-align: center;
         margin-top: 5px;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
     .navbar_element_icon, .button_WritePost .button_icon{
         margin-right: 0px!important;
@@ -2516,7 +2518,7 @@ footer .copl{
     display: flex;
     cursor: pointer;
 }
-.load_more_btn, .load_more_btn_exp, .load_more_btn_profile, .load_more_btn_profile_following, .load_more_btn_liked_profile, .load_more_btn_searched{
+.load_more_btn, .load_more_btn_exp, .load_more_btn_tagged, .load_more_btn_profile, .load_more_btn_profile_following, .load_more_btn_liked_profile, .load_more_btn_searched{
     margin: 16px auto;
 }
 .search_suggestions{
@@ -2972,21 +2974,26 @@ footer .copl{
     overflow: hidden;
 }
 .tags_followed_pg .tags_followed_pg_itself .tag_pg{
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-width: 130px;
-    text-align: center;
-    word-break: break-word;
-    height: 72px;
+    min-width: 160px;
     border-radius: 8px;
     font-size: 18px;
     font-weight: bold;
     cursor: pointer;
     margin-left: 20px;
+    background-position: center;
+    background-size: cover;
+    max-width: 160px;
+    overflow: hidden;
+}
+.tags_followed_pg .tags_followed_pg_itself .tag_pg_tag{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    word-break: break-word;
     padding: 0 10px;
+    height: 72px;
     background-color: rgba(0, 0, 0, .5);
-    width: 130px;
 }
 .tags_followed_pg .tags_followed_pg_itself .tag_pg_add{
     width: 72px;
@@ -3474,6 +3481,7 @@ footer .copl{
     display: flex;
     border-top: 1px solid #ddd;
     border-bottom: 1px solid #ddd;
+    color:#000;
 }
 .profile_main_info_editable_color_label{
     display: flex;
@@ -3502,4 +3510,119 @@ footer .copl{
     border-right: 1px solid #ddd;
     width: calc(50% - 1px);
     justify-content: end;
+}
+.navbar_elements_d{
+    height: calc(100vh - 54px);
+    overflow: auto;
+}
+.nav_options_tagged{
+    width: 304px;
+    margin: 10px auto;
+}
+.nav_options_tagged .nav_options_tagged_background{
+    background-color: rgba(0, 0, 0, .25);
+    background-position: center;
+    background-size: cover;
+    height: 186px;
+    display: flex;
+}
+.nav_options_tagged .nav_options_tagged_background .nav_options_tagged_background_info{
+    display: flex;
+    align-items: end;
+    justify-content: end;
+    text-align: right;
+    box-sizing: border-box;
+    padding: 10px;
+    width: 100%;
+    color:#fff;
+    background: linear-gradient(to bottom, transparent, rgba(0,0,0,.5));
+    cursor: pointer;
+}
+.nav_options_tagged .nav_options_tagged_background .nav_options_tagged_background_info_user{
+    display: flex;
+    align-items: center;
+}
+.nav_options_tagged .nav_options_tagged_background .nav_options_tagged_background_info_user .nav_options_tagged_background_info_user_ava{
+    width: 28px;
+    height: 28px;
+    border-radius: 2px;
+    display: block;
+    margin-left: 5px;
+}
+.nav_options_tagged .nav_options_tagged_info{
+    padding: 16px;
+    background-color: rgba(0, 0, 0, .15);
+}
+.nav_options_tagged .nav_options_tagged_info .nav_options_tagged_info_tag{
+    font-size: 24px;
+    margin-bottom: 5px;
+}
+.nav_options_tagged .nav_options_tagged_info .nav_options_tagged_info_followers{
+    margin-bottom: 10px;
+}
+.nav_options_tagged .nav_options_tagged_info .nav_options_tagged_info_buttons{
+    display: flex;
+}
+.nav_options_tagged .nav_options_tagged_info .nav_options_tagged_info_buttons .button{
+    width: 50%;
+    border-radius: 4px;
+}
+.nav_options_tagged .nav_options_tagged_info .nav_options_tagged_info_buttons .button:nth-child(1){
+    margin-right: 5px;
+}
+.post .postAuthor .postAuthorBoxInfo{
+    background-color: #fff;
+    position: absolute!important;
+    top: 46px;
+    left: 15px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, .1);
+    border-radius: 4px;
+    overflow: hidden;
+    width: 300px;
+    min-height: 200px;
+    z-index: 128;
+    text-align: center;
+    cursor: pointer;
+    transform: scale(0);
+    transition: transform .25s;
+    transform-origin: top left;
+}
+.post .postAuthor .postAuthorBoxInfo .postAuthorBoxInfoCover{
+    background-color: #333;
+    background-position: center;
+    background-size: cover;
+    height: 150px;
+}
+.post .postAuthor .postAuthorBoxInfo .postAuthorBoxInfoPFP{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: -40px;
+}
+.post .postAuthor .postAuthorBoxInfo .postAuthorBoxInfoPFP img{
+    display: block;
+    border: 3px solid #fff;
+    width: 72px;
+    height: 72px;
+    border-radius: 4px;
+}
+.post .postAuthor .postAuthorBoxInfo .postAuthorBoxInfoBiography{
+    margin-bottom: 10px;
+}
+.post .postAuthor .postAuthorBoxInfo .postAuthorBoxInfoName h2{
+    margin: 10px 0!important;
+}
+.post .postAuthor .postAuthorBoxInfo .postAuthorBoxInfoTopBar{
+    padding: 10px;
+    font-weight: bold;
+    height: 42px;
+    display: flex;
+    align-items: center;
+    color:#fff;
+    position: absolute!important;
+    width: 100%;
+    box-sizing: border-box;
+    z-index: 129;
+    top: 0;
+    background-image: linear-gradient(to bottom, rgba(0, 0, 0, .8), transparent);
 }

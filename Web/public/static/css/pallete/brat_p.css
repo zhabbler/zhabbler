@@ -1,4 +1,4 @@
-.mobile_nav, .popupContentPseudoInput, .input_tags_searched, .s_media_selections, .navbar_element_bubble_title, .main_messages_convos .main_messages_convo.main_messages_convo_active, .popup_container, .main_messages_im .main_messages_im_person, .main_messages_write_message, .popup-post-uie .popup-post-uie-btn .popup-post-uie-btn-round, .navbar_element_bubble, .profile_main, .profile_main_container, .dropdown, .error-success, .profile_main_info_editable .nickname_input, .profile_main_info_editable .biography_input, .profile_main_info_editable input:read-only, .profile_main_info_editable textarea:read-only, .profile_main_info_editable .h2_input, .profile_main_pics_pfp, input[type=checkbox]:checked, body, .tabs, .navbar_top, .post, .postRespondsRespondTextarea, .dropdown .dropdown_element, .button, .write_post_tags .write_post_tag, .settings_main, .input, postAuthorProfileImageReposted{
+.mobile_nav, .popupContentPseudoInput, .input_tags_searched, .s_media_selections, .navbar_element_bubble_title, .main_messages_convos .main_messages_convo.main_messages_convo_active, .popup_container, .main_messages_im .main_messages_im_person, .main_messages_write_message, .popup-post-uie .popup-post-uie-btn .popup-post-uie-btn-round, .navbar_element_bubble, .profile_main, .profile_main_container, .dropdown, .error-success, input[type=checkbox]:checked, body, .tabs, .navbar_top, .post, .postRespondsRespondTextarea, .dropdown .dropdown_element, .button:not(.button_outline), .write_post_tags .write_post_tag, .settings_main, .input, postAuthorProfileImageReposted{
     background: #8ACE00!important;
 }
 .main_messages_im_msgs .main_messages_im_msg .main_messages_im_msg_itself{
@@ -94,11 +94,14 @@ input[type=checkbox], .error-success, .profile_main, .settings_main{
     border: 1px solid #000!important;
 }
 .tags_followed_pg .tags_followed_pg_itself .tag_pg{
-    background: rgba(0, 0, 0, .2);
+    background-color: rgba(0, 0, 0, .2);
 }
 .postQuestionItself{
     background-color: #abff00!important;
 }
 .postQuestionItself::after{
     border-left: 12px solid #abff00;
+}
+.tags_followed_pg .tags_followed_pg_itself .tag_pg_tag{
+    color:#fff;
 }

@@ -178,18 +178,15 @@ a, .button_outline{
 .inbox_msg_empty_here{
     color:rgba(0, 0, 0, .5)!important;
 }
-.settings_main, .profile_main_info_editable input:read-only, .profile_main_info_editable textarea:read-only{
-    background-color: #eee;
-}
 .profile_main_info_editable input:not(:read-only), .profile_main_info_editable textarea:not(:read-only){
     background-color: #fff;
 }
 .nav_options_tab_danger{
     color:#f00!important;
 }
-.settings_main .profile_main_pics_pfp{
-    background-color: #eee;
-}
 .popupContentPseudoInput{
     background-color: #e9e9e9!important;
+}
+.verifed_icon{
+    color: rgba(102, 117, 134, 1);
 }

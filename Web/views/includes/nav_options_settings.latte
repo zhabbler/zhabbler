@@ -12,7 +12,7 @@
                 <span>{$language['tags_u_followed']}</span>
             </div>
             {foreach (new Web\Models\Posts())->get_followed_tags($user->token) as $tag}
-            <a href="/search?q={$tag->followedTag}" class="nav_options_req_search_recent_s">
+            <a href="/tagged/{$tag->followedTag}" class="nav_options_req_search_recent_s">
                 <i class='bx bx-hash'></i>
                 <span>
                     {$tag->followedTag}

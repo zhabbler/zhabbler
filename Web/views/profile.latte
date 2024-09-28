@@ -20,30 +20,31 @@
 </head>
 <body>
     <div id="app">
-        {if ctype_xdigit(str_replace('#', '', $profile->backgroundColor)) && ctype_xdigit(str_replace('#', '', $profile->accentColor))}
-        <style n:syntax="double">
-            .profile_main, .profile_main_container, .profile_main_pics_pfp{
-                background:{{$profile->backgroundColor|noescape}};
-            }
-            .profile_main_container .button{
-                background:{{$profile->accentColor|noescape}};
-            }
-            .profile_tab, .profile_btns .button_outline, .profile_main_container .verifed_icon, .profile_main_info a, #Posts .post .postContent a{
-                color:{{$profile->accentColor|noescape}};
-            }
-            .profile_btns .button_outline{
-                border: 2px solid {{$profile->accentColor|noescape}};
-            }
-            .profile_tab_active, .profile_tabs{
-                border-bottom: 1px solid {{$profile->accentColor|noescape}};
-            }
-        </style>
-        {/if}
         <div class="popup popup_do_not_close" id="JS_Loader">
             <div class="loader loader_cpa"><div class="loader_part loader_part_1"></div><div class="loader_part loader_part_2"></div><div class="loader_part loader_part_3"></div></div>
         </div>
         {include 'includes/login_banner.latte'}
         {include 'includes/navbar_top.latte'}
+        {if ctype_xdigit(str_replace('#', '', $profile->backgroundColor)) && ctype_xdigit(str_replace('#', '', $profile->accentColor))}
+        <style n:syntax="double">
+            .profile_main, .profile_main_container, .profile_main_pics_pfp{
+                background:{{$profile->backgroundColor|noescape}}!important;
+            }
+            .profile_tab_active, .profile_tabs{
+                border-bottom: 1px solid {{$profile->accentColor|noescape}}!important;
+            }
+            .profile_tab, .profile_btns .button_outline, .profile_main_container .verifed_icon, .profile_main_info a, #Posts .post .postContent a{
+                color:{{$profile->accentColor|noescape}}!important;
+            }
+            .profile_main_container .button:not(.button_outline){
+                background:{{$profile->accentColor|noescape}}!important;
+                color:#fff!important;
+            }
+            .profile_btns .button_outline{
+                border: 2px solid {{$profile->accentColor|noescape}};
+            }
+        </style>
+        {/if}
         <div class="container">
             {include 'includes/navbar.latte'}
             <main class="main">
