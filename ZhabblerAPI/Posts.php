@@ -1,6 +1,7 @@
 <?php declare(strict_types=1);
 namespace ZhabblerAPI;
 use ZhabblerAPI\Sessions;
+use ZhabblerAPI\User;
 use Utilities\Strings;
 use Nette;
 
@@ -15,7 +16,23 @@ class Posts extends RateLimit
         }
         $output = [];
         foreach($posts as $post){
-            $post->zhabContent = strip_tags($post->zhabContent, ["p", "h1", "h2", "h3", "h4", "h5", "h6", "img", "video", "span", "a", "b", "i", "u"]);
+            $post->zhabContent = strip_tags($post->zhabContent, ["p", "h1", "h2", "h3", "h4", "h5", "h6", "img", "video", "span", "a", "b", "i", "u", "br"]);
+            $output[] = ["id" => $post->zhabID, "post_id" => $post->zhabURLID, "userID" => $post->userID, "nickname" => $post->nickname, "profileImage" => (empty($_SERVER['HTTPS']) ? 'http' : 'https') . "://$_SERVER[HTTP_HOST]".$post->profileImage, "postContent" => $post->zhabContent, "liked" => $post->zhabLikes, "uploaded" => (string)$post->zhabUploaded];
+        }
+        return $output;
+    }
+
+    public function get_posts_by_user(string $nickname, int $lastID): array
+    {
+        $profile = (new User())->get_user_by_nickname($nickname);
+        if($lastID != 0){
+            $posts = $GLOBALS['db']->fetchAll("SELECT * FROM zhabs LEFT JOIN users ON userID = zhabBy WHERE zhabID < ? AND zhabBy = ? ORDER BY zhabID DESC LIMIT 7", $lastID, $profile['id']);
+        }else{
+            $posts = $GLOBALS['db']->fetchAll("SELECT * FROM zhabs LEFT JOIN users ON userID = zhabBy WHERE zhabBy = ? ORDER BY zhabID DESC LIMIT 7", $profile['id']);
+        }
+        $output = [];
+        foreach($posts as $post){
+            $post->zhabContent = strip_tags($post->zhabContent, ["p", "h1", "h2", "h3", "h4", "h5", "h6", "img", "video", "span", "a", "b", "i", "u", "br"]);
             $output[] = ["id" => $post->zhabID, "post_id" => $post->zhabURLID, "userID" => $post->userID, "nickname" => $post->nickname, "profileImage" => (empty($_SERVER['HTTPS']) ? 'http' : 'https') . "://$_SERVER[HTTP_HOST]".$post->profileImage, "postContent" => $post->zhabContent, "liked" => $post->zhabLikes, "uploaded" => (string)$post->zhabUploaded];
         }
         return $output;
@@ -164,6 +181,6 @@ class Posts extends RateLimit
                 $result = ["error" => "Some fields are empty!"];
             }
         }
-    	return $result;
+        return $result;
     }
 }
