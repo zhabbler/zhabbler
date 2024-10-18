@@ -1,4 +1,4 @@
-var conn = new WebSocket('ws://localhost:8000');
+var conn = new WebSocket('ws://<Enter uri here>:8000');
 var connection = null;
 conn.addEventListener("error", (event) => {
     connection = false;
