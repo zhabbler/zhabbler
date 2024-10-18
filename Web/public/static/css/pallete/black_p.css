@@ -1,6 +1,7 @@
 body, .tabs, .navbar_top{
     background: #000000!important;
 }
+.bubble-activity-tabs .bubble-activity-tab{color:#fff;}
 .button_gray{
     background-color: #333!important;
     color: #999!important;
