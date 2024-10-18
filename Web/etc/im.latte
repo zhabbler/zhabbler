@@ -1,30 +1,47 @@
-<div class="messages_b_user_info" data-hide="{$profile->nickname}">
-    <div class="messages_b_user_info_pfp">
-        <img src="{$profile->profileImage}" alt="Image">
-    </div>
-    <div>
-        <span>
-            {$profile->nickname}
-        </span>
-    </div>
-    <div class="messages_b_close" data-close="{$profile->nickname}">
-        <i class="bx bx-x"></i>
-    </div>
-</div>
-<div class="messages_b_msgs_box">
-    <div class="loader loader_black "><div class="loader_part loader_part_1"></div><div class="loader_part loader_part_2"></div><div class="loader_part loader_part_3"></div></div>
-</div>
-<div class="messages_b_write_msg">
-    <div class="messages_b_write_msg_textarea">
-        <textarea type="text" maxlength="256" onkeydown="imsendenter({$profile->nickname}, event);" placeholder="{$language['message']}..."></textarea>
-    </div>
-    <div class="messages_b_write_msg_btns">
-        <div>
-            <label class="messages_b_write_msg_btn" style="padding: 0 5px;">
-                <input type="file" accept="image/*" hidden="" onchange="imsendimage(this, {$profile->nickname})">
-                <i class='bx bx-image-alt' ></i>
-            </label>
+<div class="new_msgr_msgs_conversation_info">
+    <a href="/profile/{$profile->nickname}" class="new_msgr_msgs_conversation_info_linked">
+        <div class="new_msgr_msgs_conversation_info_profile_picture">
+            <img src="{$profile->profileImage}" alt="Avatar">
         </div>
-        <button class="messages_b_write_msg_btn messages_b_write_msg_btn_send" onclick="imsend({$profile->nickname});"><i class="bx bx-send"></i></button>
+        <div class="new_msgr_msgs_conversation_info_nickname">
+            <span>{$profile->nickname}</span>
+        </div>
+    </a>
+    <div class="new_msgr_msgs_conversation_info_btn" id="hideMsgsN" data-nickname="{$profile->nickname}">
+        <i class='bx bx-down-arrow-alt'></i>
     </div>
+    <div class="new_msgr_msgs_conversation_info_btn" id="closeMsgsN" data-nickname="{$profile->nickname}">
+        <i class='bx bx-x'></i>
+    </div>
+</div>
+<div class="new_msgr_msgs_list_m" id="MessagesList">
+    <div class="rainbow-loader"></div>
+</div>
+<div class="new_msgr_msgs_wmform">
+    {if (new Web\Models\Messages())->allowed_to_write_msgs($user->token, $profile->userID)}
+    <div class="new_msgr_msgs_wmform_input">
+        <textarea name="message" id="message" onkeydown="sendbyentermessage({$profile->nickname}, event);" placeholder="{$language['new_message']}"></textarea>
+    </div>
+    <div class="new_msgr_msgs_wmform_btns">
+        <label class="new_msgr_msgs_wmform_btn">
+            <input type="file" accept="image/*" hidden="" onchange="messenger.sendImage(this, {$profile->nickname});">
+            <i class='bx bx-image-alt'></i>
+        </label>
+        <div class="new_msgr_msgs_wmform_btn" onclick="messenger.sendMessage({$profile->nickname})">
+            <i class='bx bx-send'></i>
+        </div>
+    </div>
+    {else}
+    <div class="new_msgr_msgs_wmform_input">
+        <textarea placeholder="{$language['new_messages_disabled']}" disabled></textarea>
+    </div>
+    <div class="new_msgr_msgs_wmform_btns new_msgr_msgs_wmform_btns_disabled">
+        <div class="new_msgr_msgs_wmform_btn">
+            <i class='bx bx-image-alt'></i>
+        </div>
+        <div class="new_msgr_msgs_wmform_btn">
+            <i class='bx bx-send'></i>
+        </div>
+    </div>
+    {/if}
 </div>

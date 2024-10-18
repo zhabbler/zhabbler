@@ -1,48 +1,12 @@
 var page_id = 0;
 var locale = null;
-var opened_msgs = [];
-var conn = new WebSocket('ws://localhost:8000');
 var user = null;
-var connection = null;
 $.post("/api/Localization/get_string", function(data){
     locale = data;
 });
 $.post("/api/User/get_user_details", function(data){
     user = data;
 });
-conn.addEventListener("error", (event) => {
-    connection = false;
-});
-conn.onopen = function(e) {
-    console.log("websockets connected");
-    connection = true;
-};
-conn.onmessage = function(e) {
-    json_data = JSON.parse(e.data);
-    if(typeof json_data.deleted !== 'undefined'){
-        if($(".main_messages_im").length > 0 && $(".main_messages_im").attr("data-convo") == json_data.by){
-            getMessages(json_data.by);
-        }else if($(".main_messages").length > 0){
-            getConvos();
-        }
-    }else{
-        if(json_data.to == user.nickname){
-            $.post("/api/Messages/check_is_there_an_unread_msgs", {to:json_data.by}, function(data){
-                if(data.result == 1){
-                    new Audio("/static/audios/new_msg.mp3").play();
-                    if($(".main_messages_im").length > 0 && $(".main_messages_im").attr("data-convo") == json_data.by){
-                        getMessages(json_data.by);
-                    }else if($(".main_messages").length > 0){
-                        getConvos();
-                        zhabbler.addNotify(json_data.by + locale['new_msg_notify'], "/messages?im=" + json_data.by);
-                    }else{
-                        zhabbler.addNotify(json_data.by + locale['new_msg_notify'], "/messages?im=" + json_data.by);
-                    }
-                }
-            });
-        }
-    }
-}
 $(document).ready(function(){
     $(document).on("click", ".popup", function(){
         if(!$(this).hasClass("popup_do_not_close")){
@@ -113,11 +77,18 @@ $(document).ready(function(){
     $(document).on("click", ".main_messages_im_msg_itself img", function(){
         $("#app").prepend(`<div class="photoViewer"><div class="photoViewerClose"><i class="bx bx-x"></i></div><img src="${$(this).attr("src")}"></div>`);
     });
+    $(document).on("click", ".new_msgr_msgs_list_m_msg_i img", function(){
+        $("#app").prepend(`<div class="photoViewer"><div class="photoViewerClose"><i class="bx bx-x"></i></div><img src="${$(this).attr("src")}"></div>`);
+    });
     $(document).on("click", ".photoViewer", function(){
         $(this).remove();
     });
-    $(document).on("click", "#app", function(event){
+    $(document).on("click", "#app", function(){
         $(".dropdown").fadeOut(200);
+        $(".navbar_element_bubble:not(#NVT_US_BBL)").remove();
+    });
+    $(document).on("click", ".navbar_element_bubble", function(event){
+        event.stopPropagation();
     });
     $(document).on("mouseover", "#LabelEventer", function(){
         if($(this).find(".ariaLabelVisible").length == 0 && typeof $(this).data("label") !== 'undefined'){
@@ -265,11 +236,6 @@ $(document).ready(function(){
             }
         });
     })
-    $(document).on("click", "#newMsgSectionBtn", function(){
-        $("#Write").toggle();
-        $("#People").toggle();
-        $(this).find('span').text(($(this).find('span').text() == locale['write'] ? locale['to_messages'] : locale['write']));
-    });
     $(document).on("click", "a", function(){
         if(typeof $(this).data("refresh") === 'undefined' && $(this).data("refresh") !== true){
             if(typeof $(this).attr("href") !== 'undefined' && $(this).attr("href") !== false && !$(this).attr("href").includes("javascript:")){
@@ -277,6 +243,10 @@ $(document).ready(function(){
                 return false;
             }
         }
+    });
+    $(document).on("click", ".bubble-activity-tab", function(){
+        $(".bubble-activity-tab-active").removeClass("bubble-activity-tab-active");
+        $(this).addClass("bubble-activity-tab-active");
     });
     $(document).on("click", ".navbar_logotype", function(){
         goToPage("/");
@@ -287,11 +257,6 @@ $(document).ready(function(){
         }else{
             $(`#IM_${$(this).data('hide')}`).addClass("messages_b_hidden");
         }
-    });
-    $(document).on("click", ".messages_b .messages_b_close", function(){
-        $(`#IM_${$(this).data('close')}`).remove();
-        opened_msgs.splice(opened_msgs.indexOf($(this).data('close')), 1);
-        return false;
     });
     $(document).on("submit", "form", function(e) {
         var form = $(this);
@@ -409,12 +374,13 @@ class Zhabbler{
         $(`#post${id} .postReadMore`).remove();
         $(`#post${id} .postContent`).css("max-height", "unset");
     }
-    activityBubble(){
+    activityBubble(event){
+        event.stopPropagation();
         $("#NVT_US_BBL").hide();
         if($(".navbar_element_bubble:not(#NVT_US_BBL)").length > 0){
             $(".navbar_element_bubble:not(#NVT_US_BBL)").remove();
         }else{
-            $(($(".navbar_top").length > 0 ? "#NVT_FA" : ".main")).prepend(`<div class="navbar_element_bubble" id="ActivityBubble"><div class="loader loader_black  loader_cpa"><div class="loader_part loader_part_1"></div><div class="loader_part loader_part_2"></div><div class="loader_part loader_part_3"></div></div></div>`);
+            $(($(".navbar_top").length > 0 ? "#NVT_FA" : ".main")).prepend(`<div class="navbar_element_bubble" id="ActivityBubble"><div class="navbar_element_bubble_header"><div class="navbar_element_bubble_header_title"><span>${user.nickname}</span></div></div><div class="rainbow-loader"></div></div>`);
             $("#ActivityBubble").load("/etc/activity");
         }
     }
@@ -561,7 +527,7 @@ class Zhabbler{
                 $("#WriteResults .loader").remove();
                 var query_results = '';
                 $.each(data, function(i, data){
-                    query_results += `<div class="messages_bubble_person" onclick="zhabbler.openIM('${data.nickname}');">
+                    query_results += `<div class="messages_bubble_person" onclick="messenger.openMessages('${data.nickname}');">
                         <div class="messages_bubble_person_profile_picture">
                             <img src="${data.profileImage}" alt="Image">
                         </div>
@@ -603,9 +569,6 @@ class Zhabbler{
             </div>
         </div>`);
         }
-    }
-    openIM(nickname){
-        goToPage(`/messages?peer=${nickname}`);
     }
     askQuestion(nickname){
         $("#app").prepend(`<div class="popup popup_do_not_close"><div class="loader"><div class="loader_part loader_part_1"></div><div class="loader_part loader_part_2"></div><div class="loader_part loader_part_3"></div></div></div>`);
@@ -941,7 +904,7 @@ class Zhabbler{
                         $(".photo--:last .ui__btn__delete").attr("data-src", data.url);
                         $(".photo--:last .loader").remove();
                     }
-                }).fail(function(data){
+                }).fail(function(){
                     $(".photo--:last").remove();
                     zhabbler.addError(locale['something_went_wrong']);
                 });
@@ -1056,6 +1019,31 @@ class Zhabbler{
             });
         }
     }
+    deleteInboxMessage(id, popup){
+        if(popup == true){
+            $("#app").prepend(`<div class="popup popup_choose_alert popup_do_not_close">
+                <div>
+                    <div>
+                        <h1>
+                            ${locale['do_u_want_to_delete_message']}
+                        </h1>
+                    </div>
+                    <div style="display: flex;">
+                        <div class="button button_gray" onclick="$('.popup:first').remove();" style="margin:0 auto;">
+                            ${locale['cancel']}
+                        </div>
+                        <div class="button" onclick="$('.popup:first').remove();zhabbler.deleteInboxMessage(${id}, false);" style="margin:0 auto;">
+                            ${locale['delete']}
+                        </div>
+                    </div>
+                </div>
+            </div>`);
+        }else{
+            $.post("/api/Inbox/deleteMessage", {id:id}, function(){
+                $(`#postInbox${id}`).remove();
+            });
+        }
+    }
     openEditorWithTagged(tagged){
         $(".popup").remove();
         $("#app").prepend(`<div class="popup popup_do_not_close" id="postEditor">
@@ -1099,34 +1087,63 @@ class Cookie{
 const zhabbler = new Zhabbler();
 const cookie = new Cookie();
 window.addEventListener('popstate', function (event) {
+    var msgr = '';
+    var errors = '';
     console.log(`location: ${document.location}, state: ${JSON.stringify(history.state)}`,);
     togo = `${document.location} #app`;
     if($('.errors').length > 0){
         $('.errors .error').css("animation", "none");
         errors = $('.errors').html();
     }
+    if($('.new_msgr').length > 0){
+        $(`.new_msgr_avatar_whidn`).show();
+        $(".new_msgr_msgs").hide();
+        $(".new_msgr_msgs_opened").removeClass("new_msgr_msgs_opened");
+        msgr = $('.new_msgr').html();
+    }
     $('html,body').scrollTop(0);
+    $('.main').html('<div class="loader loader_cpa"><div class="loader_part loader_part_1"></div><div class="loader_part loader_part_2"></div><div class="loader_part loader_part_3"></div></div>');
     $("body").load(togo, function(){
         zhabbler.loadPreloaders();
-        $("#app").prepend(`<div class='errors'>${errors}</div>`);
+        if(errors != ''){
+            $("#app").prepend(`<div class='errors'>${errors}</div>`);
+        }
+        if(msgr != ''){
+            $("#app").prepend(`<div class='new_msgr'>${msgr}</div>`);
+        }
         errors = '';
+        msgr = '';
     });
 }, false);
 const goToPage = (href) => {
+    var msgr = '';
+    var errors = '';
     if(!isValidUrl(href)){
+        window.history.pushState({page:page_id++}, 'Жабблер', href);
         console.log(`location: ${document.location}, state: ${JSON.stringify(history.state)}`,);
         togo = `${href} #app`;
         if($('.errors').length > 0){
             $('.errors .error').css("animation", "none");
             errors = $('.errors').html();
         }
+        if($('.new_msgr').length > 0){
+            $(`.new_msgr_avatar_whidn`).show();
+            $(".new_msgr_msgs").hide();
+            $(".new_msgr_msgs_opened").removeClass("new_msgr_msgs_opened");
+            msgr = $('.new_msgr').html();
+        }
         $('html,body').scrollTop(0);
         $('.main').html('<div class="loader loader_cpa"><div class="loader_part loader_part_1"></div><div class="loader_part loader_part_2"></div><div class="loader_part loader_part_3"></div></div>');
         $("body").load(togo, function(){
-            window.history.pushState({page:page_id++}, 'Жабблер', href);
             zhabbler.loadPreloaders();
-            $("#app").prepend(`<div class='errors'>${errors}</div>`);
+            if(errors != ''){
+                $("#app").prepend(`<div class='errors'>${errors}</div>`);
+            }
+            if(msgr != ''){
+                $("#app").prepend(`<div class='new_msgr'>${msgr}</div>`);
+            }
             errors = '';
+            msgr = '';
         });
     }else{
         window.location.href = href;
@@ -1142,6 +1159,13 @@ const htmlspecialchars = (text) => {
     };
     
     return text.replace(/[&<>"']/g, function(m) { return map[m]; });
+}
+function nl2br(str, is_xhtml){
+    if (typeof str === 'undefined' || str === null) {
+        return '';
+    }
+    var breakTag = (is_xhtml || typeof is_xhtml === 'undefined') ? '<br />' : '<br>';
+    return (str + '').replace(/([^>\r\n]?)(\r\n|\n\r|\r|\n)/g, '$1' + breakTag + '$2');
 }
 const isValidUrl = (urlString) => {
     var urlPattern = new RegExp('^(https?:\\/\\/)?'+
@@ -1184,6 +1208,23 @@ async function copyPostURL(id) {
         zhabbler.addSuccess(locale['successfly_copied']);
     } catch (err) {
         zhabbler.addError(locale['failed_to_copy'])
+    }
+}
+const showActivity = (which) => {
+    if($(".notification_neb").length == 0){
+        $("#ActivityBubbleWarningEm").show();
+    }else{
+        $("#ActivityBubbleWarningEm").hide();
+    }
+    if(which == 0){
+        $(".notification_neb").show();
+    }else{
+        $(".notification_neb").hide();
+        if($(".notification_neb_ab_" + which).length > 0){
+            $(".notification_neb_ab_" + which).show();
+        }else{
+            $("#ActivityBubbleWarningEm").show();
+        }
     }
 }
 const makeid = (length) => {

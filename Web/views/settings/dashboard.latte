@@ -74,7 +74,7 @@
                             <div class="settings_section_content">
                                 <select name="color_pallete" class="input">
                                     <option value="none">{$language['true_green']}</option>
-                                    <option value="brat" {((new Web\Models\Personalization())->get_personalization_config($user->userID)->personalizationPallete == "brat" ? "selected" : "")}>brat</option>
+                                    <option value="brat" {((new Web\Models\Personalization())->get_personalization_config($user->userID)->personalizationPallete == "brat" ? "selected" : "")}>brat (deprecated)</option>
                                     <option value="ghost" {((new Web\Models\Personalization())->get_personalization_config($user->userID)->personalizationPallete == "ghost" ? "selected" : "")}>{$language['ghost']}</option>
                                     <option value="black" {((new Web\Models\Personalization())->get_personalization_config($user->userID)->personalizationPallete == "black" ? "selected" : "")}>{$language['dark']}</option>
                                 </select>
@@ -92,6 +92,7 @@
             {include '../includes/nav_options_settings.latte'}
         </div>
         <preloader src="/static/js/settings.js"></preloader>
+        <preloader src="/static/js/new_messenger.js"></preloader>
         <preloader src="/static/player/js/zhabblerplayer.js"></preloader>
     </div>
     <script src="/static/node_modules/jquery/dist/jquery.min.js"></script>

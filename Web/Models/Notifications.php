@@ -10,7 +10,7 @@ class Notifications
     {
         $user = (new User())->get_user_by_token($token);
         $GLOBALS['db']->query("UPDATE notifications SET notificationReaded = 1 WHERE notificationReaded != 1 AND notificationTo = ?", $user->userID);
-        return $GLOBALS['db']->fetchAll("SELECT * FROM notifications LEFT JOIN users ON userID = notificationBy WHERE notificationTo = ? ORDER BY notificationID DESC LIMIT 24", $user->userID);
+        return $GLOBALS['db']->fetchAll("SELECT * FROM notifications LEFT JOIN users ON userID = notificationBy WHERE notificationTo = ? AND reason = '' ORDER BY notificationID DESC LIMIT 24", $user->userID);
     }
 
     public function notificationUnreadedCount(string $token): int

@@ -1,11 +1,14 @@
 <div class="navbar_element_bubble_header">
     <div class="navbar_element_bubble_header_title">
         <span>
-            {$language['write']}
+            {$language['messages']}
         </span>
     </div>
+    <div class="navbar_element_bubble_header_button" id="newMsgSectionBtn">
+        <span>{$language['new_message']}</span>
+    </div>
 </div>
-<div id="Write">
+<div id="Write" style="display:none;">
     <div>
         <input class="input" placeholder="{$language['enter_nickname']}" onchange="zhabbler.bubbleMsgSearch(this.value);">
     </div>
@@ -21,4 +24,39 @@
             </div>
         </div>
     </div>
+</div>
+<div id="People">
+     {if count($conversations) == 0}
+    <div class="bubble_nve_warning">
+        <div>
+            <div>
+                <i class='bx bx-chat'></i>
+            </div>
+            <div>
+                <span>{$language['messages_warning']}</span>
+            </div>
+        </div>
+    </div>
+    {/if}
+    {foreach $conversations as $conversation}
+    <div class="messages_bubble_person {((new Web\Models\Messages())->get_count_of_unreaded_msgs_of_user($user->token, $conversation['userID']) > 0 ? "messages_bubble_person_red" : "")}" onclick="messenger.openMessages({$conversation['nickname']});">
+        <div class="messages_bubble_person_profile_picture">
+            <img src="{$conversation['profileImage']}" alt="Изображение">
+        </div>
+        <div class="messages_bubble_person_info">
+            <div>
+                <span>
+                    <b>
+                        {$conversation['nickname']}
+                    </b>
+                </span>
+            </div>
+        </div>
+        {if (new Web\Models\Messages())->get_count_of_unreaded_msgs_of_user($user->token, $conversation['userID']) > 0}
+        <div class="messages_bubble_person_info_new_msgs_counter">
+            {(new Web\Models\Messages())->get_count_of_unreaded_msgs_of_user($user->token, $conversation['userID'])}
+        </div>
+        {/if}
+    </div>
+    {/foreach}
 </div>

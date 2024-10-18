@@ -90,14 +90,16 @@
                 {/if}
                 <i class="bx bxs-envelope"></i>
             </a>
-            <a href="/messages" class="navbar_top_container_element{($_SERVER['REQUEST_URI'] == '/messages'  ? ' navbar_top_container_element_active' : '')|noescape}">
-                {if (new Web\Models\Messages())->get_count_of_unread_messages($user->token) > 0}
-                    <div class="navbar_top_container_element_counter">{(new Web\Models\Messages())->get_count_of_unread_messages($user->token)}</div>
-                {/if}
-                <i class="bx bxs-message-square-dots"></i>
-            </a>
+            <div class="navbar_top_container_element_bubble_contains" id="NVT_FM">
+                <a onclick="messenger.messagesBubble(event);" class="navbar_top_container_element   ">
+                    {if (new Web\Models\Messages())->get_count_of_unread_messages($user->token) > 0}
+                        <div class="navbar_top_container_element_counter">{(new Web\Models\Messages())->get_count_of_unread_messages($user->token)}</div>
+                    {/if}
+                    <i class="bx bxs-message-square-dots"></i>
+                </a>
+            </div>
             <div class="navbar_top_container_element_bubble_contains" id="NVT_FA">
-                <a class="navbar_top_container_element" onclick="zhabbler.activityBubble();">
+                <a class="navbar_top_container_element" onclick="zhabbler.activityBubble(event);">
                     {if (new Web\Models\Notifications())->notificationUnreadedCount($user->token) > 0}
                         <div class="navbar_top_container_element_counter">{(new Web\Models\Notifications())->notificationUnreadedCount($user->token)}</div>
                     {/if}

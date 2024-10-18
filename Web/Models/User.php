@@ -64,13 +64,15 @@ class User
         header('Content-Type: application/json');
         $query = (new Strings())->convert($query);
         $result = [];
-        if($lastID == 0){
-            $searched = $GLOBALS['db']->fetchAll("SELECT * FROM users WHERE nickname LIKE ? AND reason = '' AND activated = 1 ORDER BY userID DESC LIMIT 15", "%$query%");
-        }else{
-            $searched = $GLOBALS['db']->fetchAll("SELECT * FROM users WHERE nickname LIKE ? AND userID < ? AND reason = '' AND activated = 1 ORDER BY userID DESC LIMIT 15", "%$query%", $lastID);
-        }
-        foreach($searched as $search){
-            $result[] = ["userID" => $search->userID, "profileImage" => $search->profileImage, "name" => $search->name, "nickname" => $search->nickname];
+        if(!(new Strings())->is_empty($query)){
+            if($lastID == 0){
+                $searched = $GLOBALS['db']->fetchAll("SELECT * FROM users WHERE nickname LIKE ? AND reason = '' AND activated = 1 ORDER BY userID DESC LIMIT 15", "%$query%");
+            }else{
+                $searched = $GLOBALS['db']->fetchAll("SELECT * FROM users WHERE nickname LIKE ? AND userID < ? AND reason = '' AND activated = 1 ORDER BY userID DESC LIMIT 15", "%$query%", $lastID);
+            }
+            foreach($searched as $search){
+                $result[] = ["userID" => $search->userID, "profileImage" => $search->profileImage, "name" => $search->name, "nickname" => $search->nickname];
+            }
         }
         die(json_encode($result));
     }
@@ -170,12 +172,13 @@ class User
         die(json_encode($result));
     }
 
-    public function change_confidential_settings(string $token, int $liked, int $following, int $questions): void
+    public function change_confidential_settings(string $token, int $liked, int $following, int $questions, int $write_msgs): void
     {
         $liked = ($liked == 1 ? 1 : 0);
         $following = ($following == 1 ? 1 : 0);
         $questions = ($questions == 1 ? 1 : 0);
-        $GLOBALS['db']->query("UPDATE users SET hideLiked = ?, hideFollowing = ?, askQuestions = ? WHERE token = ?", $liked, $following, $questions, $token);
+        $write_msgs = ($write_msgs <= 2 ? $write_msgs : 0);
+        $GLOBALS['db']->query("UPDATE users SET hideLiked = ?, hideFollowing = ?, askQuestions = ?, whoCanWriteMsgs = ? WHERE token = ?", $liked, $following, $questions, $write_msgs, $token);
     }
 
     public function delete_account(string $password): void

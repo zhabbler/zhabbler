@@ -9,10 +9,10 @@
             <div class="postAuthorBoxInfoPFP">
                 <img src="{$post->profileImage}" style="border-color:{$post->backgroundColor|noescape}">
             </div>
-            <div class="postAuthorBoxInfoName">
+            <div class="postAuthorBoxInfoName" style="color:{((new Utilities\Strings())->get_closest_color($post->backgroundColor) > 130 ? '#000000' : '#ffffff')|noescape}">
                 <h2>{$post->name}</h2>
             </div>
-            <div class="postAuthorBoxInfoBiography">
+            <div class="postAuthorBoxInfoBiography" style="color:{((new Utilities\Strings())->get_closest_color($post->backgroundColor) > 130 ? '#000000' : '#ffffff')|noescape}">
                 <span>{$post->biography}</span>
             </div>
         </div>
@@ -93,7 +93,7 @@
                 </div>
                 <div>
                     <span>
-                        {$question->question|noescape}
+                        {nl2br($question->question)|noescape}
                     </span>
                 </div>
             </div>

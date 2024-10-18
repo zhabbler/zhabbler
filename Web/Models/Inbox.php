@@ -1,7 +1,5 @@
 <?php declare(strict_types=1);
 namespace Web\Models;
-use Utilities\Database;
-use Web\Models\Sessions;
 use Web\Models\User;
 use Web\Models\Strings;
 use Web\Models\Questions;
@@ -50,6 +48,18 @@ class Inbox
                 "inboxTo" => $user->userID,
                 "inboxMessage" => $message
             ]);
+        }
+    }
+
+    public function deleteMessage(string $token, int $id): void
+    {
+        $user = (new User())->get_user_by_token($token);
+        if($GLOBALS['db']->query("SELECT * FROM inbox WHERE inboxID = ? AND inboxTo = ? ORDER BY inboxID DESC", $id, $user->userID)->getRowCount() > 0){
+            $message = $GLOBALS['db']->fetch("SELECT * FROM inbox WHERE inboxID = ? AND inboxTo = ? ORDER BY inboxID DESC", $id, $user->userID);
+            if($message->inboxMessage = 'question_asked' && (new Questions())->check_question_existence($message->inboxLinked)){
+                $GLOBALS['db']->query("DELETE FROM questions WHERE questionUniqueID = ?", $message->inboxLinked);
+            }
+            $GLOBALS['db']->query("DELETE FROM inbox WHERE inboxID = ? AND inboxTo = ?", $id, $user->userID);
         }
     }
 

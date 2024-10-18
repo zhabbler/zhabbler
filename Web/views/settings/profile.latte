@@ -62,14 +62,14 @@
                             </button>
                         </div>
                     </div>
-                    <div class="profile_main_pics"{(!empty($user->backgroundColor) ? ' style="background:'.$user->backgroundColor.';"' : '')|noescape}>
+                    <div class="profile_main_pics"{(!empty($user->backgroundColor) ? ' style="background:'.$user->backgroundColor.';"' : ' style="background:#fff;"')|noescape}>
                         <div class="profile_main_pics_cover" style="background-image: url('{$user->profileCover}');">
                             <label class="settings_profile_uploader_images_btn" style="display:none;">
                                 <input type="file" name="cover" onchange="settings.change_profile_cover(this);" accept="image/*" hidden>
                                 <i class="bx bxs-pencil"></i>
                             </label>
                         </div>
-                        <div class="profile_main_pics_pfp"{(!empty($user->backgroundColor) ? ' style="background:'.$user->backgroundColor.';"' : '')|noescape}>
+                        <div class="profile_main_pics_pfp"{(!empty($user->backgroundColor) ? ' style="background:'.$user->backgroundColor.';"' : ' style="background:#fff;"')|noescape}>
                             <label class="settings_profile_uploader_images_btn" style="display:none;">
                                 <input type="file" name="avatar" onchange="settings.change_profile_image(this);" accept="image/*" hidden>
                                 <i class="bx bxs-pencil"></i>
@@ -77,7 +77,7 @@
                             <img src="{$user->profileImage}">
                         </div>
                     </div>
-                    <div class="profile_main_info profile_main_info_editable"{(!empty($user->backgroundColor) ? ' style="background:'.$user->backgroundColor.';"' : '')|noescape}>
+                    <div class="profile_main_info profile_main_info_editable"{(!empty($user->backgroundColor) ? ' style="background:'.$user->backgroundColor.';color:'.((new Utilities\Strings())->get_closest_color($user->backgroundColor) > 130 ? '#333333' : '#ffffff').';"' : ' style="background:#fff;"')|noescape}>
                         <div>
                             <input type="text" class="h2_input" value="{$user->name|noescape}" readonly>
                         </div>
@@ -134,12 +134,25 @@
                                 <span>{$language['questions_about_conf_settings']}</span>
                             </div>
                         </section>
+                        <section class="settings_section">
+                            <div class="settings_section_title">
+                                <span>{$language['who_can_write_messages_to_me']}</span>
+                            </div>
+                            <div class="settings_section_content">
+                                <select class="input" id="write_msgs">
+                                    <option value="0" {($user->whoCanWriteMsgs == 0 ? "selected" : "")}>{$language['everyone']}</option>
+                                    <option value="1" {($user->whoCanWriteMsgs == 1 ? "selected" : "")}>{$language['mutually_followed_to_only_message']}</option>
+                                    <option value="2" {($user->whoCanWriteMsgs == 2 ? "selected" : "")}>{$language['nobody']}</option>
+                                </select>
+                            </div>
+                        </section>
                     </div>
                 </div>
             </main>
             {include '../includes/nav_options_settings.latte'}
         </div>
         <preloader src="/static/js/settings.js"></preloader>
+        <preloader src="/static/js/new_messenger.js"></preloader>
         <preloader src="/static/player/js/zhabblerplayer.js"></preloader>
     </div>
     <script src="/static/node_modules/jquery/dist/jquery.min.js"></script>

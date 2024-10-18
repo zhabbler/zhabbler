@@ -35,6 +35,7 @@ $Router->add("GET", "/settings/{act}", "SettingsPresenter");
 $Router->add("GET", "/verification/{code}", "EmailVerificationPresenter");
 $Router->add("GET", "/inbox", "InboxPresenter");
 $Router->add("GET", "/messages", "MessagesPresenter");
+$Router->add("GET", "/donate", "DonatePresenter");
 $Router->add("GET", "/me", "", function(){
 	if(isset($_COOKIE['zhabbler_session']))
 		header("Location: /profile/".(new Web\Models\User())->get_user_by_token((new Web\Models\Sessions())->get_session($_COOKIE['zhabbler_session'])->sessionToken)->nickname);
@@ -180,6 +181,10 @@ $Router->add("POST", "/api/Posts/get_posts_by_followings", "", function(){
 	if(isset($_COOKIE['zhabbler_session']))
 		(new Web\Models\Posts())->get_posts_by_followings((int)$_POST['last_id'], $GLOBALS['session']->sessionToken);
 });
+$Router->add("POST", "/api/Inbox/deleteMessage", "", function(){
+	if(isset($_COOKIE['zhabbler_session']))
+		(new Web\Models\Inbox())->deleteMessage($GLOBALS['session']->sessionToken, (int)$_POST['id']);
+});
 $Router->add("POST", "/api/Posts/get_all_popular_posts", "", function(){
 	(new Web\Models\Posts())->get_all_popular_posts((isset($_COOKIE['zhabbler_session']) ? $GLOBALS['session']->sessionToken : ""));
 });
@@ -248,7 +253,7 @@ $Router->add("POST", "/api/Posts/get_liked_posts", "", function(){
 });
 $Router->add("POST", "/api/User/change_confidential_settings", "", function(){
 	if(isset($_COOKIE['zhabbler_session']))
-		(new Web\Models\User())->change_confidential_settings($GLOBALS['session']->sessionToken, (int)$_POST['liked'], (int)$_POST['following'], (int)$_POST['questions']);
+		(new Web\Models\User())->change_confidential_settings($GLOBALS['session']->sessionToken, (int)$_POST['liked'], (int)$_POST['following'], (int)$_POST['questions'], (int)$_POST['write_msgs']);
 	die;
 });
 $Router->add("POST", "/api/Posts/search_posts", "", function(){

@@ -76,7 +76,7 @@
                     <div class="dropdown_section_part">
                         <select name="who_can_repost">
                             <option value="0">
-                                {$language['all']}
+                                {$language['everyone']}
                             </option>
                             <option value="1">
                                 {$language['nobody']}
@@ -93,7 +93,7 @@
                     <div class="dropdown_section_part">
                         <select name="who_can_comment">
                             <option value="0">
-                                {$language['all']}
+                                {$language['everyone']}
                             </option>
                             <option value="1">
                                 {$language['nobody']}
@@ -157,7 +157,7 @@
             </div>
             <div>
                 <span>
-                    {$question->question|noescape}
+                    {nl2br($question->question)|noescape}
                 </span>
             </div>
         </div>

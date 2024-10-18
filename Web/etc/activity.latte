@@ -1,23 +1,35 @@
 <div class="navbar_element_bubble_header">
     <div class="navbar_element_bubble_header_title">
         <span>
-            {$language['activity']}
+            {$user->nickname}
         </span>
     </div>
 </div>
-<div>
-    {if count($notifications) == 0}
-    <div class="bubble_nve_warning">
+<div class="bubble-activity-tabs">
+    <div class="bubble-activity-tab bubble-activity-tab-active" onclick="showActivity(0);">
+        {$language['all']}
+    </div>
+    <div class="bubble-activity-tab" onclick="showActivity(3);">
+        {$language['mentions']}
+    </div>
+    <div class="bubble-activity-tab" onclick="showActivity(2);">
+        {$language['reposts']}
+    </div>
+    <div class="bubble-activity-tab" onclick="showActivity(1);">
+        {$language['responds']}
+    </div>
+</div>
+<div class="bubble_nve_warning" id="ActivityBubbleWarningEm" {(count($notifications) != 0 ? 'style="display:none;"' : '')|noescape}>
+    <div>
         <div>
-            <div>
-                <i class='bx bxs-bolt'></i>
-            </div>
-            <div>
-                <span>{$language['activity_warning']}</span>
-            </div>
+            <i class='bx bxs-bolt'></i>
+        </div>
+        <div>
+            <span>{$language['activity_warning']}</span>
         </div>
     </div>
-    {/if}
+</div>
+<div>
     {foreach $notifications as $notification}
     <div class="notification_neb notification_neb_ab_{$notification->notificationCausedBy}" onclick="goToPage({$notification->notificationLink})">
         <div class="notification_neb_icon">

@@ -100,6 +100,17 @@ class Strings
         return $srcs;
     }
 
+    public function get_closest_color(string $hex): int
+    {
+        $hex = str_replace('#', '', $hex);
+
+        $c_r = hexdec(substr($hex, 0, 2));
+        $c_g = hexdec(substr($hex, 2, 2));
+        $c_b = hexdec(substr($hex, 4, 2));
+
+        return intval((($c_r * 299) + ($c_g * 587) + ($c_b * 114)) / 1000);
+    }
+
     public function get_img_src(string $html_content): string
     {
         $html_content = strip_tags($html_content, ['img', 'video']);
@@ -122,7 +133,7 @@ class Strings
     
     public function prepare_post_text(string $string): string
     {
-        $string = strip_tags($string, ['br', 'p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'b', 'i', 'u', 'a', 'strong', 'span', 'img', 'video']);
+        $string = strip_tags($string, ['p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'b', 'i', 'u', 'a', 'strong', 'span', 'img', 'video']);
         preg_replace('/(<.+?)(?<=\s)on[a-z]+\s*=\s*(?:([\'"])(?!\2).+?\2|(?:\S+?\(.*?\)(?=[\s>])))(.*?>)/i', "$1 $3", $string);
         $dom = new DOMDocument('1.0', 'UTF-8');
         $dom->loadHTML(mb_convert_encoding($string, 'HTML-ENTITIES', "UTF-8"));
@@ -138,7 +149,7 @@ class Strings
         }
         foreach(iterator_to_array($dom->getElementsByTagName('*')) as $element){
             $trimmed_value = trim($element->nodeValue);
-            if(!in_array($element->nodeName, ['img', 'video', 'br']) && $element->childNodes->length === 0 || $element->firstChild->nodeName === '#text' && $element->childNodes->length === 1 && empty($trimmed_value)){
+            if(!in_array($element->nodeName, ['img', 'video']) && $element->childNodes->length === 0 || $element->firstChild->nodeName === '#text' && $element->childNodes->length === 1 && empty($trimmed_value)){
                 $element->parentNode->removeChild($element);
             }else{
                 if($element->hasAttributes()){

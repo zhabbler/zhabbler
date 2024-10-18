@@ -30,7 +30,7 @@
                             </span>
                         </div>
                         <div class="main_messages_convos_elements">
-                            <div class="main_messages_convos_element" onclick="writeMessage();">
+                            <div class="main_messages_convos_element" onclick="goToPage('/search')">
                                 <i class='bx bxs-edit'></i>
                             </div>
                         </div>
@@ -83,6 +83,8 @@
                 </div>
             </main>
         </div>
+        <preloader src="/static/js/new_messenger.js"></preloader>
+        <preloader src="/static/js/new_messenger.js"></preloader>
         <preloader src="/static/player/js/zhabblerplayer.js"></preloader>
         <preloader src="/static/js/messages.js"></preloader>
         {if isset($open_msgs)}

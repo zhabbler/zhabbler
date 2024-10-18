@@ -1,11 +1,11 @@
 <?php declare(strict_types=1);
 namespace Web\Models;
-use Utilities\Database;
 use Nette;
 use Web\Models\User;
 use Utilities\Strings;
 use Utilities\Files;
 use Utilities\RateLimit;
+use Web\Models\Follow;
 #[\AllowDynamicProperties]
 class Messages
 {
@@ -22,18 +22,39 @@ class Messages
     	return $result;
     }
 
+    public function allowed_to_write_msgs(string $token, int $id): bool
+    {
+        $user = (new User())->get_user_by_token($token);
+        $profile = (new User())->get_user_by_id($id);
+        if($token == $profile->token){
+            return true;
+        }else{
+            if($profile->whoCanWriteMsgs == 0){
+                return true;
+            }else if($profile->whoCanWriteMsgs == 1 && (new Follow())->check_follow_existence($token, $id) && (new Follow())->check_follow_existence($profile->token, $user->userID)){
+                return true;
+            }else{
+                return false;
+            }
+        }
+    }
+
     public function delete_message(string $token, int $id): void
     {
         $user = (new User())->get_user_by_token($token);
         $message = $this->get_message($id);
         if($user->userID == $message->messageBy){
+            if(!empty($message->messageImage)){
+                $image_path = $_SERVER['DOCUMENT_ROOT']."/Web/public".openssl_decrypt($message->messageImage, 'aes-256-ecb', ENCRYPTION_KEY.md5($message->nickname));
+                unlink($image_path);
+            }
             $GLOBALS['db']->query("DELETE FROM messages WHERE messageID = ?", $id);
         }
     }
 
     public function get_message(int $id): Nette\Database\Row
     {
-        return $GLOBALS['db']->fetch("SELECT * FROM messages WHERE messageID = ?", $id);
+        return $GLOBALS['db']->fetch("SELECT * FROM messages LEFT JOIN users ON userID = messageBy WHERE messageID = ?", $id);
     }
 
     public function get_conversation(string $token, int $to): Nette\Database\Row
@@ -96,24 +117,28 @@ class Messages
             }else{
                 $this->update_conversation($token, $to);
             }
-            $conversation = $this->get_conversation($token, $to);
-            $message = (new Strings())->convert($message);
-            if(!(new Strings())->is_empty($GLOBALS['config']['application']['encryption_key'])){
-                if(!(new Strings())->is_empty($message)){
-                    (new RateLimit())->increase_rate_limit($token);
-                    $message = openssl_encrypt($message, 'aes-256-ecb', ENCRYPTION_KEY.md5($user->nickname));
-                    $GLOBALS['db']->query("INSERT INTO messages", [
-                        "messageBy" => $user->userID,
-                        "messageTo" => $to,
-                        "messageContent" => preg_replace('!(http|ftp|scp)(s)?:\/\/[a-zA-Z0-9.?&_/]+!', "<a href=\"\\0\">\\0</a>", $message),
-                        "messageAdded" => date("Y-m-d H:i:s"),
-                        "messageReaded" => ($user->userID == $to ? 1 : 0)
-                    ]);
+            if($this->allowed_to_write_msgs($token, $to)){
+                $conversation = $this->get_conversation($token, $to);
+                $message = (new Strings())->convert($message);
+                if(!(new Strings())->is_empty($GLOBALS['config']['application']['encryption_key'])){
+                    if(!(new Strings())->is_empty($message)){
+                        (new RateLimit())->increase_rate_limit($token);
+                        $message = openssl_encrypt($message, 'aes-256-ecb', ENCRYPTION_KEY.md5($user->nickname));
+                        $GLOBALS['db']->query("INSERT INTO messages", [
+                            "messageBy" => $user->userID,
+                            "messageTo" => $to,
+                            "messageContent" => preg_replace('!(http|ftp|scp)(s)?:\/\/[a-zA-Z0-9.?&_/]+!', "<a href=\"\\0\">\\0</a>", $message),
+                            "messageAdded" => date("Y-m-d H:i:s"),
+                            "messageReaded" => ($user->userID == $to ? 1 : 0)
+                        ]);
+                    }else{
+                        $result = ["error" => "empty message"];
+                    }
                 }else{
-                    $result = ["error" => "empty message"];
+                    $result = ["error" => "encryption key is empty"];
                 }
             }else{
-                $result = ["error" => "encryption key is empty"];
+                $result = ["error" => "not allowed to write msgs to this user"];
             }
             die(json_encode($result));
         }
@@ -138,20 +163,24 @@ class Messages
         $user = (new User())->get_user_by_token($token);
         $profile = (new User())->get_user_by_nickname($to);
         if($user->activated == 1 && $profile->activated == 1){
-            $image = (new Files())->upload_image($file, false);
-            $image = openssl_encrypt($image['url'], 'aes-256-ecb', ENCRYPTION_KEY.md5($user->nickname));
-            if(!$this->check_conversation_existence($token, $profile->userID)){
-                $this->new_conversation($token, $profile->userID);
+            if($this->allowed_to_write_msgs($token, $profile->userID)){
+                $image = (new Files())->upload_image($file, false);
+                $image = openssl_encrypt($image['url'], 'aes-256-ecb', ENCRYPTION_KEY.md5($user->nickname));
+                if(!$this->check_conversation_existence($token, $profile->userID)){
+                    $this->new_conversation($token, $profile->userID);
+                }else{
+                    $this->update_conversation($token, $profile->userID);
+                }
+                $GLOBALS['db']->query("INSERT INTO messages", [
+                    "messageBy" => $user->userID,
+                    "messageTo" => $profile->userID,
+                    "messageImage" => $image,
+                    "messageAdded" => date("Y-m-d H:i:s"),
+                    "messageReaded" => ($user->userID == $profile->userID ? 1 : 0)
+                ]);
             }else{
-                $this->update_conversation($token, $profile->userID);
+                header($_SERVER['SERVER_PROTOCOL'] . ' 500 Internal Server Error', true, 500);
             }
-            $GLOBALS['db']->query("INSERT INTO messages", [
-                "messageBy" => $user->userID,
-                "messageTo" => $profile->userID,
-                "messageImage" => $image,
-                "messageAdded" => date("Y-m-d H:i:s"),
-                "messageReaded" => ($user->userID == $profile->userID ? 1 : 0)
-            ]);
         }
     }
 
@@ -164,7 +193,7 @@ class Messages
             $msg = openssl_decrypt($message->messageContent, 'aes-256-ecb', ENCRYPTION_KEY.md5($message->nickname));
             $msg = (!empty($msg) && empty($message->messageImage) ? $msg : "Error: Failed to decrypt message");
             $image = (!empty($message->messageImage) ? openssl_decrypt($message->messageImage, 'aes-256-ecb', ENCRYPTION_KEY.md5($message->nickname)) : "");
-            $result[] = ["id" => $message->messageID, "profileImage" => $message->profileImage, "nickname" => $message->nickname, "message" => $msg, "added" => (string)$message->messageAdded, "image" => $image, "messageByUser" => ($user->userID == $message->messageBy ? 1 : 0), "readed" => $message->messageReaded];
+            $result[] = ["id" => $message->messageID, "profileImage" => $message->profileImage, "nickname" => $message->nickname, "message" => nl2br($msg), "added" => (string)$message->messageAdded, "image" => $image, "messageByUser" => ($user->userID == $message->messageBy ? 1 : 0), "readed" => $message->messageReaded];
             if($user->userID != $message->userID && $message->messageReaded != 1){
                 $GLOBALS['db']->query("UPDATE messages SET messageReaded = 1 WHERE messageID = ?", $message->messageID);
             }

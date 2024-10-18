@@ -69,16 +69,6 @@ body, .tabs, .navbar_top{
 .postRespondsRespondItself a{
     color:#fff!important;
 }
-.profile_main{
-    background-color: #333!important;
-    color:#fff!important;
-}
-.profile_main_container{
-    background-color: #222!important;
-}
-.profile_main_container .post{
-    border: 1px solid #333!important;
-}
 .ariaLabelVisible{
     background-color: rgba(255,255,255,.5)!important;
     color:#000!important;
@@ -188,4 +178,43 @@ hr{
 }
 .nav_options_tagged .nav_options_tagged_info{
     background-color: rgba(255, 255, 255, .15);
+}
+.new_msgr_msgs{
+    background-color: #222;
+    box-shadow: 0 4px 32px rgba(255, 255, 255, .2);
+    color:#fff;
+}
+.new_msgr_avatar_whidn{
+    background-color: #222;
+    box-shadow: 0 0 1em 0 rgba(255, 255, 255, .3);
+}
+.new_msgr_msgs_conversation_info_linked, .new_msgr_msgs_wmform_input textarea, .new_msgr_msgs_list_m_msg .new_msgr_msgs_list_m_msg_i{
+    color:#fff;
+}
+.messages_bubble_person_info b{
+    color:#fff!important;
+}
+.new_msgr_msgs_conversation_info, .messages_bubble_person{
+    border-bottom: 1px solid rgba(255, 255, 255, .1);
+}
+.new_msgr_msgs_wmform_btns .new_msgr_msgs_wmform_btn{
+    color: #ccc;
+}
+.new_msgr_msgs_wmform_input, .new_msgr_msgs_wmform_input textarea{
+    background-color: #333;
+}
+.new_msgr_msgs_wmform{
+    border-top: 1px solid rgba(255, 255, 255, .1);
+}
+.new_msgr_msgs_wmform_btns .new_msgr_msgs_wmform_btn:hover {
+    background-color: #333!important;
+}
+.new_msgr_msgs_list_m_msg_timestamp, .new_msgr_msgs_list_m_msg_dlt_ms{
+    color: rgba(255, 255, 255, .5);
+}
+.new_msgr_msgs_list_m_msg_dlt_ms:hover{
+    color: rgba(255, 255, 255, 1)!important;
+}
+.new_msgr_msgs_list_m_msg .new_msgr_msgs_list_m_msg_i{
+    background-color: #444;
 }

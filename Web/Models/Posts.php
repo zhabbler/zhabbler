@@ -149,9 +149,9 @@ class Posts
         $user = (new User())->get_user_by_token($token);
         $query = (new Strings())->convert($query);
         if($lastID != 0){
-            $posts = $GLOBALS['db']->fetchAll("SELECT * FROM zhabs LEFT JOIN users ON userID = zhabBy WHERE lastID < ? AND zhabContent LIKE ? AND reason = '' OR zhabTags LIKE ? ORDER BY zhabID DESC LIMIT 7", $lastID, "%$query%", "%$query%");
+            $posts = $GLOBALS['db']->fetchAll("SELECT * FROM zhabs LEFT JOIN users ON userID = zhabBy WHERE (lastID < ? AND zhabContent LIKE ?) AND reason = '' OR zhabTags LIKE ? ORDER BY zhabID DESC LIMIT 7", $lastID, "%$query%", "%$query%");
         }else{
-            $posts = $GLOBALS['db']->fetchAll("SELECT * FROM zhabs LEFT JOIN users ON userID = zhabBy WHERE zhabContent LIKE ? OR zhabTags LIKE ? AND reason = '' ORDER BY zhabID DESC LIMIT 7", "%$query%", "%$query%");
+            $posts = $GLOBALS['db']->fetchAll("SELECT * FROM zhabs LEFT JOIN users ON userID = zhabBy WHERE (zhabContent LIKE ? OR zhabTags LIKE ?) AND reason = '' ORDER BY zhabID DESC LIMIT 7", "%$query%", "%$query%");
         }
         $output = "";
         foreach($posts as $post){
@@ -179,7 +179,7 @@ class Posts
     
     public function search_posts_count(string $query): int
     {
-        return $GLOBALS['db']->query("SELECT * FROM zhabs WHERE zhabContent LIKE ?", "%$query%")->getRowCount();
+        return $GLOBALS['db']->query("SELECT * FROM zhabs LEFT JOIN users ON userID = zhabBy WHERE zhabContent LIKE ? AND reason = ''", "%$query%")->getRowCount();
     }
 
     public function get_posts_by_followings(int $lastID, string $token): void
@@ -255,13 +255,13 @@ class Posts
 
     public function get_reposts_count(string $id): int
     {
-        return $GLOBALS['db']->query("SELECT * FROM zhabs WHERE zhabRepliedTo = ?", $id)->getRowCount();
+        return $GLOBALS['db']->query("SELECT * FROM zhabs LEFT JOIN users ON userID = zhabBy WHERE zhabRepliedTo = ? AND reason = ''", $id)->getRowCount();
     }
 
     public function check_like(string $token, string $id): bool
     {
         $user = (new User())->get_user_by_token($token);
-        return ($GLOBALS['db']->query("SELECT * FROM likes WHERE likeBy = ? AND likeTo = ?", $user->userID, $id)->getRowCount() == 1 ? true : false);
+        return ($GLOBALS['db']->query("SELECT * FROM likes LEFT JOIN users ON userID = likeBy WHERE likeBy = ? AND likeTo = ? AND reason = ''", $user->userID, $id)->getRowCount() == 1 ? true : false);
     }
 
     public function comment(string $token, string $id, string $comment): void
@@ -396,7 +396,7 @@ class Posts
     public function get_comments(string $id, string $token = ""): void
     {
         header('Content-Type: application/json');
-        $comments_rows = $GLOBALS['db']->fetchAll("SELECT * FROM comments LEFT JOIN users ON userID = commentBy WHERE commentTo = ?", $id);
+        $comments_rows = $GLOBALS['db']->fetchAll("SELECT * FROM comments LEFT JOIN users ON userID = commentBy WHERE commentTo = ? AND reason = ''", $id);
         if(isset($token))
             $user = (new User())->get_user_by_token($token);
         $comments = [];
@@ -419,7 +419,7 @@ class Posts
 
     public function get_comments_count(string $id): int
     {
-        return $GLOBALS['db']->query("SELECT * FROM comments WHERE commentTo = ?", $id)->getRowCount();
+        return $GLOBALS['db']->query("SELECT * FROM comments LEFT JOIN users ON userID = commentBy WHERE commentTo = ? AND reason = ''", $id)->getRowCount();
     }
 
     public function delete_comment(string $id, string $token): void
@@ -505,12 +505,14 @@ class Posts
     {
         header('Content-Type: application/json');
         $result = [];
-        foreach($GLOBALS['db']->fetchAll("SELECT * FROM tags WHERE tag LIKE ?", "%$query%") as $tag){
-            if($GLOBALS['db']->query("SELECT * FROM zhabs WHERE FIND_IN_SET(?, zhabTags)", $tag->tag)->getRowCount() > 0){
-                $result[] = ["tag" => $tag->tag];
-            }else{
-                $GLOBALS['db']->query("DELETE FROM tags WHERE tag = ?", $tag->tag);
-                $GLOBALS['db']->query("DELETE FROM followed_tags WHERE followedTag = ?", $tag->tag);
+        if(!(new Strings())->is_empty($query)){
+            foreach($GLOBALS['db']->fetchAll("SELECT * FROM tags WHERE tag LIKE ?", "%$query%") as $tag){
+                if($GLOBALS['db']->query("SELECT * FROM zhabs WHERE FIND_IN_SET(?, zhabTags)", $tag->tag)->getRowCount() > 0){
+                    $result[] = ["tag" => $tag->tag];
+                }else{
+                    $GLOBALS['db']->query("DELETE FROM tags WHERE tag = ?", $tag->tag);
+                    $GLOBALS['db']->query("DELETE FROM followed_tags WHERE followedTag = ?", $tag->tag);
+                }
             }
         }
         die(json_encode($result));
@@ -557,23 +559,25 @@ class Posts
 
     public function get_popular_image_of_tag(string $tag): string
     {
-        if($this->check_tag_existence($tag)){
-            $post = $GLOBALS['db']->fetch("SELECT * FROM zhabs WHERE FIND_IN_SET(?, zhabTags) AND zhabContains != 1 ORDER BY zhabLikes DESC", $tag);
+        if($this->check_tag_existence($tag) && $GLOBALS['db']->query("SELECT * FROM zhabs LEFT JOIN users ON userID = zhabBy WHERE FIND_IN_SET(?, zhabTags) AND zhabContains != 1 AND reason = '' ORDER BY zhabLikes DESC", $tag)->getRowCount() > 0){
+            $post = $GLOBALS['db']->fetch("SELECT * FROM zhabs LEFT JOIN users ON userID = zhabBy WHERE FIND_IN_SET(?, zhabTags) AND zhabContains != 1 AND reason = '' ORDER BY zhabLikes DESC", $tag);
             return (new Strings())->get_img_src($post->zhabContent);
+        }else{
+            return "";
         }
     }
 
     public function get_data_from_popular_image_of_tag_post(string $tag): Nette\Database\Row
     {
         if($this->check_tag_existence($tag)){
-            return $GLOBALS['db']->fetch("SELECT * FROM zhabs LEFT JOIN users ON userID = zhabBy WHERE FIND_IN_SET(?, zhabTags) AND zhabContains != 1 ORDER BY zhabLikes DESC", $tag);
+            return $GLOBALS['db']->fetch("SELECT * FROM zhabs LEFT JOIN users ON userID = zhabBy WHERE FIND_IN_SET(?, zhabTags) AND zhabContains != 1 AND reason = '' ORDER BY zhabLikes DESC", $tag);
         }
     }
 
     public function get_popular_image_of_random_tag(): string
     {
         $tag = $GLOBALS['db']->fetch("SELECT * FROM tags ORDER BY rand()")->tag;
-        return ($GLOBALS['db']->query("SELECT * FROM zhabs WHERE FIND_IN_SET(?, zhabTags) AND zhabLikes > 0 AND zhabContains != 1", $tag)->getRowCount() > 0 ? $this->get_popular_image_of_tag($tag) : "");
+        return ($GLOBALS['db']->query("SELECT * FROM zhabs LEFT JOIN users ON userID = zhabBy WHERE FIND_IN_SET(?, zhabTags) AND zhabLikes > 0 AND zhabContains != 1 AND reason = ''", $tag)->getRowCount() > 0 ? $this->get_popular_image_of_tag($tag) : "");
     }
 
     public function add(string $post, string $urlid = null, int $contains, int $who_comment, int $who_repost, string $repost = "", string $question = "", string $tags = ""): void

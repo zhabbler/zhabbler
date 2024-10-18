@@ -44,7 +44,8 @@ class Settings{
         var following = ($("#following_io").is(":checked") == true ? 0 : 1);
         var liked = ($("#liked_io").is(":checked") == true ? 0 : 1);
         var questions = ($("#questions_io").is(":checked") == true ? 1 : 0);
-        $.post("/api/User/change_confidential_settings", {liked:liked, following:following, questions:questions});
+        var write_msgs = (Number($("#write_msgs").val()) <= 2 ? Number($("#write_msgs").val()) : 0);
+        $.post("/api/User/change_confidential_settings", {liked:liked, following:following, questions:questions, write_msgs:write_msgs});
     }
     change_profile_cover(element){
         const file = element.files[0];
@@ -77,7 +78,10 @@ class Settings{
             if(data.error != null){
                 zhabbler.addError(data.error);
             }else{
-                settings.customize_btn();
+                $.post("/api/User/get_user_details", function(data){
+                    user = data;
+                    settings.customize_btn();
+                });
             }
         })
     }
@@ -112,6 +116,9 @@ $(document).ready(function(){
         window.location.reload();
     });
     $(document).on("change", "#liked_io", function(){
+        settings.change_conf_set();
+    });
+    $(document).on("change", "#write_msgs", function(){
         settings.change_conf_set();
     });
 })

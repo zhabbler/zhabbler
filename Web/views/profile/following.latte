@@ -35,6 +35,9 @@
             .profile_main, .profile_main_container, .profile_main_pics_pfp{
                 background:{{$profile->backgroundColor|noescape}}!important;
             }
+            .profile_main_info{
+                color: {{((new Utilities\Strings())->get_closest_color($profile->backgroundColor) > 130 ? '#333333' : '#ffffff')|noescape}};
+            }
             .profile_tab_active, .profile_tabs{
                 border-bottom: 1px solid {{$profile->accentColor|noescape}}!important;
             }
@@ -47,6 +50,25 @@
             }
             .profile_btns .button_outline{
                 border: 2px solid {{$profile->accentColor|noescape}};
+            }
+        </style>
+        {else}
+        <style>
+            .profile_main, .profile_main_container, .profile_main_pics_pfp{
+                background:#ffffff!important;
+            }
+            .profile_tab_active, .profile_tabs{
+                border-bottom: 1px solid #13b552!important;
+            }
+            .profile_tab, .profile_btns .button_outline, .profile_main_container .verifed_icon, .profile_main_info a, #Posts .post .postContent a{
+                color:#13b552!important;
+            }
+            .profile_main_container .button:not(.button_outline){
+                background:#13b552!important;
+                color:#fff!important;
+            }
+            .profile_btns .button_outline{
+                border: 2px solid #13b552;
             }
         </style>
         {/if}
@@ -115,7 +137,7 @@
                                 </div>
                             </button>
                             {/if}
-                            <button class="button button_outline button_only_icon" onclick="zhabbler.openIM({$profile->nickname});">
+                            <button class="button button_outline button_only_icon" onclick="messenger.openMessages({$profile->nickname});">
                                 <div class="button_icon">
                                     <i class='bx bx-message-square-add' ></i>
                                 </div>
@@ -178,6 +200,7 @@
         </div>
         <preloader>var nickname = "{$profile->nickname}";</preloader>
         <preloader src="/static/js/profile_following.js"></preloader>
+        <preloader src="/static/js/new_messenger.js"></preloader>
         <preloader src="/static/player/js/zhabblerplayer.js"></preloader>
     </div>
     <script src="/static/node_modules/jquery/dist/jquery.min.js"></script>

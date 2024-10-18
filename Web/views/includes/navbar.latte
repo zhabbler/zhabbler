@@ -38,31 +38,35 @@
             </div>
         </li>
         {if $user->activated == 1}
-        <li class="navbar_element" onclick="zhabbler.activityBubble();">
+        <li class="navbar_element" onclick="zhabbler.activityBubble(event);">
             <div class="navbar_element_icon">
                 <i class='bx bxs-bolt'></i>
             </div>
             <div class="navbar_element_title">
                 <span>
                     {$language['activity']}
-                    {if (new Web\Models\Notifications())->notificationUnreadedCount($user->token) > 0}
-                        (<span id="ActivityCounter">{(new Web\Models\Notifications())->notificationUnreadedCount($user->token)}</span>)
-                    {/if}
                 </span>
             </div>
+            {if (new Web\Models\Notifications())->notificationUnreadedCount($user->token) > 0}
+                <div class="navbar_element_right_counter" id="MsgsCounter">
+                    {(new Web\Models\Notifications())->notificationUnreadedCount($user->token)}
+                </div>
+            {/if}
         </li>
-        <li class="navbar_element{($_SERVER['REQUEST_URI'] == '/messages'  ? ' navbar_element_active' : '')|noescape}" href="/messages">
+        <li class="navbar_element" onclick="messenger.messagesBubble(event);">
             <div class="navbar_element_icon">
                 <i class='bx bxs-message-square-dots'></i>
             </div>
             <div class="navbar_element_title">
                 <span>
                     {$language['messages']}
-                    {if (new Web\Models\Messages())->get_count_of_unread_messages($user->token) > 0}
-                        (<span id="MsgsCounter">{(new Web\Models\Messages())->get_count_of_unread_messages($user->token)}</span>)
-                    {/if}
                 </span>
             </div>
+            {if (new Web\Models\Messages())->get_count_of_unread_messages($user->token) > 0}
+                <div class="navbar_element_right_counter" id="MsgsCounter">
+                    {(new Web\Models\Messages())->get_count_of_unread_messages($user->token)}
+                </div>
+            {/if}
         </li>
         <li class="navbar_element{($_SERVER['REQUEST_URI'] == '/inbox'  ? ' navbar_element_active' : '')|noescape}" href="/inbox">
             <div class="navbar_element_icon">
@@ -71,11 +75,13 @@
             <div class="navbar_element_title">
                 <span>
                     {$language['inbox']}
-                    {if (new Web\Models\Inbox())->getUnreadCountOfMsgs($user->token) > 0}
-                        (<span>{(new Web\Models\Inbox())->getUnreadCountOfMsgs($user->token)}</span>)
-                    {/if}
                 </span>
             </div>
+            {if (new Web\Models\Inbox())->getUnreadCountOfMsgs($user->token) > 0}
+                <div class="navbar_element_right_counter" id="MsgsCounter">
+                    {(new Web\Models\Inbox())->getUnreadCountOfMsgs($user->token)}
+                </div>
+            {/if}
         </li>
         {/if}
         <li class="navbar_element" onclick="zhabbler.showExtended();">

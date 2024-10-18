@@ -1,4 +1,7 @@
 $(document).ready(function(){
+    $("#pC_sS .postContent").click(function(){
+        $(this).children('p').attr('contentEditable','true');
+    });
     $(document).on("input", ".popup:first form .postContent", function(){
         if($(this).html().trim().length == 0){
             zhabbler.insertIntoEditorContent('p', locale['go_ahead_put_smth']);
@@ -11,6 +14,11 @@ $(document).ready(function(){
 			$(`.video--[data-src="${$(this).data("src")}"]`).remove();
 		}
     });
+    document.addEventListener('keydown', event => {
+        if (event.key === 'Enter') {
+            document.execCommand('defaultParagraphSeparator', false, 'p');
+        }
+    })
     $(document).on("click", ".write_post_tag_add", function(){
         $(this).replaceWith(`<input class="write_post_tag write_post_tag_add_input" style="width: 4px;" maxlength="32" oninput="this.style.width = (this.scrollWidth - 30) + 'px';" type="text">`);
         $(".write_post_tag_add_input").focus();

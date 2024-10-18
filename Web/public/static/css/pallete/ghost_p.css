@@ -190,3 +190,12 @@ a, .button_outline{
 .verifed_icon{
     color: rgba(102, 117, 134, 1);
 }
+.new_msgr_msgs{
+    box-shadow: 0 4px 32px rgba(0, 0, 0, .2);
+}
+.new_msgr_avatar_whidn{
+    box-shadow: 0 0 1em 0 rgba(0, 0, 0, .3);
+}
+.new_msgr_msgs_list_m_msg_by_us .new_msgr_msgs_list_m_msg_i, .new_msgr_avatar_whidn_unms, .navbar_element_right_counter{
+    background-color: rgba(102, 117, 134, 1)!important;
+}
