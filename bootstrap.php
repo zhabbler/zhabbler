@@ -56,10 +56,17 @@ if(!str_starts_with($_SERVER['REQUEST_URI'], "/developer/api/") && !isset($_COOK
 }
 
 $GLOBALS['db'] = Utilities\Database::DatabaseConnection();
+define("ALLOWED_HTML_TAGS", ["p", "h1", "h2", "h3", "h4", "h5", "h6", "img", "video", "span", "a", "b", "i", "u", "br", "iframe", "audio"]);
 define("BASE_URL", $GLOBALS['config']['application']['base_url']);
 define("ENCRYPTION_KEY", $GLOBALS['config']['application']['encryption_key']);
 date_default_timezone_set($GLOBALS['config']['application']['default_time_zone']);
 $actual_link = (empty($_SERVER['HTTPS']) ? 'http' : 'https')."://$_SERVER[HTTP_HOST]/";
+$host = explode('.', $_SERVER['HTTP_HOST']);
+$subdomain = $host[0];
+if(count($host) == 3){
+    header("Location: ".BASE_URL."profile/".$subdomain);
+    die;
+}
 if($actual_link != BASE_URL){
     header("HTTP/1.0 404 Not Found");
     die;
