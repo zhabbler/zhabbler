@@ -47,7 +47,7 @@ class Strings
                     if($attr->nodeName == 'src'){
                         if(in_array($attr->nodeValue, $not_exists)){
                             $attr->nodeValue = '/static/images/image_corrupted.png';
-                        }else if($attr->nodeValue != '/static/images/image_corrupted.png'){
+                        }else if(str_starts_with($attr->nodeValue, BASE_URL) && $attr->nodeValue != '/static/images/image_corrupted.png'){
                             $binary_data = file_get_contents($attr->nodeValue);
                             $im = imagecreatefromstring($binary_data);
                             $img->setAttribute('width', "540");
