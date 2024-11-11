@@ -95,8 +95,8 @@
     border-radius: 50%;
     box-shadow: 0 0 1em 0 rgba(0, 0, 0, .5);
     background: 
-      radial-gradient(farthest-side,#fff 94%,#0000) top/8px 8px no-repeat,
-      conic-gradient(#0000 0%,#fff);
+      radial-gradient(farthest-side,#fff 100%,#0000) top/8px 8px no-repeat,
+      conic-gradient(#0000 30%,#fff);
     -webkit-mask: radial-gradient(farthest-side,#0000 calc(100% - 8px),#000 0);
     animation: l13 .5s infinite linear;
 }

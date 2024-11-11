@@ -1,0 +1,70 @@
+{if !isset($user) && count((new Web\Models\User())->random_profiles()) != 0}
+<div class="profile_main_rec_profiles">
+    <div class="profile_main_rec_profiles_title">
+        <span>{$language['check_out_these_profile']}</span>
+    </div>
+    <div class="profile_main_rec_profiles_i">
+        {foreach (new Web\Models\User())->random_profiles() as $profile}
+        <div class="profile_main_rec_profiles_i_profile" onclick="goToPage('/profile/' + {$profile->nickname});">
+            <div class="profile_main_rec_profiles_i_profile_pfp">
+                <img src="{$profile->profileImage}">
+            </div>
+            <div class="profile_main_rec_profiles_i_profile_info">
+                <div>
+                    <span>
+                        <b>
+                            {$profile->nickname}
+                        </b>
+                    </span>
+                </div>
+                <div>
+                    <span>
+                        {$profile->name|noescape}
+                    </span>
+                </div>
+            </div>
+            <div class="profile_main_rec_profiles_i_profile_follow">
+                <a href="javascript:void();">
+                    {$language['follow']}
+                </a>
+            </div>
+        </div>
+        {/foreach}
+    </div>
+</div>
+{/if}
+{if isset($user) && count((new Web\Models\User())->recommended_profiles($user->token)) != 0}
+<div class="profile_main_rec_profiles">
+    <div class="profile_main_rec_profiles_title">
+        <span>{$language['check_out_these_profile']}</span>
+    </div>
+    <div class="profile_main_rec_profiles_i">
+        {foreach (new Web\Models\User())->recommended_profiles($user->token) as $profile}
+        <div class="profile_main_rec_profiles_i_profile" onclick="goToPage('/profile/' + {$profile->nickname});">
+            <div class="profile_main_rec_profiles_i_profile_pfp">
+                <img src="{$profile->profileImage}">
+            </div>
+            <div class="profile_main_rec_profiles_i_profile_info">
+                <div>
+                    <span>
+                        <b>
+                            {$profile->nickname}
+                        </b>
+                    </span>
+                </div>
+                <div>
+                    <span>
+                        {$profile->name|noescape}
+                    </span>
+                </div>
+            </div>
+            <div class="profile_main_rec_profiles_i_profile_follow">
+                <a href="javascript:void();">
+                    {$language['follow']}
+                </a>
+            </div>
+        </div>
+        {/foreach}
+    </div>
+</div>
+{/if}

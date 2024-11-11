@@ -10,6 +10,7 @@
     <meta property="og:image:height" content="400">
     <link rel="stylesheet" href="/static/css/main.css">
     <link rel="stylesheet" href="/static/player/css/player.css">
+    <link rel="stylesheet" href="/static/audioplayer/css/audioplayer.css">
     <link rel="shortcut icon" href="/static/images/icon.png" type="image/png">
     <link rel="stylesheet" href="/static/node_modules/boxicons/css/boxicons.min.css">
     <link rel="manifest" href="/manifest.json" />
@@ -24,178 +25,181 @@
             <div class="loader loader_cpa"><div class="loader_part loader_part_1"></div><div class="loader_part loader_part_2"></div><div class="loader_part loader_part_3"></div></div>
         </div>
         {include '../includes/navbar_top.latte'}
-        {if ctype_xdigit(str_replace('#', '', $profile->backgroundColor)) && ctype_xdigit(str_replace('#', '', $profile->accentColor))}
-        <style n:syntax="double">
-            .profile_main, .profile_main_container, .profile_main_pics_pfp{
-                background:{{$profile->backgroundColor|noescape}}!important;
-            }
-            .profile_main_info{
-                color: {{((new Utilities\Strings())->get_closest_color($profile->backgroundColor) > 130 ? '#333333' : '#ffffff')|noescape}};
-            }
-            .profile_tab_active, .profile_tabs{
-                border-bottom: 1px solid {{$profile->accentColor|noescape}}!important;
-            }
-            .profile_tab, .profile_btns .button_outline, .profile_main_container .verifed_icon, .profile_main_info a, #Posts .post .postContent a{
-                color:{{$profile->accentColor|noescape}}!important;
-            }
-            .profile_main_container .button:not(.button_outline){
-                background:{{$profile->accentColor|noescape}}!important;
-                color:#fff!important;
-            }
-            .profile_btns .button_outline{
-                border: 2px solid {{$profile->accentColor|noescape}};
-            }
-        </style>
-        {else}
-        <style>
-            .profile_main, .profile_main_container, .profile_main_pics_pfp{
-                background:#ffffff!important;
-            }
-            .profile_tab_active, .profile_tabs{
-                border-bottom: 1px solid #13b552!important;
-            }
-            .profile_tab, .profile_btns .button_outline, .profile_main_container .verifed_icon, .profile_main_info a, #Posts .post .postContent a{
-                color:#13b552!important;
-            }
-            .profile_main_container .button:not(.button_outline){
-                background:#13b552!important;
-                color:#fff!important;
-            }
-            .profile_btns .button_outline{
-                border: 2px solid #13b552;
-            }
-        </style>
-        {/if}
         <div class="container">
             {include '../includes/navbar.latte'}
-            <main class="main">
+            <main class="main newPMain">
                 <div class="profile_main">
-                    <div class="profile_main_container">
-                        <div class="profile_main_pics">
-                            <div class="profile_main_pics_cover" style="background-image: url('{$profile->profileCover}');"></div>
-                            <div class="profile_main_pics_pfp">
-                                <img src="{$profile->profileImage}">
-                            </div>
-                        </div>
-                        <div class="profile_main_info">
-                            <div class="dFaIcjSc">
-                                <h2>{$profile->name|noescape}</h2>
-                                {if $profile->verifed == 1}<i class='bx bxs-badge-check verifed_icon'></i>{/if}
-                            </div>
-                            <div>
-                                <a href="/profile/{$profile->nickname}">@{$profile->nickname}</a>
-                            </div>
-                            {if (new Web\Models\Follow())->get_followers_count($profile->nickname) != 0}
-                            <div style="color:#666;">
-                                <span>{(new Web\Models\Follow())->get_followers_count($profile->nickname)} {$language['followers']}</span>
-                            </div>
-                            {/if}
-                            <div>
-                                <span>{$profile->biography|breakLines}</span>
-                            </div>
-                        </div>
-                        <div class="profile_btns">
-                            {if $profile->userID == $user->userID}
-                            <button class="button" onclick="goToPage('/settings/profile');">
-                                <div class="button_title">
-                                    <span>
-                                        {$language['profile_settings']}
-                                    </span>
+                    <div class="profile_main_itself">
+                        {if ctype_xdigit(str_replace('#', '', $profile->backgroundColor)) && ctype_xdigit(str_replace('#', '', $profile->accentColor))}
+                        <style n:syntax="double">
+                            .profile_main, .profile_main_container, .profile_main_pics_pfp, .profile_main_rec_profiles{
+                                background:{{$profile->backgroundColor|noescape}}!important;
+                            }
+                            #Following .following_person, .profile_main_rec_profiles, .profile_main_info{
+                                color: {{((new Utilities\Strings())->get_closest_color($profile->backgroundColor) > 130 ? '#333333' : '#ffffff')|noescape}};
+                            }
+                            .profile_tab_active, .profile_tabs{
+                                border-bottom: 1px solid {{$profile->accentColor|noescape}}!important;
+                            }
+                            .profile_main_rec_profiles_i_profile_follow a, .profile_tab, .profile_btns .button_outline, .profile_main_container .verifed_icon, .profile_main_info a, #Posts .post .postContent a{
+                                color:{{$profile->accentColor|noescape}}!important;
+                            }
+                            .profile_main_container .button:not(.button_outline), .popup_profile_close_btn{
+                                background:{{$profile->accentColor|noescape}}!important;
+                                color:#fff!important;
+                            }
+                            .profile_btns .button_outline{
+                                border: 2px solid {{$profile->accentColor|noescape}};
+                            }
+                        </style>
+                        {else}
+                        <style>
+                            .profile_main, .profile_main_container, .profile_main_pics_pfp, .profile_main_rec_profiles{
+                                background:#ffffff!important;
+                            }
+                            .profile_tab_active, .profile_tabs{
+                                border-bottom: 1px solid #13b552!important;
+                            }
+                            .profile_tab, .profile_btns .button_outline, .profile_main_container .verifed_icon, .profile_main_info a, #Posts .post .postContent a{
+                                color:#13b552!important;
+                            }
+                            .profile_main_container .button:not(.button_outline){
+                                background:#13b552!important;
+                                color:#fff!important;
+                            }
+                            .profile_btns .button_outline{
+                                border: 2px solid #13b552;
+                            }
+                        </style>
+                        {/if}
+                        <div class="profile_main_container">
+                            <div class="profile_main_pics">
+                                <div class="profile_main_pics_cover"{!empty($profile->profileCover) ? ' style="background-image: url('.$profile->profileCover.')"' : ''|noescape}></div>
+                                <div class="profile_main_pics_pfp">
+                                    <img src="{$profile->profileImage}">
                                 </div>
-                            </button>
-                            {else}
-                            {if (new Web\Models\Follow())->check_follow_existence($user->token, $profile->userID)}
-                            <button class="button" id="FollowBtn" data-id="{$profile->userID}">
-                                <div class="button_title">
-                                    <span>
-                                        {$language['following']}
-                                    </span>
+                            </div>
+                            <div class="profile_main_info">
+                                <div class="dFaIcjSc">
+                                    <h2>{$profile->name|noescape}</h2>
+                                    {if $profile->verifed == 1}<i class='bx bxs-badge-check verifed_icon'></i>{/if}
                                 </div>
-                            </button>
-                            {else}
-                            <button class="button" id="FollowBtn" data-id="{$profile->userID}">
-                                <div class="button_title">
-                                    <span>
-                                        {$language['follow']}
-                                    </span>
+                                <div>
+                                    <a href="/profile/{$profile->nickname}">@{$profile->nickname}</a>
                                 </div>
-                            </button>
-                            {/if}
-                            {/if}
-                            {if $profile->askQuestions == 1}
-                            <button class="button" style="z-index:10;" onclick="zhabbler.askQuestion({$profile->nickname});">
-                                <div class="button_title">
-                                    <span>
-                                        {$language['ask_me_a_question']}
-                                    </span>
+                                {if (new Web\Models\Follow())->get_followers_count($profile->nickname) != 0}
+                                <div style="color:#666;">
+                                    <span>{(new Web\Models\Follow())->get_followers_count($profile->nickname)} {$language['followers']}</span>
                                 </div>
-                            </button>
-                            {/if}
-                            <button class="button button_outline button_only_icon" onclick="messenger.openMessages({$profile->nickname});">
-                                <div class="button_icon">
-                                    <i class='bx bx-message-square-add' ></i>
+                                {/if}
+                                <div>
+                                    <span>{$profile->biography|breakLines}</span>
                                 </div>
-                            </button>
-                            {if $profile->userID != $user->userID}
-                            <div>
-                                <button class="button button_outline button_only_icon" id="DropdownListener" data-dropdown="#dropdown_usr">
-                                    <div class="button_icon">
-                                        <i class='bx bx-dots-horizontal-rounded' ></i>
+                            </div>
+                            <div class="profile_btns">
+                                {if $profile->userID == $user->userID}
+                                <button class="button" onclick="goToPage('/settings/profile');">
+                                    <div class="button_title">
+                                        <span>
+                                            {$language['profile_settings']}
+                                        </span>
                                     </div>
                                 </button>
-                                <div class="dropdown" id="dropdown_usr" style="display: none;">
-                                    <div class="dropdown_element dropdown_element_red" onclick="zhabbler.report({$profile->nickname});">
-                                        <b>
-                                            {$language['report']}
-                                        </b>
+                                {else}
+                                {if (new Web\Models\Follow())->check_follow_existence($user->token, $profile->userID)}
+                                <button class="button" id="FollowBtn" data-id="{$profile->userID}">
+                                    <div class="button_title">
+                                        <span>
+                                            {$language['following']}
+                                        </span>
+                                    </div>
+                                </button>
+                                {else}
+                                <button class="button" id="FollowBtn" data-id="{$profile->userID}">
+                                    <div class="button_title">
+                                        <span>
+                                            {$language['follow']}
+                                        </span>
+                                    </div>
+                                </button>
+                                {/if}
+                                {/if}
+                                {if $profile->askQuestions == 1}
+                                <button class="button" style="z-index:10;" onclick="zhabbler.askQuestion({$profile->nickname});">
+                                    <div class="button_title">
+                                        <span>
+                                            {$language['ask_me_a_question']}
+                                        </span>
+                                    </div>
+                                </button>
+                                {/if}
+                                <button class="button button_outline button_only_icon" onclick="messenger.openMessages({$profile->nickname});">
+                                    <div class="button_icon">
+                                        <i class='bx bx-message-square-add' ></i>
+                                    </div>
+                                </button>
+                                {if $profile->userID != $user->userID}
+                                <div>
+                                    <button class="button button_outline button_only_icon" id="DropdownListener" data-dropdown="#dropdown_usr">
+                                        <div class="button_icon">
+                                            <i class='bx bx-dots-horizontal-rounded' ></i>
+                                        </div>
+                                    </button>
+                                    <div class="dropdown" id="dropdown_usr" style="display: none;">
+                                        <div class="dropdown_element dropdown_element_red" onclick="zhabbler.report({$profile->nickname});">
+                                            <b>
+                                                {$language['report']}
+                                            </b>
+                                        </div>
                                     </div>
                                 </div>
+                                {/if}
+                            </div>
+                            <div class="profile_tabs">
+                                <a class="profile_tab" href="/profile/{$profile->nickname}">
+                                    {$language['posts']}
+                                </a>
+                                {if $user->userID == $profile->userID || $profile->hideLiked != 1}
+                                <a class="profile_tab profile_tab_active" href="/profile/{$profile->nickname}/liked">
+                                    {if $profile->hideLiked == 1}
+                                    <i class='bx bxs-lock-alt'></i>
+                                    {/if}
+                                    {$language['likes']}
+                                </a>
+                                {/if}
+                                {if $user->userID == $profile->userID || $profile->hideFollowing != 1}
+                                <a class="profile_tab" href="/profile/{$profile->nickname}/following">
+                                    {if $profile->hideFollowing == 1}
+                                    <i class='bx bxs-lock-alt'></i>
+                                    {/if}
+                                    {$language['following_tab']}
+                                </a>
+                                {/if}
+                            </div>
+                            {if $user->userID == $profile->userID && $profile->hideLiked == 1}
+                            <div class="profile_warn_co">
+                                <i class='bx bx-info-circle'></i>
+                                {$language["your_liked_posts_cannot_see"]}
                             </div>
                             {/if}
-                        </div>
-                        <div class="profile_tabs">
-                            <a class="profile_tab" href="/profile/{$profile->nickname}">
-                                {$language['posts']}
-                            </a>
-                            {if $user->userID == $profile->userID || $profile->hideLiked != 1}
-                            <a class="profile_tab profile_tab_active" href="/profile/{$profile->nickname}/liked">
-                                {if $profile->hideLiked == 1}
-                                <i class='bx bxs-lock-alt'></i>
-                                {/if}
-                                {$language['likes']}
-                            </a>
-                            {/if}
-                            {if $user->userID == $profile->userID || $profile->hideFollowing != 1}
-                            <a class="profile_tab" href="/profile/{$profile->nickname}/following">
-                                {if $profile->hideFollowing == 1}
-                                <i class='bx bxs-lock-alt'></i>
-                                {/if}
-                                {$language['following_tab']}
-                            </a>
-                            {/if}
-                        </div>
-                        {if $user->userID == $profile->userID && $profile->hideLiked == 1}
-                        <div class="profile_warn_co">
-                            <i class='bx bx-info-circle'></i>
-                            {$language["your_liked_posts_cannot_see"]}
-                        </div>
-                        {/if}
-                        <div id="PostsLiked">
-                            <div class="loader loader_black">
-                                <div class="loader_part loader_part_1"></div>
-                                <div class="loader_part loader_part_2"></div>
-                                <div class="loader_part loader_part_3"></div>
+                            <div id="PostsLiked">
+                                <div class="loader loader_black">
+                                    <div class="loader_part loader_part_1"></div>
+                                    <div class="loader_part loader_part_2"></div>
+                                    <div class="loader_part loader_part_3"></div>
+                                </div>
                             </div>
                         </div>
+                        {include '../includes/sidebar_profile.latte'}
+                        <preloader>var nickname = "{$nickname}";</preloader>
+                        <preloader src="/static/js/profile_liked.js"></preloader>
+                        <preloader src="/static/js/new_messenger.js"></preloader>
+                        <preloader src="/static/player/js/zhabblerplayer.js"></preloader>
+        <preloader src="/static/audioplayer/js/audioplayer.js"></preloader>
                     </div>
                 </div>
             </main>
-            {include '../includes/nav_options.latte'}
         </div>
-        <preloader>var nickname = "{$profile->nickname}";</preloader>
-        <preloader src="/static/js/profile_liked.js"></preloader>
-        <preloader src="/static/js/new_messenger.js"></preloader>
-        <preloader src="/static/player/js/zhabblerplayer.js"></preloader>
     </div>
     <script src="/static/node_modules/jquery/dist/jquery.min.js"></script>
     <script src="/static/node_modules/jquery-ui/dist/jquery-ui.min.js"></script>

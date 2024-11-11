@@ -10,3 +10,7 @@ ua:
 	name: "Українська"
 	flag: "🇺🇦"
 	code: "ua"
+eo:
+	name: "Esperanto"
+	flag: "EO"
+	code: "eo"

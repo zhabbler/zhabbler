@@ -22,13 +22,13 @@
     <div class="colors" style="display: none;">
         <div>
             <button class="color" style="background-color: #000000;"></button>
-            <button class="color" style="background-color: #ff4242;"></button>
+            <button class="color" style="background-color: #ff4930;"></button>
             <button class="color" style="background-color: #ff8800;"></button>
             <button class="color" style="background-color: #fff700;"></button>
         </div>
         <div>
             <button class="color" style="background-color: #009f00;"></button>
-            <button class="color" style="background-color: #009dff;"></button>
+            <button class="color" style="background-color: #00b8ff;"></button>
             <button class="color" style="background-color: #0026ff;"></button>
             <button class="color" style="background-color: #9900ff;"></button>
         </div>
@@ -36,7 +36,7 @@
 </div>
 <form class="post" id="PopupContainer">
     <div class="postAuthor">
-        <a href="/profile/{$user->nickname}" class="postAuthorProfileImage">
+        <a href="#" class="postAuthorProfileImage">
             <img src="{$user->profileImage}" alt="Image">
             {if isset($reposted)}
             <div class="postAuthorProfileImageReposted">
@@ -44,7 +44,7 @@
             </div>
             {/if}
         </a>
-        <a href="/profile/{$user->nickname}" class="postAuthorPointsToAuthor">
+        <a href="#" class="postAuthorPointsToAuthor">
             {$user->nickname}
         </a>
         {if isset($reposted)}
@@ -52,6 +52,7 @@
                 {$language['reposted']}
             </span>
         {/if}
+        {if !isset($post_edit)}
         <div class="postAuthorMoreActions">
             <div class="postAuthorMoreActionsBtn" id="DropdownListener" data-dropdown="#dropdown_edit_post_settings">
                 <i class='bx bxs-cog'></i>
@@ -120,6 +121,7 @@
                 </section>
             </div>
         </div>
+        {/if}
     </div>
     {if isset($reposted)}
     <div>
@@ -166,10 +168,21 @@
         </div>
     </div>
     {/if}
-    <div id="pC_sS" ondrop="return false;" onpaste="pastetools(event);">
+    <div id="pC_sS" onpaste="pastetools(event);" ondragover="event.preventDefault();" ondrop="dropFiles(event);">
+        <div class="pC_sS_dropetc" style="display: none;">
+            <div class="pC_sS_dropetc_con">
+                <div class="pC_sS_dropetc_con_icon">
+                    <i class='bx bx-upload'></i>
+                </div>
+            </div>
+        </div>
         <div class="postContent" data-text="*звук сверчков*" contenteditable="true">
-            <h1 data-text="{$language['heading']}" contenteditable="true"></h1>
-            <p data-text="{$language['go_ahead_put_smth']}" contenteditable="true"></p>
+            {if isset($post_edit)}
+            {$post_edit->zhabContent|noescape}
+            {else}
+                <h1 data-text="{$language['heading']}" contenteditable="true"></h1>
+                <p data-text="{$language['go_ahead_put_smth']}" contenteditable="true"></p>
+            {/if}
         </div>
     </div>
     <div class="tools_P" contenteditable="false">
@@ -202,28 +215,46 @@
             </div>
         </div>
         <div class="tools_P_tool" onclick="zhabbler.insertIntoEditorContent('p', {$language['something_somebody_else_said_here']}, `class='content_quote'`);">
-            <i class='bx bxs-quote-alt-left' style="color:#ff8c00;"></i>
+            <i class='bx bxs-quote-alt-left' style="color:#ff8a00;"></i>
         </div>
         <div class="tools_P_tool" onclick="zhabbler.insertIntoEditorContent('p', {$language['frog_croak_croak']}, `class='content_dialogue'`);">
-            <i class='bx bxs-conversation' style="color:#009dff;"></i>
+            <i class='bx bxs-conversation' style="color:#00b8ff;"></i>
         </div>
         <div class="tools_P_tool" onclick="zhabbler.addPhotoSelection();">
-            <i class='bx bxs-image-alt' style="color:#ff4242;"></i>
+            <i class='bx bxs-image-alt' style="color:#ff4930;"></i>
+        </div>
+        <div class="tools_P_tool" onclick="zhabbler.addAudioSelection();">
+            <i class='bx bx-headphone' style="color:#7d61ff;"></i>
         </div>
         <div class="tools_P_tool" onclick="zhabbler.addVideoSelection();">
-            <i class='bx bxs-video' style="color:#ff4deb;"></i>
+            <i class='bx bxs-video' style="color:#ff62ce;"></i>
         </div>
     </div>
     <div class="write_post_tags">
+        {if isset($post_edit)}
+            {if (new Utilities\Strings())->is_empty($post_edit->zhabTags)}
+            <div class="write_post_tag write_post_tag_add">
+                #{$language['add_tags_to_help_people_find_your_post']}
+            </div>
+            {else}
+            {foreach (new Web\Models\Posts())->get_tags($post_edit->zhabTags) as $tag}
+            <div class="write_post_tag" data-tag="{$tag}">#<span>{$tag}</span><i class="bx bx-x"></i></div>
+            {/foreach}
+            <div class="write_post_tag write_post_tag_add">
+                +
+            </div>
+            {/if}
+        {else}
         <div class="write_post_tag write_post_tag_add">
             #{$language['add_tags_to_help_people_find_your_post']}
         </div>
+        {/if}
     </div>
     <div class="postActions">
-        <button class="button button_gray" onclick="closeEditor();" type="button">
+        <button class="button button_gray" onclick="{(!isset($post_edit) ? 'closeEditor();' : '$(".popup:first").remove();')|noescape}" type="button">
             {$language['close']}
         </button>
-        <button class="button" style="margin-left:auto;" type="button" onclick="publish({$repostedID}, {$questionID});">
+        <button class="button" style="margin-left:auto;" type="button" onclick="{(!isset($post_edit) ? 'publish("'.$repostedID.'", "'.$questionID.'")' : 'edit("'.$post_edit->zhabURLID.'")')|noescape};">
             {$language['publish']}
         </button>
     </div>

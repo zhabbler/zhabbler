@@ -1,0 +1,101 @@
+.zhabblerAudioPlayer{
+    font-family: "Helvetica Neue","HelveticaNeue",Helvetica,Arial,sans-serif;
+    height: 85px;
+    width: 100%;
+    max-width: 540px;
+    box-sizing: border-box;
+    background-color: #13b552;
+    color: #fff;
+    display: flex;
+}
+.zhabblerAudioPlayer, .zhabblerAudioPlayer *{
+    white-space:unset!important;
+}
+.zhabblerAudioPlayerMain{
+    position: relative!important;
+    width: 100%;
+}
+.zhabblerAudioPlayer .zhabblerAudioPlayerBar{
+    cursor: pointer;
+    height: 85px;
+    display: flex;
+    background-color: #13b552;
+}
+@keyframes bar_test {
+    from{
+        width: 0%;
+    }
+    to{
+        width: 100%;
+    }
+}
+.zhabblerAudioPlayer .zhabblerAudioPlayerBar .zhabblerAudioPlayerBarActive{
+    height: 100%;
+    width: 0%;
+    animation-fill-mode: backwards;
+    background-color: rgba(0, 0, 0, .25);
+    transition: width .1s linear;
+}
+.zhabblerAudioPlayer .zhabblerAudioPlayerControls{
+    position: absolute!important;
+    display: flex;
+    height: 85px;
+    box-sizing: border-box;
+    pointer-events: none;
+    z-index: 24;
+}
+.zhabblerAudioPlayer .zhabblerAudioPlayerControlsInformation{
+    height: 85px;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+}
+.zhabblerAudioPlayer .zhabblerAudioPlayerControlsInformation input[type=text]{
+    background-color: rgba(0, 0, 0, .25);
+    appearance: none;
+    border: none;
+    color: #fff;
+    font-weight: bold;
+    pointer-events:all;
+    font-size: 16px;
+}
+.zhabblerAudioPlayer .zhabblerAudioPlayerControlsInformation div:first-child{
+    color: #fff;
+    font-weight: bold;
+}
+.zhabblerAudioPlayer .zhabblerAudioPlayerControlsInformation div{
+    color: rgba(255, 255, 255, .5);
+}
+.zhabblerAudioPlayer .zhabblerAudioPlayerControls .zhabblerAudioPlayerControlsButton{
+    height: 85px;
+    width: 74px;
+    font-size: 48px;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color:#fff;
+    background: transparent;
+    border: none;
+    appearance: none;
+}
+.zhabblerAudioPlayer .zhabblerAudioPlayerControls .zhabblerAudioPlayerControlsButton i.bx{
+    pointer-events:all;
+}
+.zhabblerAudioPlayerCover{
+    min-width: 85px;
+    min-height: 85px;
+    max-width: 85px;
+    max-height: 85px;
+    display: flex;
+}
+.zhabblerAudioPlayerCover img{
+    background-color: rgba(255, 255, 255, .25);
+    width: 100%;
+    margin: 0px!important;
+    height: 100%;
+}
+label.zhabblerAudioPlayerCover:hover img{
+    filter: brightness(.8);
+}

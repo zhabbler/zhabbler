@@ -8,10 +8,26 @@ $.post("/api/User/get_user_details", function(data){
     user = data;
 });
 $(document).ready(function(){
+    if($(window).width() > 980){
+        var prevScrollpos = window.pageYOffset;
+        window.onscroll = function() {
+            var currentScrollPos = window.pageYOffset;
+            if(prevScrollpos > currentScrollPos){
+                $(".tabs").css("top", "");
+            }else{
+                $(".tabs").css("top", "-56px");
+            }
+            prevScrollpos = currentScrollPos;
+        }
+    }
     $(document).on("click", ".popup", function(){
         if(!$(this).hasClass("popup_do_not_close")){
             $(".popup:first").remove();
         }
+    });
+    $(document).on("click", ".popup_profile_close_btn", function(){
+        $(".popup_profile").remove();
+        window.history.pushState({page:page_id++}, 'Жабблер', $(this).data("prev"));
     });
     $(document).on("input", ".postRespondsRespondTextarea textarea", function () {
         this.setAttribute("style", "height:" + (this.scrollHeight) + "px;overflow-y:hidden;");
@@ -109,7 +125,17 @@ $(document).ready(function(){
     });
     $(document).on("click", ".navbar_element", function(){
         if(typeof $(this).attr("href") !== 'undefined' && $(this).attr("href") !== false){
+            if($(window).width() <= 980){
+                $(".mobile_new_nav_sidebar_b").fadeOut(200);
+                $(".mobile_new_nav_sidebar_b .navbar").removeClass("navbar_mb_expanded");
+            }
             goToPage($(this).attr("href"));
+        }
+    });
+    $(document).on("click", ".navbar_extended_show .navbar_element", function(){
+        if($(window).width() <= 980){
+            $(".mobile_new_nav_sidebar_b").fadeOut(200);
+            $(".mobile_new_nav_sidebar_b .navbar").removeClass("navbar_mb_expanded");
         }
     });
     $(document).on("click", "#FollowBtn", function(){
@@ -129,6 +155,9 @@ $(document).ready(function(){
     $(document).on("focusin", ".nav_options_searchbar input", function(){
         $(".nav_options_req_search").fadeIn(200);
     });
+    $(document).on("click", ".popup-post-uie-btn", function(){
+        $(".popup:not(#postEditor)").remove();
+    })
     $(document).on("mouseover", ".postBoxEventL", function(){
         if($(`#boxinfo_${$(this).data('box')}`).css('display') == 'none'){
             $(`#boxinfo_${$(this).data('box')}`).fadeIn(200);
@@ -279,7 +308,8 @@ $(document).ready(function(){
                         if(typeof form.data("location") !== 'undefined' && form.attr("location") !== false){
                             goToPage(form.data("location"));
                         }else{
-                            goToPage(document.location);
+                            console.log(window.location.pathname);
+                            goToPage(window.location.pathname);
                         }
                     }
                     if(form.data("reload") == 2){
@@ -306,8 +336,21 @@ $(document).ready(function(){
             event.stopPropagation();
         }
     });
+    $(document).on("click", ".mobile_new_nav_sidebar_b", function(){
+        $(".mobile_new_nav_sidebar_b").fadeOut(200);
+        $(".mobile_new_nav_sidebar_b .navbar").removeClass("navbar_mb_expanded");
+    });
+    $(document).on("click", ".mobile_new_nav_sidebar_b .navbar", function(event){
+        event.stopPropagation();
+    });
 });
 class Zhabbler{
+    expandNavbarMobile(){
+        if($(window).width() <= 980){
+            $(".mobile_new_nav_sidebar_b").fadeIn(200);
+            $(".mobile_new_nav_sidebar_b .navbar").addClass("navbar_mb_expanded");
+        }
+    }
     followFromRec(id){
         $.post("/api/Follow/follow", {id:id}, function(data){
             if(data.followed == 1){
@@ -376,12 +419,23 @@ class Zhabbler{
     }
     activityBubble(event){
         event.stopPropagation();
-        $("#NVT_US_BBL").hide();
-        if($(".navbar_element_bubble:not(#NVT_US_BBL)").length > 0){
-            $(".navbar_element_bubble:not(#NVT_US_BBL)").remove();
+        if($(window).width() <= 980){
+            window.history.pushState({page:page_id++}, 'Жабблер', window.location.pathname);
+            $(".mobile_new_nav_sidebar_b").fadeOut(200);
+            $(".mobile_new_nav_sidebar_b .navbar").removeClass("navbar_mb_expanded");
+            $(".main").css("background", "#fff");
+            $(".main").css("color", "#000");
+            $(".main").attr("class", "main");
+            $('.main').html('<div class="loader loader_black loader_cpa"><div class="loader_part loader_part_1"></div><div class="loader_part loader_part_2"></div><div class="loader_part loader_part_3"></div></div>');
+            $(".main").load("/etc/activity");
         }else{
-            $(($(".navbar_top").length > 0 ? "#NVT_FA" : ".main")).prepend(`<div class="navbar_element_bubble" id="ActivityBubble"><div class="navbar_element_bubble_header"><div class="navbar_element_bubble_header_title"><span>${user.nickname}</span></div></div><div class="rainbow-loader"></div></div>`);
-            $("#ActivityBubble").load("/etc/activity");
+            $("#NVT_US_BBL").hide();
+            if($(".navbar_element_bubble:not(#NVT_US_BBL)").length > 0){
+                $(".navbar_element_bubble:not(#NVT_US_BBL)").remove();
+            }else{
+                $(($(".navbar_top").length > 0 ? "#NVT_FA" : ".main")).prepend(`<div class="navbar_element_bubble" id="ActivityBubble"><div class="navbar_element_bubble_header"><div class="navbar_element_bubble_header_title"><span>${user.nickname}</span></div></div><div class="rainbow-loader"></div></div>`);
+                $("#ActivityBubble").load("/etc/activity");
+            }
         }
     }
     scrollFTags(pos){
@@ -775,11 +829,49 @@ class Zhabbler{
             }
         })
     }
+    addAudioSelection(){
+        if($(".s_media_selections").length == 0 && $("#pC_sS .postContent audio").length < 10){
+            if($(".audio-- .loader").length == 0){
+                $("#pC_sS").append(`<div class="s_media_selections" contenteditable="false">
+                    <div style="display: flex;align-items: center;justify-content: center;height:155px;">
+                    <div class="s_media_selections_close_btn" onclick="$('.s_media_selections').remove();"><i class='bx bx-x'></i></div>
+            <label class="s_media_selection">
+                <div>
+                    <i class='bx bx-headphone' ></i>
+                </div>
+                <div>
+                    <span>
+                        ${locale['upload_audio']}
+                    </span>
+                </div>
+                <input type="file" name="audio" hidden accept="audio/mp3,audio/*;capture=microphone" onchange="zhabbler.insertIntoEditorContentMedia(this)" id="video">
+            </label>
+            <div class="s_media_selection" style="border-left: 1px solid #999;" onclick="zhabbler.addMediaSelectionURL();">
+                <div>
+                    <i class='bx bx-globe'></i>
+                </div>
+                <div>
+                    <span>
+                        ${locale['add_audio_from_web']}
+                    </span>
+                </div>
+            </div>
+            </div>
+            <p style="text-align:center;font-size:14px;color:#666;">
+                ${locale['audio_limit']}
+            </p>
+        </div>`);
+            }else{
+                zhabbler.addError(locale["photo_loader_error"]);
+            }
+        }
+    }
     addVideoSelection(){
         if($(".s_media_selections").length == 0 && $("#pC_sS .postContent video").length < 10){
             if($(".video-- .loader").length == 0){
                 $("#pC_sS").append(`<div class="s_media_selections" contenteditable="false">
                     <div style="display: flex;align-items: center;justify-content: center;height:155px;">
+                    <div class="s_media_selections_close_btn" onclick="$('.s_media_selections').remove();"><i class='bx bx-x'></i></div>
             <label class="s_media_selection">
                 <div>
                     <i class='bx bx-video-plus' ></i>
@@ -789,15 +881,15 @@ class Zhabbler{
                         ${locale['upload_video']}
                     </span>
                 </div>
-                <input type="file" name="video" hidden accept="video/*" onchange="zhabbler.insertIntoEditorContentVideo(this)" id="video">
+                <input type="file" name="video" hidden accept="video/*" onchange="zhabbler.insertIntoEditorContentMedia(this)" id="video">
             </label>
-            <div class="s_media_selection" onclick="$('.s_media_selections').remove();">
+            <div class="s_media_selection" style="border-left: 1px solid #999;" onclick="zhabbler.addMediaSelectionURL();">
                 <div>
-                    <i class='bx bx-x' ></i>
+                    <i class='bx bx-globe'></i>
                 </div>
                 <div>
                     <span>
-                        ${locale['cancel']}
+                        ${locale['add_videos_from_web']}
                     </span>
                 </div>
             </div>
@@ -811,11 +903,108 @@ class Zhabbler{
             }
         }
     }
+    insertIframeByURL(event){
+        if(event.keyCode === 13){
+            let userMediaLink = $("#url_ScS").val();
+            if(userMediaLink != ''){
+                if($("#pC_sS .postContent .iframe--").length > 10){
+                    zhabbler.addError("Failed to attach iframe. Iframe limit exceeded");
+                    return false;
+                }
+                if(!/http/i.test(userMediaLink)){
+                    userMediaLink = "http://" + userMediaLink;
+                }
+                let whitelisted = ["youtube.com", "soundcloud.com"];
+                let domain = userMediaLink.match(/^(?:https?:\/\/)?(?:[^@\n]+@)?(?:www\.)?([^:\/\n]+)/im)[1];
+                let iframeURL = '';
+                if(whitelisted.includes(domain)){
+                    $(".popup:first form #pC_sS .postContent").append(`<div contenteditable="false" class="iframe--">
+                        <div class="loader">
+                            <div class="loader_part loader_part_1"></div>
+                            <div class="loader_part loader_part_2"></div>
+                            <div class="loader_part loader_part_3"></div>
+                        </div>
+                        <div class="ui__btn__delete"><i class='bx bx-x'></i></div>
+                        <div class="ui__handle"><i class='bx bxs-hand'></i></div>
+                        <iframe allowfullscreen></iframe>
+                    </div>`);
+                    if(domain == 'youtube.com'){
+                        iframeURL = 'https://youtube.com/embed/' + getYouTubeID(userMediaLink);
+                    }else if(domain == 'soundcloud.com'){
+                        iframeURL = `https://w.soundcloud.com/player/?url=${userMediaLink}&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true&visual=true`;
+                    }
+                    let iframeUID = makeid(32);
+                    $(".iframe--:last iframe").attr("src", iframeURL);
+                    $(".iframe--:last iframe").attr("data-originalsrc", userMediaLink);
+                    $(".iframe--:last").attr("data-src", iframeUID);
+                    $(".iframe--:last .ui__btn__delete").attr("data-src", iframeUID);
+                    $(".iframe--:last .loader").remove();
+                }else{
+                    zhabbler.addError(locale['unsupported_link']);
+                    return false;
+                }
+            }else{
+                return false;
+            }
+            $(".s_media_selections").remove();
+        }
+    }
+    insertImageByURL(event){
+        if(event.keyCode === 13){
+            let userImageLink = $("#url_ScS").val();
+            if(userImageLink != ''){
+                if(!/http/i.test(userImageLink)){
+                    userImageLink = "http://" + userImageLink;
+                }
+                if(userImageLink.match(/\.(jpeg|jpg|png)$/) == null){
+                    zhabbler.addError(locale['url_image_error']);
+                }else{
+                    if($(".photo-- .loader").length == 0 && $("#pC_sS .postContent img").length < 15){
+                        $(".popup:first form #pC_sS .postContent").append(`<div contenteditable="false" class="photo--">
+                            <div class="loader">
+                                <div class="loader_part loader_part_1"></div>
+                                <div class="loader_part loader_part_2"></div>
+                                <div class="loader_part loader_part_3"></div>
+                            </div>
+                            <div class="ui__btn__delete"><i class='bx bx-x'></i></div>
+                            <div class="ui__handle"><i class='bx bxs-hand'></i></div>
+                            <img src="${userImageLink}"/>
+                            </div>`);
+                        $.post("/api/Files/upload_image_by_url", {url:userImageLink}, function(data){
+                            if(data.error != null){
+                                zhabbler.addError(`${locale['failed_to_upload_image']} (${data.error})`);
+                                $(".photo--:last").remove();
+                            }else{
+                                $(".photo--:last img").attr("src", data.url);
+                                $(".photo--:last").attr("data-src", data.url);
+                                $(".photo--:last .ui__btn__delete").attr("data-src", data.url);
+                                $(".photo--:last .loader").remove();
+                            }
+                        });
+                    }
+                }
+            }else{
+                return false;
+            }
+            $(".s_media_selections").remove();
+        }
+    }
+    addMediaSelectionURL(){
+        $(".s_media_selections").addClass("s_media_selections_hfh")
+        $(".s_media_selections").html(`<div class="s_media_selections_close_btn" onclick="$('.s_media_selections').remove();"><i class='bx bx-x'></i></div><input type="text" class="s_media_selections_uinput" id="url_ScS" onkeyup="zhabbler.insertIframeByURL(event);" placeholder="${locale['enter_or_paste_url']}">`);
+        $("#url_ScS").focus();
+    }
+    addPhotoSelectionURL(){
+        $(".s_media_selections").addClass("s_media_selections_hfh")
+        $(".s_media_selections").html(`<div class="s_media_selections_close_btn" onclick="$('.s_media_selections').remove();"><i class='bx bx-x'></i></div><input type="text" class="s_media_selections_uinput" id="url_ScS" onkeyup="zhabbler.insertImageByURL(event);" placeholder="${locale['enter_or_paste_url']}">`);
+        $("#url_ScS").focus();
+    }
     addPhotoSelection(){
         if($(".s_media_selections").length == 0 && $("#pC_sS .postContent img").length < 15){
             if($(".photo-- .loader").length == 0){
                 $("#pC_sS").append(`<div class="s_media_selections" contenteditable="false">
                     <div style="display: flex;align-items: center;justify-content: center;height:155px;">
+                <div class="s_media_selections_close_btn" onclick="$('.s_media_selections').remove();"><i class='bx bx-x'></i></div>
             <label class="s_media_selection">
                 <div>
                     <i class='bx bx-image-add' ></i>
@@ -825,15 +1014,15 @@ class Zhabbler{
                         ${locale['upload_image']}
                     </span>
                 </div>
-                <input type="file" name="image" hidden accept="image/*" onchange="zhabbler.insertIntoEditorContentImage(this)" id="image">
+                <input type="file" name="image" hidden accept="image/*" onchange="zhabbler.insertIntoEditorContentMedia(this)" id="image">
             </label>
-            <div class="s_media_selection" onclick="$('.s_media_selections').remove();">
+            <div class="s_media_selection" style="border-left: 1px solid #999;" onclick="zhabbler.addPhotoSelectionURL();">
                 <div>
-                    <i class='bx bx-x' ></i>
+                    <i class='bx bx-globe'></i>
                 </div>
                 <div>
                     <span>
-                        ${locale['cancel']}
+                        ${locale['add_images_from_web']}
                     </span>
                 </div>
             </div>
@@ -858,131 +1047,114 @@ class Zhabbler{
         $(".popup:first").load("/static/html/choose_language.html");
     }
     writePost(){
+        if($(window).width() <= 980){
+            $(".mobile_new_nav_sidebar_b").fadeOut(200);
+            $(".mobile_new_nav_sidebar_b .navbar").removeClass("navbar_mb_expanded");
+            zhabbler.openEditor('text');
+            return false;
+        }
         $("#app").prepend(`<div class="popup">
         <div class="loader">
             <div class="loader_part loader_part_1"></div>
             <div class="loader_part loader_part_2"></div>
             <div class="loader_part loader_part_3"></div>
         </div>
-    </div>`); 
+    </div>`);
         $(".popup:first").load("/etc/post_usr_interact?popup");
     }
     insertIntoEditorContent(element, placeholder, attributes = ""){
         $(".popup:first form #pC_sS .postContent").append(`<${element} data-text="${placeholder}" ${attributes}></${element}>`);
     }
-    insertIntoEditorContentImage(element){
+    insertIntoEditorContentMedia(element){
         const file = element.files[0];
         if(file){
-            $(".s_media_selections").remove();
-            $(".popup:first form #pC_sS .postContent").append(`<div contenteditable="false" class="photo--">
-            <div class="loader">
-                <div class="loader_part loader_part_1"></div>
-                <div class="loader_part loader_part_2"></div>
-                <div class="loader_part loader_part_3"></div>
-            </div>
-            <div class="ui__btn__delete"><i class='bx bx-x'></i></div>
-            <div class="ui__handle"><i class='bx bxs-hand'></i></div>
-            <img src="${URL.createObjectURL(file)}"/>
-            </div>`);
-            var formData = new FormData();
-            if(file.type == 'image/gif'){
-                formData.append('gif', file);
-                $.ajax({
-                url: "/api/Files/upload_gif",
-                type: "POST",
-                data: formData,
-                enctype: 'multipart/form-data',
-                processData: false,
-                contentType: false
-                }).done(function(data){
-                    if(data.error != null){
-                        $(".photo--:last").remove();
-                        zhabbler.addError(locale['something_went_wrong']);
-                    }else{
-                        $(".photo--:last img").attr("src", data.url);
-                        $(".photo--:last").attr("data-src", data.url);
-                        $(".photo--:last .ui__btn__delete").attr("data-src", data.url);
-                        $(".photo--:last .loader").remove();
-                    }
-                }).fail(function(){
-                    $(".photo--:last").remove();
-                    zhabbler.addError(locale['something_went_wrong']);
-                });
-            }else if(file.type == 'image/jpeg' || file.type == 'image/jpg' || file.type == 'image/png' || file.type == 'image/bmp'){
-                formData.append('image', file);
-                $.ajax({
-                url: "/api/Files/upload_image",
-                type: "POST",
-                data: formData,
-                enctype: 'multipart/form-data',
-                processData: false,
-                contentType: false
-                }).done(function(data){
-                    if(data.error != null){
-                        $(".photo--:last").remove();
-                        zhabbler.addError(locale['something_went_wrong']);
-                    }else{
-                        $(".photo--:last img").attr("src", data.url);
-                        $(".photo--:last").attr("data-src", data.url);
-                        $(".photo--:last .ui__btn__delete").attr("data-src", data.url);
-                        $(".photo--:last .loader").remove();
-                    }
-                }).fail(function(data){
-                    $(".photo--:last").remove();
-                    zhabbler.addError(locale['something_went_wrong']);
-                });
-            }else{
-                $(".photo--:last").remove();
-                zhabbler.addError(locale['something_went_wrong']);
-            }
+            attachFile(file);
         }
     }
-    insertIntoEditorContentVideo(element){
-        const file = element.files[0];
-        if(file){
-            $(".s_media_selections").remove();
-            $(".popup:first form #pC_sS .postContent").append(`<div contenteditable="false" class="video--">
+    editPost(id){
+        $("#app").prepend(`<div class="popup popup_do_not_close" id="postEditor">
             <div class="loader">
                 <div class="loader_part loader_part_1"></div>
                 <div class="loader_part loader_part_2"></div>
                 <div class="loader_part loader_part_3"></div>
             </div>
-            <div class="ui__btn__delete"><i class='bx bx-x'></i></div>
-            <div class="ui__handle"><i class='bx bxs-hand'></i></div>
-            <video src="${URL.createObjectURL(file)}" autoplay muted loop></video>
-            </div>`);
-            var formData = new FormData();
-            formData.append('video', file);
-            $.ajax({
-              url: "/api/Files/upload_video",
-              type: "POST",
-              data: formData,
-              enctype: 'multipart/form-data',
-              processData: false,
-              contentType: false
-            }).done(function(data){
-                if(data.error != null || data.url == null){
-                    $(".video--:last").remove();
-                    zhabbler.addError(locale['something_went_wrong']);
-                }else{
-                    $.get(data.url).fail(function(){
-                        $(".video--:last").remove();
-                        zhabbler.addError(locale['something_went_wrong']);
-                        return false;
-                    });
-                    $(".video--:last video").attr("src", data.url);
-                    $(".video--:last").attr("data-src", data.url);
-                    $(".video--:last .ui__btn__delete").attr("data-src", data.url);
-                    $(".video--:last .loader").remove();
-                }
-            }).fail(function(data){
-                $(".video--:last").remove();
-                zhabbler.addError(locale['something_went_wrong']);
+        </div>`);
+        $.post("/etc/post_write", {edit_post:id}, function(data){
+            $(".popup:first").html(data);
+            $(".popup:first form #pC_sS .postContent").sortable({handle: ".ui__handle", axis: 'y'});
+            $(".popup:first form #pC_sS .postContent *:not(img):not(video):not(audio):not(iframe)").attr("data-text", locale['go_ahead_put_smth']);
+            $(".popup:first form #pC_sS .postContent img").each(function(){
+                $(this).replaceWith(`<div contenteditable="false" class="photo--" data-src="${$(this).attr("src").replace(/^.*\/\/[^\/]+/, '')}">
+                    <div class="ui__btn__delete" data-src="${$(this).attr("src").replace(/^.*\/\/[^\/]+/, '')}"><i class='bx bx-x'></i></div>
+                    <div class="ui__handle"><i class='bx bxs-hand'></i></div>
+                    <img src="${$(this).attr("src").replace(/^.*\/\/[^\/]+/, '')}"/>
+                </div>`);
             });
-        }
+            $(".popup:first form #pC_sS .postContent video").each(function(){
+                $(this).replaceWith(`<div contenteditable="false" class="video--" data-src="${$(this).attr("src").replace(/^.*\/\/[^\/]+/, '')}">
+                    <div class="ui__btn__delete" data-src="${$(this).attr("src").replace(/^.*\/\/[^\/]+/, '')}"><i class='bx bx-x'></i></div>
+                    <div class="ui__handle"><i class='bx bxs-hand'></i></div>
+                    <video src="${$(this).attr("src").replace(/^.*\/\/[^\/]+/, '')}" autoplay muted loop></video>
+                </div>`);
+            });
+            $(".popup:first form #pC_sS .postContent audio").each(function(){
+                $(this).replaceWith(`<div contenteditable="false" class="audio--" data-src="${$(this).attr("src").replace(/^.*\/\/[^\/]+/, '')}">
+                    <div class="ui__btn__delete" data-src="${$(this).attr("src").replace(/^.*\/\/[^\/]+/, '')}"><i class='bx bx-x'></i></div>
+                    <div class="ui__handle"><i class='bx bxs-hand'></i></div>
+                    <div class="zhabblerAudioPlayer" data-player="${$(this).attr("src").replace(/^.*\/\/[^\/]+/, '')}">
+                        <audio src="${$(this).attr("src").replace(/^.*\/\/[^\/]+/, '')}" data-cover="${$(this).attr("data-cover").replace(/^.*\/\/[^\/]+/, '')}" data-name="${$(this).attr("data-name")}" ontimeupdate="audiotimeupdate($(this));"></audio>
+                        <div class="zhabblerAudioPlayerMain">
+                            <div class="zhabblerAudioPlayerControls">
+                                <button class="zhabblerAudioPlayerControlsButton" id="AudioPlayBtn" data-play="${$(this).attr("src").replace(/^.*\/\/[^\/]+/, '')}">
+                                    <i class='bx bx-play'></i>
+                                </button>
+                                <div class="zhabblerAudioPlayerControlsInformation">
+                                    <div class="zhabblerAudioPlayerControlsInformationFake">
+                                        <input type="text" name="audio_name" maxlength="72" placeholder="${locale['audio_name']}" data-for="${$(this).attr("src").replace(/^.*\/\/[^\/]+/, '')}" value="${$(this).attr("data-name")}">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="zhabblerAudioPlayerBar" data-play="${$(this).attr("src").replace(/^.*\/\/[^\/]+/, '')}">
+                                <div class="zhabblerAudioPlayerBarActive"></div>
+                            </div>
+                        </div>
+                        <label class="zhabblerAudioPlayerCover">
+                            <input type="file" name="audiocover" onchange="change_audio_cover('${$(this).attr("src").replace(/^.*\/\/[^\/]+/, '')}', this.files[0]);" hidden="" accept="image/*" id="audiocover">
+                            <img src="${$(this).attr("data-cover").replace(/^.*\/\/[^\/]+/, '')}" data-ignore="true">
+                        </label>
+                    </div>
+                    </div>`);
+            });
+            $(".popup:first form #pC_sS .postContent iframe").each(function(){
+                let iframeURL = '';
+                let originalsrc = $(this).attr("data-originalsrc");
+                let domain = originalsrc.match(/^(?:https?:\/\/)?(?:[^@\n]+@)?(?:www\.)?([^:\/\n]+)/im)[1];
+                if(domain == 'youtube.com'){
+                    iframeURL = 'https://youtube.com/embed/' + getYouTubeID(originalsrc);
+                    $(this).replaceWith(`<div contenteditable="false" class="iframe--" data-src="${iframeURL}">
+                        <div class="ui__btn__delete" data-src="${iframeURL}"><i class='bx bx-x'></i></div>
+                        <div class="ui__handle"><i class='bx bxs-hand'></i></div>
+                        <iframe src="${iframeURL}" data-originalsrc="${originalsrc}" allowfullscreen></iframe>
+                    </div>`);
+                }else if(domain == 'soundcloud.com'){
+                    let elem = $(this);
+                    $.get('https://soundcloud.com/oembed?format=js&url=' + originalsrc + '&iframe=true', function(data){
+                        let element = $.parseHTML(data.html);
+                        iframeURL = $(element).attr("src");
+                        elem.replaceWith(`<div contenteditable="false" class="iframe--" data-src="${iframeURL}">
+                            <div class="ui__btn__delete" data-src="${iframeURL}"><i class='bx bx-x'></i></div>
+                            <div class="ui__handle"><i class='bx bxs-hand'></i></div>
+                            ${JSON.parse(data.replace(/[());]/g, '')).html.replace('width="100%"', `width="100%" data-originalsrc="${originalsrc}"`)}
+                        </div>`);
+                    }).fail(function(){
+                        zhabbler.addError("Failed to add Soundcloud media");
+                        $(this).remove();
+                    });
+                }
+            });
+        });
     }
     openEditor(execute, placeholder = "", attributes = "", repost = "", question = ""){
-        $(".popup").remove();
         $("#app").prepend(`<div class="popup popup_do_not_close" id="postEditor">
             <div class="loader">
                 <div class="loader_part loader_part_1"></div>
@@ -1002,19 +1174,23 @@ class Zhabbler{
                 zhabbler.addVideoSelection();
                 return false;
             }
+            if(execute == "audio"){
+                zhabbler.addAudioSelection();
+                return false;
+            }
             $(".popup:first form #pC_sS .postContent").html("");
             zhabbler.insertIntoEditorContent(execute, placeholder, attributes);
         }
         if(repost != "" || question != ""){
             $.post("/etc/post_write", {repost:repost, question:question}, function(data){
                 $(".popup:first").html(data);
-                $(".popup:first form #pC_sS .postContent").sortable({handle: ".ui__handle"});
+                $(".popup:first form #pC_sS .postContent").sortable({handle: ".ui__handle", axis: 'y'});
                 whatToDo(execute, placeholder, attributes);
             });
         }else{
             $.get("/etc/post_write", function(data){
                 $(".popup:first").html(data);
-                $(".popup:first form #pC_sS .postContent").sortable({handle: ".ui__handle"});
+                $(".popup:first form #pC_sS .postContent").sortable({handle: ".ui__handle", axis: 'y'});
                 whatToDo(execute, placeholder, attributes);
             });
         }
@@ -1045,7 +1221,6 @@ class Zhabbler{
         }
     }
     openEditorWithTagged(tagged){
-        $(".popup").remove();
         $("#app").prepend(`<div class="popup popup_do_not_close" id="postEditor">
             <div class="loader">
                 <div class="loader_part loader_part_1"></div>
@@ -1090,6 +1265,8 @@ window.addEventListener('popstate', function (event) {
     var msgr = '';
     var errors = '';
     console.log(`location: ${document.location}, state: ${JSON.stringify(history.state)}`,);
+    $(".main").css("background", "");
+    $(".main").css("color", "");
     togo = `${document.location} #app`;
     if($('.errors').length > 0){
         $('.errors .error').css("animation", "none");
@@ -1115,36 +1292,80 @@ window.addEventListener('popstate', function (event) {
         msgr = '';
     });
 }, false);
-const goToPage = (href) => {
+const goToPage = (href, ignore_profile = false) => {
     var msgr = '';
     var errors = '';
     if(!isValidUrl(href)){
-        window.history.pushState({page:page_id++}, 'Жабблер', href);
         console.log(`location: ${document.location}, state: ${JSON.stringify(history.state)}`,);
-        togo = `${href} #app`;
-        if($('.errors').length > 0){
-            $('.errors .error').css("animation", "none");
-            errors = $('.errors').html();
+        if(href.startsWith("/profile/") && window.location.pathname.startsWith("/profile/") && $(".popup_profile").length == 0){
+            ignore_profile = true;
+        }else if($(window).width() < 980){
+            ignore_profile = true;
         }
-        if($('.new_msgr').length > 0){
-            $(`.new_msgr_avatar_whidn`).show();
-            $(".new_msgr_msgs").hide();
-            $(".new_msgr_msgs_opened").removeClass("new_msgr_msgs_opened");
-            msgr = $('.new_msgr').html();
+        if(href.startsWith("/profile/") && ignore_profile == false){
+            console.log("Profile");
+            if($('.new_msgr').length > 0){
+                $(`.new_msgr_avatar_whidn`).show();
+                $(".new_msgr_msgs").hide();
+                $(".new_msgr_msgs_opened").removeClass("new_msgr_msgs_opened");
+            }
+            if($(".popup_profile").length == 0){
+                $("#app").prepend(`<div class="popup popup_profile popup_do_not_close">
+                    <div class="popup_profile_close_btn" data-prev="${window.location.pathname}">
+                        <i class="bx bx-x"></i>
+                    </div>
+                    <div class="profile_main" id="PopupContainer">
+                        <div class="loader loader_black loader_cpa">
+                            <div class="loader_part loader_part_1"></div>
+                            <div class="loader_part loader_part_2"></div>
+                            <div class="loader_part loader_part_3"></div>
+                        </div>
+                    </div>
+                </div>`);
+            }else{
+                $(".popup_profile .profile_main").html(`<div class="loader loader_black loader_cpa">
+                            <div class="loader_part loader_part_1"></div>
+                            <div class="loader_part loader_part_2"></div>
+                            <div class="loader_part loader_part_3"></div>
+                        </div>`);
+            }
+            window.history.pushState({page:page_id++}, 'Жабблер', href);
+            $(".popup_profile .profile_main").load(`${href} .profile_main_itself`, function(){
+                if($(".profile_main").html() == ''){
+                    $(".profile_main").prepend(`<div id="spCPA"><span>${locale['its_so_empty_here']}</span></div>`)
+                }
+                zhabbler.loadPreloaders();
+            });
+        }else{
+            $(".main").css("background", "");
+            $(".main").css("color", "");
+            $(".popup_profile").remove();
+            window.history.pushState({page:page_id++}, 'Жабблер', href);
+            togo = `${href} #app`;
+            if($('.errors').length > 0){
+                $('.errors .error').css("animation", "none");
+                errors = $('.errors').html();
+            }
+            if($('.new_msgr').length > 0){
+                $(`.new_msgr_avatar_whidn`).show();
+                $(".new_msgr_msgs").hide();
+                $(".new_msgr_msgs_opened").removeClass("new_msgr_msgs_opened");
+                msgr = $('.new_msgr').html();
+            }
+            $('html,body').scrollTop(0);
+            $('.main').html('<div class="loader loader_cpa"><div class="loader_part loader_part_1"></div><div class="loader_part loader_part_2"></div><div class="loader_part loader_part_3"></div></div>');
+            $("body").load(togo, function(){
+                zhabbler.loadPreloaders();
+                if(errors != ''){
+                    $("#app").prepend(`<div class='errors'>${errors}</div>`);
+                }
+                if(msgr != ''){
+                    $("#app").prepend(`<div class='new_msgr'>${msgr}</div>`);
+                }
+                errors = '';
+                msgr = '';
+            });
         }
-        $('html,body').scrollTop(0);
-        $('.main').html('<div class="loader loader_cpa"><div class="loader_part loader_part_1"></div><div class="loader_part loader_part_2"></div><div class="loader_part loader_part_3"></div></div>');
-        $("body").load(togo, function(){
-            zhabbler.loadPreloaders();
-            if(errors != ''){
-                $("#app").prepend(`<div class='errors'>${errors}</div>`);
-            }
-            if(msgr != ''){
-                $("#app").prepend(`<div class='new_msgr'>${msgr}</div>`);
-            }
-            errors = '';
-            msgr = '';
-        });
     }else{
         window.location.href = href;
     }
@@ -1176,7 +1397,41 @@ const isValidUrl = (urlString) => {
     '(\\#[-a-z\\d_]*)?$','i');
     return !!urlPattern.test(urlString);
 }
+const getYouTubeID = (url) => {
+    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+    const match = url.match(regExp);
+
+    return (match && match[2].length === 11)
+      ? match[2]
+      : null;
+}
 const checkPostsAttachments = () => {
+    $(".post .postContent audio:not(#AudioPlayerAffected)").each(function(){
+        $(this).replaceWith(`<div class="zhabblerAudioPlayer" data-player="${$(this).attr("src")}">
+        <audio src="${$(this).attr("src")}" id="AudioPlayerAffected" ontimeupdate="audiotimeupdate($(this));" hidden></audio>
+        <div class="zhabblerAudioPlayerMain">
+            <div class="zhabblerAudioPlayerControls">
+                <button class="zhabblerAudioPlayerControlsButton" id="PlayAudioBtn" data-play="${$(this).attr("src")}">
+                    <i class='bx bx-play'></i>
+                </button>
+                <div class="zhabblerAudioPlayerControlsInformation">
+                    <div>
+                        <span>
+                            <b>${htmlspecialchars($(this).data("name"))}</b>
+                        </span>
+                    </div>
+                    <div>
+                        <span id="durations"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="zhabblerAudioPlayerBar" data-play="${$(this).attr("src")}">
+                <div class="zhabblerAudioPlayerBarActive"></div>
+            </div>
+        </div>
+        ${($(this).data("cover") != '' ? `<div class="zhabblerAudioPlayerCover"><img src="${$(this).data("cover")}"></div>` : ``)}
+    </div>`);
+    });
     $(".post .postContent video:not(.zhabblerPlayerVideo)").each(function(){
         uniqueid = makeid(32);
         $(this).replaceWith(`<div class="zhabblerPlayer" data-player="${uniqueid}">
@@ -1185,7 +1440,7 @@ const checkPostsAttachments = () => {
             <div class="zhabblerPlayerControl zhabblerPlayerControlPlayPause" id="PlayBtn" data-play="${uniqueid}"></div>
             <div class="zhabblerDurs">
                 <span id="active">
-                    00:00
+                    0:00
                 </span>
             </div>
             <div class="zhabblerPlayerBar" data-play="${uniqueid}">
@@ -1193,7 +1448,7 @@ const checkPostsAttachments = () => {
             </div>
             <div class="zhabblerDurs">
                 <span id="nonactive">
-                    00:00
+                    0:00
                 </span> 
             </div>
             <div class="zhabblerPlayerControl" id="FullScreenBtn" data-play="${uniqueid}"></div>

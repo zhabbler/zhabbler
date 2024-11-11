@@ -5,7 +5,7 @@
             <div class="postAuthorBoxInfoTopBar">
                 <div><span>{$post->nickname}</span></div>
             </div>
-            <div class="postAuthorBoxInfoCover" style="background-image: url('{$post->profileCover}');"></div>
+            <div class="postAuthorBoxInfoCover"{!empty($post->profileCover) ? ' style="background-image: url('.$post->profileCover.')"' : ''|noescape}></div>
             <div class="postAuthorBoxInfoPFP">
                 <img src="{$post->profileImage}" style="border-color:{$post->backgroundColor|noescape}">
             </div>
@@ -116,6 +116,18 @@
     {if !empty($post->zhabTags) && !isset($mini_type)}
     <div class="postTags">
         {(new Web\Models\Posts())->show_tags_html((isset($user) ? $user->token : ""), $post->zhabTags)|noescape}
+    </div>
+    {/if}
+    {if isset($user) && $user->userID == $post->zhabBy}
+    <div class="postActions" style="border-bottom: 1px solid #ddd;">
+        <div class="postActionsItself">
+            <div class="postAction" id="LabelEventer" onclick="zhabbler.deletePost({$post->zhabURLID});" data-label="{$language['delete']}">
+                <i class='bx bx-trash'></i>
+            </div>
+            <div class="postAction" id="LabelEventer" onclick="zhabbler.editPost({$post->zhabURLID})" data-label="{$language['edit']}">
+                <i class='bx bx-pencil'></i>
+            </div>
+        </div>
     </div>
     {/if}
     <div class="postActions">
