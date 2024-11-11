@@ -70,15 +70,23 @@ $Router->add("POST", "/api/Account/login", "", function(){
 });
 $Router->add("POST", "/api/Files/upload_image", "", function(){
 	if(isset($_COOKIE['zhabbler_session']))
-		(new Utilities\Files())->upload_image($_FILES['image'], true);
+		(new Utilities\Files())->upload_image($GLOBALS['session']->sessionToken, $_FILES['image'], true);
 });
 $Router->add("POST", "/api/Files/upload_gif", "", function(){
 	if(isset($_COOKIE['zhabbler_session']))
-		(new Utilities\Files())->upload_gif($_FILES['gif']);
+		(new Utilities\Files())->upload_gif($GLOBALS['session']->sessionToken, $_FILES['gif']);
+});
+$Router->add("POST", "/api/Files/upload_image_by_url", "", function(){
+	if(isset($_COOKIE['zhabbler_session']))
+		(new Utilities\Files())->upload_image_by_url($GLOBALS['session']->sessionToken, $_POST['url'], true);
 });
 $Router->add("POST", "/api/Files/upload_video", "", function(){
 	if(isset($_COOKIE['zhabbler_session']))
-		(new Utilities\Files())->upload_video($_FILES['video'], true);
+		(new Utilities\Files())->upload_video($GLOBALS['session']->sessionToken,$_FILES['video'], true);
+});
+$Router->add("POST", "/api/Files/upload_audio", "", function(){
+	if(isset($_COOKIE['zhabbler_session']))
+		(new Utilities\Files())->upload_audio($GLOBALS['session']->sessionToken,$_FILES['audio'], true);
 });
 $Router->add("POST", "/api/Account/change_profile_image", "", function(){
 	if(isset($_COOKIE['zhabbler_session']))
@@ -298,6 +306,10 @@ $Router->add("POST", "/api/Account/password_reset", "", function(){
 $Router->add("POST", "/api/Account/password_reset_change", "", function(){
 	if(!isset($_COOKIE['zhabbler_session']))
 		(new Web\Models\User())->password_reset_change($_POST['code'], $_POST['password'], $_POST['repassword']);
+});
+$Router->add("POST", "/api/Posts/edit_post", "", function(){
+	if(isset($_COOKIE['zhabbler_session']))
+		(new Web\Models\Posts())->edit_post($GLOBALS['session']->sessionToken, $_POST['content'], $_POST['urlid'], $_POST['tags']);
 });
 
 // 404

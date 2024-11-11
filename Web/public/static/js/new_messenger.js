@@ -1,4 +1,4 @@
-var conn = new WebSocket('ws://<Enter uri here>:8000');
+var conn = new WebSocket('ws://localhost:8000');
 var connection = null;
 conn.addEventListener("error", (event) => {
     connection = false;
@@ -308,6 +308,12 @@ class Messenger{
     }
     messagesBubble(event){
         event.stopPropagation();
+        if($(window).width() <= 980){
+            $(".mobile_new_nav_sidebar_b").fadeOut(200);
+            $(".mobile_new_nav_sidebar_b .navbar").removeClass("navbar_mb_expanded");
+            goToPage("/messages");
+            return false;
+        }
         $("#NVT_US_BBL").hide();
         if($(".navbar_element_bubble:not(#NVT_US_BBL)").length > 0){
             $(".navbar_element_bubble:not(#NVT_US_BBL)").remove();

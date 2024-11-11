@@ -8,25 +8,31 @@
     </section>
     <section class="post_usr_interact_el" onclick="zhabbler.openEditor('photo');">
         <div>
-            <div class="post_usr_interact_el_icon" style="color:#ff4242;"><i class='bx bxs-camera'></i></div>
+            <div class="post_usr_interact_el_icon" style="color:#ff4930;"><i class='bx bxs-camera'></i></div>
             <div class="post_user_interact_el_text">{$language['photo']}</div>
         </div>
     </section>
     <section class="post_usr_interact_el" onclick="zhabbler.openEditor('p', {$language['something_somebody_else_said_here']}, `class='content_quote'`);">
         <div>
-            <div class="post_usr_interact_el_icon" style="color:#ff8c00;"><i class='bx bxs-quote-alt-left' ></i></div>
+            <div class="post_usr_interact_el_icon" style="color:#ff8a00;"><i class='bx bxs-quote-alt-left' ></i></div>
             <div class="post_user_interact_el_text">{$language['quote']}</div>
         </div>
     </section>
     <section class="post_usr_interact_el" onclick="zhabbler.openEditor('p', {$language['frog_croak_croak']}, `class='content_dialogue'`);">
         <div>
-            <div class="post_usr_interact_el_icon" style="color:#009dff;"><i class='bx bxs-conversation' ></i></div>
+            <div class="post_usr_interact_el_icon" style="color:#00b8ff;"><i class='bx bxs-conversation' ></i></div>
             <div class="post_user_interact_el_text">{$language['dialog']}</div>
+        </div>
+    </section>
+    <section class="post_usr_interact_el" onclick="zhabbler.openEditor('audio');">
+        <div>
+            <div class="post_usr_interact_el_icon" style="color:#7d61ff;"><i class='bx bx-headphone'></i></div>
+            <div class="post_user_interact_el_text">{$language['audio']}</div>
         </div>
     </section>
     <section class="post_usr_interact_el" onclick="zhabbler.openEditor('video');">
         <div>
-            <div class="post_usr_interact_el_icon" style="color:#ff4deb;"><i class='bx bxs-video-recording' ></i></div>
+            <div class="post_usr_interact_el_icon" style="color:#ff62ce;"><i class='bx bxs-video-recording' ></i></div>
             <div class="post_user_interact_el_text">{$language['video']}</div>
         </div>
     </section>
@@ -44,7 +50,7 @@
         </div>
     </div>
     <div class="popup-post-uie-btn" onclick="zhabbler.openEditor('photo');">
-        <div class="popup-post-uie-btn-round" style="background-color:#ff4242;">
+        <div class="popup-post-uie-btn-round" style="background-color:#ff4930;">
             <i class='bx bxs-camera'></i>
         </div>
         <div class="popup-post-uie-btn-txt">
@@ -54,7 +60,7 @@
         </div>
     </div>
     <div class="popup-post-uie-btn" onclick="zhabbler.openEditor('p', {$language['something_somebody_else_said_here']}, `class='content_quote'`);">
-        <div class="popup-post-uie-btn-round" style="background-color:#ff8c00;">
+        <div class="popup-post-uie-btn-round" style="background-color:#ff8a00;">
             <i class='bx bxs-quote-alt-left' ></i>
         </div>
         <div class="popup-post-uie-btn-txt">
@@ -64,7 +70,7 @@
         </div>
     </div>
     <div class="popup-post-uie-btn" onclick="zhabbler.openEditor('p', {$language['frog_croak_croak']}, `class='content_dialogue'`);">
-        <div class="popup-post-uie-btn-round" style="background-color:#009dff;">
+        <div class="popup-post-uie-btn-round" style="background-color:#00b8ff;">
             <i class='bx bxs-conversation' ></i>
         </div>
         <div class="popup-post-uie-btn-txt">
@@ -73,8 +79,18 @@
             </span>
         </div>
     </div>
+    <div class="popup-post-uie-btn" onclick="zhabbler.openEditor('audio');">
+        <div class="popup-post-uie-btn-round" style="background-color:#7d61ff;">
+            <i class='bx bx-headphone' ></i>
+        </div>
+        <div class="popup-post-uie-btn-txt">
+            <span>
+                {$language['audio']}
+            </span>
+        </div>
+    </div>
     <div class="popup-post-uie-btn" onclick="zhabbler.openEditor('video');">
-        <div class="popup-post-uie-btn-round" style="background-color:#ff4deb;">
+        <div class="popup-post-uie-btn-round" style="background-color:#ff62ce;">
             <i class='bx bxs-video-recording' ></i>
         </div>
         <div class="popup-post-uie-btn-txt">

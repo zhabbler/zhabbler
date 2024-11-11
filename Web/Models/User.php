@@ -19,7 +19,7 @@ class User
     public function change_profile_image(string $token, ?array $file): void
     {
         header('Content-Type: application/json');
-        $file = (new Files())->upload_image($file, false);
+        $file = (new Files())->upload_image($token, $file, false);
         if($file['error'] == null){
             $filename = "/uploads/zhabbler_avatar_".(new Strings())->random_string(128).".jpeg";
             (new Files())->thumbnail_avatar_crop($_SERVER['DOCUMENT_ROOT']."/Web/public/".$file['url'], $_SERVER['DOCUMENT_ROOT']."/Web/public$filename");
@@ -27,8 +27,9 @@ class User
             if($user->activated == 1){
                 if($file['error'] == null && !empty($file['url'])){
                     $GLOBALS['db']->query("UPDATE users SET profileImage = ? WHERE token = ?", $filename, $token);
-                    if($user->profileImage != '/static/images/no_avatar_1900.png')
+                    if(str_starts_with($user->profileImage, "/uploads/")){
                         unlink("{$_SERVER['DOCUMENT_ROOT']}/Web/public{$user->profileImage}");
+                    }
                 }
             }
         }
@@ -84,7 +85,7 @@ class User
     public function change_profile_cover(string $token, ?array $file): void
     {
         header('Content-Type: application/json');
-        $file = (new Files())->upload_image($file, false);
+        $file = (new Files())->upload_image($token, $file, false);
         $user = $this->get_user_by_token($token);
         if($user->activated == 1){
             if($file['error'] == NULL && !empty($file['url'])){
@@ -370,6 +371,7 @@ class User
                     }else{
                         $session = (new Sessions())->create($tempUser->token);
                         if($session != "ERROR"){
+                            (new Notifications())->addNotify(4, $tempUser->token, $tempUser->userID, "/settings/account");
                             if($json_answer){
                                 $result = ["error" => NULL, "session" => $session];
                             }else{
@@ -421,7 +423,7 @@ class User
                         "nickname" => $nickname,
                         "email" => $email,
                         "password" => $password,
-                        "profileImage" => "/static/images/no_avatar_1900.png",
+                        "profileImage" => "/static/images/avatars/".rand(1,5).".png",
                         "token" => $token,
                         "joined" => date("Y-m-d"),
                         "activated" => ($GLOBALS['config']['application']['email_verification'] == 1 ? 0 : 1)

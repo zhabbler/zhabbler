@@ -22,15 +22,25 @@ class Notifications
     public function addNotify(int $caused_by, string $token, int $to, string $link): void
     {
         $user = (new User())->get_user_by_token($token);
-        if($user->userID != $to && (new User())->check_user_existence_by_id($to)){
-            if($caused_by >= 1 or $caused_by <= 3){
-                $GLOBALS['db']->query("INSERT INTO notifications", [
-                    "notificationCausedBy" => $caused_by,
-                    "notificationBy" => $user->userID,
-                    "notificationTo" => $to,
-                    "notificationLink" => $link,
-                    "notificationAdded" => date("Y-m-d H:i:s")
-                ]);
+        if($caused_by == 4){
+            $GLOBALS['db']->query("INSERT INTO notifications", [
+                "notificationCausedBy" => $caused_by,
+                "notificationBy" => $user->userID,
+                "notificationTo" => $to,
+                "notificationLink" => $link,
+                "notificationAdded" => date("Y-m-d H:i:s")
+            ]);
+        }else{
+            if($user->userID != $to && (new User())->check_user_existence_by_id($to)){
+                if($caused_by >= 1 || $caused_by <= 3){
+                    $GLOBALS['db']->query("INSERT INTO notifications", [
+                        "notificationCausedBy" => $caused_by,
+                        "notificationBy" => $user->userID,
+                        "notificationTo" => $to,
+                        "notificationLink" => $link,
+                        "notificationAdded" => date("Y-m-d H:i:s")
+                    ]);
+                }
             }
         }
     }

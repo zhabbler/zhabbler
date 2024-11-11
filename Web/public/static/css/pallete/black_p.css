@@ -13,6 +13,10 @@ body, .tabs, .navbar_top{
 .post .postAuthor:hover{
     background: #333!important;
 }
+.postActions[style="border-bottom: 1px solid #ddd;"]{
+    border-bottom: 1px solid #333!important;
+}
+.popup{background-color: rgba(0, 0, 0, .5);}
 .postAuthorPointsToAuthor, .dropdown_section_part input, .dropdown_section_part select, .postRespondsRespondItself{
     color: #fff!important;
 }

@@ -1,4 +1,8 @@
 console.log("Player - ready!");
+var loadR = 0;
+var bufferingDetected = false;
+var lastPlayPos = 0;
+var currentPlayPos = 0;
 $(".zhabblerPlayer").ready(function(){
     $(document).on("click", "#PlayBtn", function(){
         $(this).attr("id", "PauseBtn");
@@ -46,6 +50,21 @@ $(".zhabblerPlayer").ready(function(){
             document.msExitFullscreen();
         }
     });
+    setInterval(() => {
+        $(`.zhabblerPlayer`).each(function(){
+            currentPlayPos = $(this).find("video").get(0).currentTime;
+            var offset = (50 - 20) / 1000;
+            if(!bufferingDetected && currentPlayPos < (lastPlayPos + offset) && !$(this).find("video").get(0).paused){
+                $(this).prepend(`<div class="zhabblerPlayerLoader"></div>`);
+                bufferingDetected = true;
+            }
+            if(bufferingDetected && currentPlayPos > (lastPlayPos + offset) && !$(this).find("video").get(0).paused){
+                $(this).find('.zhabblerPlayerLoader').remove();
+                bufferingDetected = false;
+            }
+            lastPlayPos = currentPlayPos;
+        });
+    }, 50)
 });
 const videotimeupdate = (element) => {
     let curr = (element.get(0).currentTime / element.get(0).duration) * 100;
@@ -58,7 +77,6 @@ const videotimeupdate = (element) => {
 }
 const formatTime = (s) => {
     var m = Math.floor(s / 60);
-    m = (m >= 10) ? m : "0" + m;
     s = Math.floor(s % 60);
     s = (s >= 10) ? s : "0" + s;
     return m + ":" + s;

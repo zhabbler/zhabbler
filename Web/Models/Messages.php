@@ -164,7 +164,7 @@ class Messages
         $profile = (new User())->get_user_by_nickname($to);
         if($user->activated == 1 && $profile->activated == 1){
             if($this->allowed_to_write_msgs($token, $profile->userID)){
-                $image = (new Files())->upload_image($file, false);
+                $image = (new Files())->upload_image($token, $file, false);
                 $image = openssl_encrypt($image['url'], 'aes-256-ecb', ENCRYPTION_KEY.md5($user->nickname));
                 if(!$this->check_conversation_existence($token, $profile->userID)){
                     $this->new_conversation($token, $profile->userID);
