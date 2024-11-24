@@ -4,13 +4,16 @@ body, html{
     overscroll-behavior-y: contain;
 }
 body, .tabs, .navbar_top, .mobile_new_nav, .mobile_new_nav_sidebar_b .navbar{
-    background: #f7f7f7!important;
+    background: #fff!important;
+}
+.navbar_logotype, .navbar_top_logotype{
+    color: #13b552;
 }
 #app{
     color:#000!important;
 }
 .navbar_element{
-    color:#565656!important;
+    color:rgba(0,0,0,.5)!important;
 }
 .navbar_element:hover {
     background-color: rgba(0, 0, 0, .1)!important;
@@ -25,7 +28,7 @@ body, .tabs, .navbar_top, .mobile_new_nav, .mobile_new_nav_sidebar_b .navbar{
     background-color: #fff!important;
 }
 .post{
-    background: #e9e9e9!important;
+    background: #eee!important;
 }
 .main{
     border-left: 1px solid rgba(0, 0, 0, .1);
@@ -43,19 +46,19 @@ body, .tabs, .navbar_top, .mobile_new_nav, .mobile_new_nav_sidebar_b .navbar{
 .loader .loader_part{
     background-color: #666!important;
 }
-.new_btn_loader .loader .loader_part{
+.new_btn_loader .loader .loader_part, .popup:not(.popup_profile) .loader .loader_part{
     background-color: #fff!important;
 }
 .tags_followed_pg .tags_followed_pg_itself{
     color:#fff!important;
 }
 .popup{
-    background-color: rgba(247, 247, 247, .5);
+    background-color: rgba(0, 0, 0, .5);
 }
 .navbar_extended_show{
     border-top: 1px solid rgba(0, 0, 0, .5)!important;
 }
-#app, .navbar_element:active, .navbar_element_profile .navbar_element_title, .tabs .tab_active, .popup_choose_alert, .nav_options_whoToFollow_profile .nav_options_whoToFollow_profile_information b, .navbar_top_logotype, .navbar_top_container_element:hover, .nav_options_tab{
+#app, .navbar_element:active, .navbar_element_profile .navbar_element_title, .tabs .tab_active, .nav_options_whoToFollow_profile .nav_options_whoToFollow_profile_information b, .navbar_top_container_element:hover, .nav_options_tab{
     color:#000!important;
 }
 .nav_options_searchbar input, .input_search{
@@ -80,32 +83,11 @@ body, .tabs, .navbar_top, .mobile_new_nav, .mobile_new_nav_sidebar_b .navbar{
 .navbar_top_container_element{
     color: rgba(0, 0, 0, .6)!important;
 }
-.button, input[type=checkbox]:checked, .postAuthorProfileImageReposted{
-    background-color: rgba(102, 117, 134, 1);
-}
-.popup-post-uie .popup-post-uie-btn .popup-post-uie-btn-round{
-    background-color: #ddd;
-}
-a, .button_outline{
-    color:rgba(102, 117, 134, 1);
-}
-.tabs .tab_active{
-    border-bottom: 2px solid rgba(102, 117, 134, 1);
-}
-.profile_tabs, .profile_tab_active{
-    border-bottom: 1px solid rgba(102, 117, 134, 1);
-}
-.nav_options_searchbar input:focus, .input_search:focus, .button_outline{
-    border: 2px solid rgba(102, 117, 134, 1);
-}
 .navbar_top_container_element.navbar_top_container_element_active, .navbar_element_active{
     color:#000!important;
 }
 .navbar_top{
     border-bottom: 1px solid rgba(0, 0, 0, .1);
-}
-.popup-post-uie .popup-post-uie-btn{
-    color:#000!important;
 }
 #postEditor .post .postAuthor{
     border-bottom: 1px solid #ddd;
@@ -192,18 +174,18 @@ a, .button_outline{
 .popupContentPseudoInput{
     background-color: #e9e9e9!important;
 }
-.verifed_icon{
-    color: rgba(102, 117, 134, 1);
-}
 .new_msgr_msgs{
     box-shadow: 0 4px 32px rgba(0, 0, 0, .2);
 }
 .new_msgr_avatar_whidn{
     box-shadow: 0 0 1em 0 rgba(0, 0, 0, .3);
 }
-.new_msgr_msgs_list_m_msg_by_us .new_msgr_msgs_list_m_msg_i, .new_msgr_avatar_whidn_unms, .navbar_element_right_counter{
-    background-color: rgba(102, 117, 134, 1)!important;
-}
 .mobile_new_nav .mobile_new_nav_element{
     color:rgba(0, 0, 0, .5);
+}
+.settings_main{
+    background-color: #eee;
+}
+.popup_profile_close_btn{
+    color: #fff;
 }

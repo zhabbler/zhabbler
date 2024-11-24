@@ -82,7 +82,6 @@ body{
 }
 #app *{
     font-family: "Helvetica Neue Cyr","HelveticaNeueCyr","Helvetica Neue","HelveticaNeue",Helvetica,Arial,sans-serif;
-    position: relative;
 }
 .container{
     margin: 0 auto;
@@ -1539,7 +1538,8 @@ hr{
     background-image: url('/static/images/cover.png');
     background-color: #13b552;
     width: 100%;
-    height: 300px;
+    /* height: 300px; */
+    aspect-ratio: 29/15;
 }
 .profile_main_container{
     background-color: #fff;
@@ -4431,4 +4431,39 @@ footer .copl{
     width: 100%;
     height: 100%;
     z-index: 10;
+}
+.nav_options_req_search{
+    box-shadow: 0 0 1em 0 rgba(0, 0, 0, .25);
+}
+.popup_container_2btns{
+    display: flex;
+    margin-top: 10px;
+    align-items: center;
+}
+.popup_container_2btns .button:nth-child(2){
+    margin-left: auto;
+}
+#app *{position: relative;}
+.cropper-wrap-box,
+.cropper-canvas,
+.cropper-drag-box,
+.cropper-crop-box,
+.cropper-modal,
+.cropper-dashed,
+.cropper-center,
+.cropper-center::before,
+.cropper-center::after,
+.cropper-face,
+.cropper-line,
+.cropper-point,
+.cropper-point.point-se::before,
+.cropper-hide{
+    position: absolute!important;
+}
+.cropper-view-box{
+    outline: 2px solid #ccc!important;
+    outline-color: rgba(175, 175, 175, 0.75)!important;
+}
+.cropper-point{
+    background-color: #ccc!important;
 }

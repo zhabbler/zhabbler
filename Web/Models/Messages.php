@@ -60,7 +60,6 @@ class Messages
     public function get_conversation(string $token, int $to): Nette\Database\Row
     {
         $user = (new User())->get_user_by_token($token);
-        $result = [];
         if((new User())->check_user_existence_by_id($to)){
             return $GLOBALS['db']->fetch("SELECT * FROM conversations WHERE (conversationBy = ? AND conversationTo = ?) OR (conversationBy = ? AND conversationTo = ?)", $user->userID, $to, $to, $user->userID);
         }

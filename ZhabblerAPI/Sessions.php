@@ -62,12 +62,19 @@ class Sessions
                 $tempUser = $GLOBALS['db']->fetch("SELECT * FROM users WHERE email = ?", $email);
                 if(password_verify($password, $tempUser->password)){
                     if($tempUser->activated != 1){
-                        $result = ["warning" => "Verify email to continue"];
+                        $result = ["error" => "Verify email to continue"];
                     }else if(!empty($tempUser->reason)){
-                        $result = ["warning" => "Banned user"];
+                        $result = ["error" => "Banned user"];
                     }else{
                         $session = $this->create($tempUser->token);
                         if($session != "ERROR"){
+                            $GLOBALS['db']->query("INSERT INTO notifications", [
+                                "notificationCausedBy" => 4,
+                                "notificationBy" => $tempUser->userID,
+                                "notificationTo" => $tempUser->userID,
+                                "notificationLink" => "/settings/account",
+                                "notificationAdded" => date("Y-m-d H:i:s")
+                            ]);
                             $result = ["session" => $session];
                         }else{
                             $result = ["error" => "Error with session (Most likely a session with the same IP and User Agent already exists)"];
