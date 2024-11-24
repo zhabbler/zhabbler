@@ -66,13 +66,13 @@
                     <div class="profile_main_pics"{(!empty($user->backgroundColor) ? ' style="background:'.$user->backgroundColor.';"' : ' style="background:#fff;"')|noescape}>
                         <div class="profile_main_pics_cover"{!empty($user->profileCover) ? ' style="background-image: url('.$user->profileCover.')"' : ''|noescape}>
                             <label class="settings_profile_uploader_images_btn" style="display:none;">
-                                <input type="file" name="cover" onchange="settings.change_profile_cover(this);" accept="image/*" hidden>
+                                <input type="file" name="cover" onchange="settings.change_profile_cover();" accept="image/*" hidden>
                                 <i class="bx bxs-pencil"></i>
                             </label>
                         </div>
                         <div class="profile_main_pics_pfp"{(!empty($user->backgroundColor) ? ' style="background:'.$user->backgroundColor.';"' : ' style="background:#fff;"')|noescape}>
                             <label class="settings_profile_uploader_images_btn" style="display:none;">
-                                <input type="file" name="avatar" onchange="settings.change_profile_image(this);" accept="image/*" hidden>
+                                <input type="file" name="avatar" id="StngsAvatar" onchange="settings.change_profile_image();" accept="image/*" hidden>
                                 <i class="bx bxs-pencil"></i>
                             </label>
                             <img src="{$user->profileImage}">
@@ -152,6 +152,8 @@
             </main>
             {include '../includes/nav_options_settings.latte'}
         </div>
+        <link href="/static/node_modules/cropperjs/dist/cropper.css" rel="stylesheet">
+        <preloader src="/static/node_modules/cropperjs/dist/cropper.js"></preloader>
         <preloader src="/static/js/settings.js"></preloader>
         <preloader src="/static/js/new_messenger.js"></preloader>
         <preloader src="/static/player/js/zhabblerplayer.js"></preloader>

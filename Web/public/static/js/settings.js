@@ -14,31 +14,66 @@ class Settings{
 		$(".title_fade_buttons .button_gray").toggle();
         $(".profile_main_info_editable_colors").toggle();
 	}
-	change_profile_image(element){
-        const file = element.files[0];
-        if(file){
+	change_profile_image(){
+        let image = URL.createObjectURL(event.currentTarget.files[0]);
+        $("#app").prepend(`<div class="popup popup_do_not_close">
+            <div class="popup_container" id="PopupContainer" style="min-width:300px;max-width:600px;">
+                <div class="zhabbler-cropper" style="max-height: 500px;">
+                    <img src="${image}" id="zhabbler-cropper-image">
+                </div>
+                <div class="popup_container_2btns">
+                    <button class="button button_gray" onclick="$('.popup:first').remove()">
+                        ${locale['cancel']}
+                    </button>
+                    <button class="button" id="ChangeAvatar">
+                        ${locale['done']}
+                    </button>
+                </div>
+            </div>
+        </div>`);
+        const cropper = new Cropper(document.getElementById('zhabbler-cropper-image'), {
+            aspectRatio: 1/1,
+            zoomable: true,
+            minCropBoxWidth: 150,
+            minCropBoxHeight: 150,
+            dragMode: 'move',
+            background: false,
+            center: false,
+            guides: false,
+            modal: true,
+            viewMode: 2
+        });
+        $(document).on("click", "#ChangeAvatar", function(){
             settings.customize_btn();
             $(".profile_main_pics_pfp").prepend(`<div class="profile_main_pics_pfp_loader"></div>`);
             var formData = new FormData();
-            formData.append('avatar', file);
-            $.ajax({
-              url: "/api/Account/change_profile_image",
-              type: "POST",
-              data: formData,
-              enctype: 'multipart/form-data',
-              processData: false,
-              contentType: false
-            }).done(function(data){
-                if(data.error != null){
+            cropper.getCroppedCanvas({
+                fillColor: '#000000',
+                imageSmoothingEnabled: false,
+                imageSmoothingQuality: 'high',
+            }).toBlob((blob) => {
+                formData.append('avatar', blob);
+                $.ajax({
+                    url: "/api/Account/change_profile_image",
+                    type: "POST",
+                    data: formData,
+                    enctype: 'multipart/form-data',
+                    processData: false,
+                    contentType: false
+                }).done(function(data){
+                    if(data.error != null){
+                        zhabbler.addError(locale['something_went_wrong']);
+                    }else{
+                        $(".profile_main_pics_pfp img").attr("src", data.url);
+                        goToPage("/settings/profile");
+                    }
+                    $(".profile_main_pics_pfp .profile_main_pics_pfp_loader").remove();
+                }).fail(function(data){
                     zhabbler.addError(locale['something_went_wrong']);
-                }else{
-                    $(".profile_main_pics_pfp img").attr("src", data.url)
-                }
-                $(".profile_main_pics_pfp .profile_main_pics_pfp_loader").remove();
-            }).fail(function(data){
-                zhabbler.addError(locale['something_went_wrong']);
+                });
             });
-        }
+            $(".popup:first").remove();
+        });
     }
     change_conf_set(){
         var following = ($("#following_io").is(":checked") == true ? 0 : 1);
@@ -47,31 +82,66 @@ class Settings{
         var write_msgs = (Number($("#write_msgs").val()) <= 2 ? Number($("#write_msgs").val()) : 0);
         $.post("/api/User/change_confidential_settings", {liked:liked, following:following, questions:questions, write_msgs:write_msgs});
     }
-    change_profile_cover(element){
-        const file = element.files[0];
-        if(file){
+    change_profile_cover(){
+        let image = URL.createObjectURL(event.currentTarget.files[0]);
+        $("#app").prepend(`<div class="popup popup_do_not_close">
+            <div class="popup_container" id="PopupContainer" style="min-width:300px;max-width:600px;">
+                <div class="zhabbler-cropper" style="max-height: 500px;">
+                    <img src="${image}" id="zhabbler-cropper-image">
+                </div>
+                <div class="popup_container_2btns">
+                    <button class="button button_gray" onclick="$('.popup:first').remove()">
+                        ${locale['cancel']}
+                    </button>
+                    <button class="button" id="ChangeCover">
+                        ${locale['done']}
+                    </button>
+                </div>
+            </div>
+        </div>`);
+        const cropper = new Cropper(document.getElementById('zhabbler-cropper-image'), {
+            aspectRatio: 29/15,
+            zoomable: true,
+            minCropBoxWidth: 150,
+            minCropBoxHeight: 78,
+            dragMode: 'move',
+            background: false,
+            center: false,
+            guides: false,
+            modal: true,
+            viewMode: 2
+        });
+        $(document).on("click", "#ChangeCover", function(){
             settings.customize_btn();
             $(".profile_main_pics_cover").prepend(`<div class="profile_main_pics_pfp_loader"></div>`);
             var formData = new FormData();
-            formData.append('cover', file);
-            $.ajax({
-              url: "/api/Account/change_profile_cover",
-              type: "POST",
-              data: formData,
-              enctype: 'multipart/form-data',
-              processData: false,
-              contentType: false
-            }).done(function(data){
-                if(data.error != null){
+            cropper.getCroppedCanvas({
+                fillColor: '#000000',
+                imageSmoothingEnabled: false,
+                imageSmoothingQuality: 'high',
+            }).toBlob((blob) => {
+                formData.append('cover', blob);
+                $.ajax({
+                    url: "/api/Account/change_profile_cover",
+                    type: "POST",
+                    data: formData,
+                    enctype: 'multipart/form-data',
+                    processData: false,
+                    contentType: false
+                }).done(function(data){
+                    if(data.error != null){
+                        zhabbler.addError(locale['something_went_wrong']);
+                    }else{
+                        $(".profile_main_pics_cover").css("background-image", `url(${data.url})`);
+                        goToPage("/settings/profile");
+                    }
+                    $(".profile_main_pics_cover .profile_main_pics_pfp_loader").remove();
+                }).fail(function(data){
                     zhabbler.addError(locale['something_went_wrong']);
-                }else{
-                    $(".profile_main_pics_cover").css("background-image", `url(${data.url})`);
-                }
-                $(".profile_main_pics_cover .profile_main_pics_pfp_loader").remove();
-            }).fail(function(data){
-                zhabbler.addError(locale['something_went_wrong']);
+                });
             });
-        }
+            $(".popup:first").remove();
+        });
     }
     save_changes(){
         $.post("/api/Account/update_user_info", {name:$(".h2_input").val(), nickname:$(".nickname_input").val(), biography:$(".biography_input").val(), accent:$("#accent_color").val(), background:$("#background_color").val()}, function(data){

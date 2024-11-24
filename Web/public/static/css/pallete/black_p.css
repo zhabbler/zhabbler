@@ -1,4 +1,4 @@
-body, .tabs, .navbar_top{
+body, .tabs, .navbar_top, .mobile_new_nav, .mobile_new_nav_sidebar_b .navbar{
     background: #000000!important;
 }
 .bubble-activity-tabs .bubble-activity-tab{color:#fff;}
