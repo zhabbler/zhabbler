@@ -1,40 +1,41 @@
-# Жабблер
-Жабблер - социальная сеть, попытка создать простую CMS которая пародирует Tumblr. Представленный здесь исходный код на данный момент является нестабильным.
+# 嘰嘰喳喳# 嘰嘰喳喳
+Jabbler 是一個社交網絡，試圖創建一個模仿 Tumblr 的簡單 CMS。此處提供的源代碼目前不穩定。
 
-Tumblr принадлежит Дэвиду Карпу и Automatic.
+Tumblr 的擁有者是 David Karp，
 
-Все найденные баги или предложения новых функций можете писать во вкладке [Issues](https://github.com/zhabbler/zhabbler/issues).
+您可以在[問題](https://github.com/zhabbler/zhabbler/issues)標籤中寫下您發現的任何錯誤或對新功能的建議。
 
-## Инстанции
-Список инстаций Жабблера которые работают на данный момент:
-* [zhabbler.ru](https://zhabbler.ru)
+## 實例
+目前正在運行的 Jabbler 實例的列表
 
-## Могу ли я создать свою собственную инстанцию?
-Конечно!
+## 我可以建立自己的實例嗎？## 我可以建立自己的實例嗎？
+當然！
 
-Но рекомендуется использовать VDS или VPS, так как вы не сможете установить Жабблер на хостинге.
+但建議使用VDS或VPS，因為您將無法在主機上安裝Jubbler。
 
-## И как же установить Жабблер?
-1. Установите PHP версии >= 8.0, Apache, Composer, git, ffmpeg (для работы с видео), npm (nodejs).
-2. Установите MySQL
-   * Рекомендуем использовать MariaDB, но любая MySQL-совместимая база данных должна работать.
-3. Создайте новую базу данных и импортируйте файл `zhabbler-dump.sql` и файлы sql в папке `sql` в вашу БД.
-4. Установите Жабблер в той директории, где находится ваш сайт.
-5. Зайдите в конфиг Apache того сайта, на котором будет установлен Жабблер, и допишите к директориям домашней папки сайта `/Web/public` и конечно же отключите список директорий на сайте (Directory listing).
-6. Зайдите в конфиг самого Жабблера (`config.neon`) и измените настройки.
-   * В `encryption_key` введите рандомные значения (чем больше - тем лучше), так как это значение используется в ключе шифрования сообщений.
-7. Зайдите в `/Web/public/static/js/new_messenger.js` и в первой строке измените URL.
-8. Установите все расширения используя команду `composer install`.
-10. Зайдите в `/Web/public/static` и установите все расширения используя команду `npm install`.
-11. Включите вебсокеты для сообщений `php bin/websockets-server.php`.
-12. Перезагрузите Apache
 
-Поздравляем, у вас теперь установлен Жабблер на вашем сервере!
+## 那麼如何安裝Jubbler？## 那麼如何安裝Jubbler？
+1. 安裝 PHP 版本 >= 8.0、Apache、Composer、git、ffmpeg（用於處理影片）、npm (nodejs)。
+2.安裝MySQL
+   * 我們推薦使用 MariaDB，但任何 M
+3.   * 我們推薦使用 MariaDB，但任何 M
 
-Аккаунт администратора - `admin@localhost.lh` и пароль `qwerty123`.
+4.4. 在您的網站所在目錄中安裝 Jabbler。
+5. 前往要安裝 Jubbler 的網站的 Apache 配置，並將 `/Web/public` 新增至網站主資料夾的目錄中  前往要安裝 Jubbler 的網站的 Apache 配置，並將 `/Web/public` 新增至網站主資料夾的目錄中 
 
-Если случились какие-то проблемы во время установки, [напишите об этом в Issues](https://github.com/zhabbler/zhabbler/issues)
+6.6. 前往 Jabbler 本身的配置 (`config.neon`) 並更改設定。
+   * 在`encryption_key`中輸入隨機值（越多越好），因為該值用於加密金鑰   * 在`encryption_key`中輸入隨機值（越多越好），因為該值用於加密金鑰
+ 
+7.7. 前往 `/Web/public/static/js/new_messenger.js` 並更改第一行的 URL。
+8. 使用「composer install」指令安裝所有擴充功能。
+10. 到 `/Web/public/static` 並安裝 到 `/Web/public/static` 並安裝
 
-## Где мне получить помощь?
-* В нашем [Telegram чате](https://t.me/ZhabblerChat)
-* В [Issues](https://github.com/zhabbler/zhabbler/issues)
+恭喜，您現在已在伺服器上安裝了 Jabbler！
+
+管理員帳號是“admin@localhost.lh”，密碼是“qwerty123”。
+
+如果安裝過程中遇到任何問題，[在Issues中寫](https://github.com/zhabbler/zhabbler/issues)
+
+## 我可以從哪裡獲得幫助？
+* 在我們的 [Telegram 聊天](https://t.me/Zhabbl/zhabbler/issues)
+* 
