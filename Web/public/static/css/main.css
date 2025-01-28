@@ -916,20 +916,21 @@ hr{
     user-select: none;
     font-weight: 900;
 }
-.LoginBannerContainer .buttons{
+.LoginBanner .buttons{
     width: 527px;
     display: flex;
     margin: 15px 0;
     align-items: center;
+    padding-left: 2em;
 }
-.LoginBannerContainer .buttons .button{
+.LoginBanner .buttons .button{
     width: 50%;
     padding: 10px;
     background-color: #fff;
     border:2px solid #fff;
     color:#13b552;
 }
-.LoginBannerContainer .buttons .button_outline{
+.LoginBanner .buttons .button_outline{
     margin-left: 10px;
     background-color: #13b552;
     border:2px solid #fff;
@@ -1629,31 +1630,40 @@ hr{
 }
 @keyframes reveal{
     from{
-        transform: translateX(-32px);
+        transform: translateY(24px);
         opacity: 0;
     }
     to{
-        transform: translateX(0px);
+        transform: translateY(0px);
         opacity: 1;
     }
 }
 .LoginBanner{
-    animation: fadeIn .5s;
+    animation: reveal .2s;
 }
 .LoginBannerContainer h2{
-    animation: reveal .2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    animation: reveal .2s;
     opacity: 0;
     animation-fill-mode: forwards;
+    animation-delay: .1s;
+    margin-top: 0px;
+    margin-bottom: .5em;
 }
 .LoginBannerContainer .login_text_promo_login_banner_container{
-    animation: reveal .2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    animation-delay: .1s;
+    animation: reveal .2s;
+    animation-delay: .2s;
     opacity: 0;
     animation-fill-mode: forwards;
 }
-.LoginBannerContainer .buttons{
-    animation: reveal .2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    animation-delay: .2s;
+.LoginBanner .buttons .button{
+    animation: reveal .2s;
+    animation-delay: .3s;
+    opacity: 0;
+    animation-fill-mode: forwards;
+}
+.LoginBanner .buttons .button_outline{
+    animation: reveal .2s;
+    animation-delay: .4s;
     opacity: 0;
     animation-fill-mode: forwards;
 }
@@ -2872,7 +2882,7 @@ footer .copl{
     .mobile_new_nav{
         display: flex!important;
     }
-    .popup_profile{display: none!important;}
+    .popup_profile, .LoginBanner{display: none!important;}
     .newPMain{
         min-width: 100%!important;
         max-width: 100%!important;
@@ -2933,7 +2943,7 @@ footer .copl{
     /* .LoginBanner, .main{
         margin-bottom: 57px;
     } */
-    .LoginBannerContainer .buttons{
+    .LoginBanner .buttons{
         width: auto!important;
         margin: 10px;
     }
@@ -4466,4 +4476,28 @@ footer .copl{
 }
 .cropper-point{
     background-color: #ccc!important;
+}
+.UIAlHid .LoginBanner{
+    display: none!important;
+}
+.LoginBanner .LoginBannerCloseBtn{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+    color: #fff;
+    opacity: .75;
+    cursor: pointer;
+    background-color: transparent;
+    border: none;
+    appearance: none;
+    position: absolute!important;
+    right: 0;
+    top: 0;
+    z-index: 300;
+    padding: 10px;
+    transition: opacity .2s;
+}
+.LoginBanner .LoginBannerCloseBtn:hover{
+    opacity: 1;
 }
