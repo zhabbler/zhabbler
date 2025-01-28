@@ -1,5 +1,6 @@
 {if !isset($user)}
 <div class="LoginBanner">
+    <button  class="LoginBannerCloseBtn"><i class='bx bx-x'></i></button>
     <div class="LoginBannerContainer">
         <h2>
             {$language['welcome_to_zhabbler_login_text']} <span class="logotype_font">{$language['zhabbler']}</span>!
@@ -9,22 +10,24 @@
                 {$language['login_text_promo']}
             </span>
         </div>
-        <div class="buttons">
-            <button class="button" onclick="goToPage('/register');">
-                {$language['register']}
-            </button>
-            <button class="button button_outline" onclick="goToPage('/login');">
-                {$language['login']}
-            </button>
-        </div>
+    </div>
+    <div class="buttons">
+        <button class="button" onclick="goToPage('/register');">
+            {$language['register']}
+        </button>
+        <button class="button button_outline" onclick="goToPage('/login');">
+            {$language['login']}
+        </button>
     </div>
 </div>
 <style>
-    .nav_options, .navbar{
-        height:calc(100vh - 161px)!important;
-    }
-    .main{
-        padding-bottom:161px;
+    @media only screen and (min-width: 981px) {
+        #app:not(.UIAlHid) .nav_options, .navbar{
+            height:calc(100vh - 100px)!important;
+        }
+        #app:not(.UIAlHid) .main{
+            padding-bottom:100px;
+        }
     }
 </style>
 {/if}

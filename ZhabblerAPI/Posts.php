@@ -56,10 +56,74 @@ class Posts extends RateLimit
         return $output;
     }
 
-    private function get_followed_tags(string $session): array
+    public function get_posts_by_followings(string $session, int $lastID): array
     {
         $user = (object)(new Sessions())->get_user_by_session($session);
-        return $GLOBALS['db']->fetchAll("SELECT * FROM followed_tags WHERE followedTagBy = ?", $user->id);
+        if(isset($user->error)){
+            $output = ["error" => $user->error];
+        }else{
+            if($lastID != 0){
+                $posts = $GLOBALS['db']->fetchAll("SELECT * FROM zhabs LEFT JOIN users ON userID = zhabBy LEFT JOIN follows ON followTo = zhabBy WHERE zhabID < ? AND (followBy = ? AND reason = '') ORDER BY zhabID DESC LIMIT 7", $lastID, $user->id);
+            }else{
+                $posts = $GLOBALS['db']->fetchAll("SELECT * FROM zhabs LEFT JOIN users ON userID = zhabBy LEFT JOIN follows ON followTo = zhabBy WHERE followBy = ? AND reason = '' ORDER BY zhabID DESC LIMIT 7", $user->id);
+            }
+            $output = [];
+            foreach($posts as $post){
+                $output[] = $this->get_post($session, $post->zhabURLID);
+            }
+        }
+        return $output;
+    }
+
+    public function get_liked_posts(string $session, string $nickname, int $lastID): array
+    {
+        $user = (object)(new Sessions())->get_user_by_session($session);
+        if(isset($user->error)){
+            $output = ["error" => $user->error];
+        }else{
+            $profile = (object)(new User())->get_user_by_nickname($nickname);
+            if($lastID != 0){
+                $posts = $GLOBALS['db']->fetchAll("SELECT * FROM zhabs LEFT JOIN users ON userID = zhabBy LEFT JOIN likes ON likeTo = zhabURLID WHERE zhabID < ? AND reason = '' AND likeBy = ? ORDER BY zhabID DESC LIMIT 7", $lastID, $profile->id);
+            }else{
+                $posts = $GLOBALS['db']->fetchAll("SELECT * FROM zhabs LEFT JOIN users ON userID = zhabBy LEFT JOIN likes ON likeTo = zhabURLID WHERE likeBy = ? AND reason = '' ORDER BY zhabID DESC LIMIT 7", $profile->id);
+            }
+            $output = [];
+            if(!(new User())->check_likes_hidden($profile->nickname)['result'] || $profile->nickname == $user->nickname){
+                foreach($posts as $post){
+                    $output[] = $this->get_post($session, $post->zhabURLID);
+                }
+            }
+        }
+        return $output;
+    }
+
+    public function add_followed_tags(string $session, string $tags): array
+    {
+        $user = (object)(new Sessions())->get_user_by_session($session);
+        $GLOBALS['db']->query("DELETE FROM followed_tags WHERE followedTagBy = ?", $user->id);
+        if(!(new Strings())->is_empty($tags)){
+            $tags_array = explode(",", $tags);
+            foreach($tags_array as $key => $tag){
+                $tag = preg_replace("/<[^>]*>?/", "", $tag);
+                $tag = preg_replace("/[^a-zA-Z0-9\p{Cyrillic}]/u", "", $tag);
+                if(!(new Strings())->is_empty($tag) && $GLOBALS['db']->query("SELECT * FROM tags WHERE tag = ?", $tag)->getRowCount() > 0){
+                    if($GLOBALS['db']->query("SELECT * FROM followed_tags WHERE followedTag = ? AND followedTagBy = ?", $tag, $user->id)->getRowCount() == 0)
+                        $GLOBALS['db']->query("INSERT INTO followed_tags", ["followedTag" => $tag, "followedTagBy" => $user->id]);
+                }
+            }
+        }
+        return [];
+    }
+
+    public function get_followed_tags(string $session): array
+    {
+        $user = (object)(new Sessions())->get_user_by_session($session);
+        $tags = $GLOBALS['db']->fetchAll("SELECT * FROM followed_tags WHERE followedTagBy = ?", $user->id);
+        $output = [];
+        foreach($tags as $tag){
+            array_push($output, $tag->followedTag);
+        }
+        return $output;
     }
 
     public function get_posts_by_user_tags(string $session, int $lastID): array
@@ -73,7 +137,7 @@ class Posts extends RateLimit
             if(count($followed_tags)){
                 $query = "SELECT * FROM zhabs LEFT JOIN users ON userID = zhabBy WHERE ".($lastID != 0 ? "zhabID < ? AND" : "")." reason = '' AND (";
                 foreach($followed_tags as $key => $tag){
-                    $query .= 'FIND_IN_SET("'.$tag->followedTag.'", zhabTags)';
+                    $query .= 'FIND_IN_SET("'.$tag->tag.'", zhabTags)';
                     if($key + 1 != count($followed_tags)){
                         $query .= " OR ";
                     }else{
@@ -93,6 +157,36 @@ class Posts extends RateLimit
         return $output;
     }
 
+    public function like(string $session, string $id): array
+    {
+        $result = ["liked" => false];
+        $user = (object)(new Sessions())->get_user_by_session($session);
+        $post = $this->get_post($session, $id);
+        if($post['user_liked']){
+            $GLOBALS['db']->query("DELETE FROM likes WHERE likeBy = ? AND likeTo = ?", $user->id, $id);
+            $GLOBALS['db']->query("UPDATE zhabs SET zhabLikes = zhabLikes - 1 WHERE zhabURLID = ?", $id);
+        }else{
+            $GLOBALS['db']->query("INSERT INTO likes", [
+                "likeBy" => $user->id,
+                "likeTo" => $id
+            ]);
+            $GLOBALS['db']->query("UPDATE zhabs SET zhabLikes = zhabLikes + 1 WHERE zhabURLID = ?", $id);
+            $result = ["liked" => true];
+        }
+        $result += ["likes_count" => $this->get_post($session, $id)['liked']];
+        return $result;
+    }
+
+    private function get_who_liked(string $id): array
+    {
+        $likes_rows = $GLOBALS['db']->fetchAll("SELECT * FROM likes LEFT JOIN users ON userID = likeBy WHERE likeTo = ? AND hideLiked != 1 ORDER BY likeID DESC", $id);
+        $likes = [];
+        foreach($likes_rows as $like){
+            $likes[] = (new User())->get_user_by_id($like->likeBy);
+        }
+        return $likes;
+    }
+
     public function get_post(string $session, string $id): array
     {
         $result = [];
@@ -107,7 +201,9 @@ class Posts extends RateLimit
                     "post_real_id" => $post->zhabID,
                     "post_id" => $post->zhabURLID,
                     "user" => (new User())->get_user_by_nickname($post->nickname),
-                    "content" => $post->zhabContent,
+                    "reposted_to" => ($post->zhabRepliedTo != '' ? $this->get_post($session, $post->zhabRepliedTo) : []),
+                    "answered_to" => ($post->zhabAnsweredTo != '' ? (new Questions())->get_question($post->zhabAnsweredTo) : []),
+                    "content" => strip_tags($post->zhabContent, ALLOWED_HTML_TAGS),
                     "tags" => ($post->zhabTags != '' ? $tags : []),
                     "liked" => $post->zhabLikes,
                     "uploaded" => (string)$post->zhabUploaded,
@@ -115,6 +211,7 @@ class Posts extends RateLimit
                         "all_repost" => $post->zhabWhoCanRepost == 0,
                         "all_comment" => $post->zhabWhoCanComment == 0,
                     ],
+                    "who_liked" => $this->get_who_liked($post->zhabURLID),
                     "user_liked" => ($GLOBALS['db']->query("SELECT * FROM likes LEFT JOIN users ON userID = likeBy WHERE likeBy = ? AND likeTo = ? AND reason = ''", $user->id, $id)->getRowCount() == 1 ? true : false)
                 ];
             }
@@ -137,21 +234,6 @@ class Posts extends RateLimit
         }else{
             return ["error" => $user->error];
         }
-    }
-
-    public function get_liked(string $session, string $post_id): array
-    {
-        $user = (object)(new Sessions())->get_user_by_session($session);
-        $result = [];
-        if(isset($user->error)){
-            $result = ["error" => $user->error];
-        }else{
-            $likes_rows = $GLOBALS['db']->fetchAll("SELECT * FROM likes LEFT JOIN users ON userID = likeBy WHERE likeTo = ? AND hideLiked != 1", $post_id);
-            foreach($likes_rows as $like){
-                $result[] = (new User())->get_user_by_nickname($like->nickname);
-            }
-        }
-        return $result;
     }
 
     public function check_post_existence(string $post_id): bool
@@ -254,7 +336,7 @@ class Posts extends RateLimit
                                 "zhabWhoCanComment" => ($who_comment == 1 ? 1 : 0),
                                 "zhabWhoCanRepost" => ($who_repost == 1 ? 1 : 0),
                                 "zhabRepliedTo" => (!empty($repost) && $this->check_post_existence($repost) ? $repost : ""),
-                                "zhabAnsweredTo" => (!empty($question) && $GLOBALS['db']->query("SELECT * FROM inbox WHERE inboxMessage = 'question_asked' AND inboxLinked = ?", $question)->getRowCount() > 0 && (new Questions())->check_question_existence($question) ? $question : ""),
+                                "zhabAnsweredTo" => (!empty($question) && $GLOBALS['db']->query("SELECT * FROM inbox WHERE inboxMessage = 'question_asked' AND inboxLinked = ?", $question)->getRowCount() > 0 && (new Questions())->check_question_existence($question)['result'] ? $question : ""),
                                 "zhabTags" => $tags
                             ]);
                             if(isset($reposted) && $user->id != $reposted->user['id'])

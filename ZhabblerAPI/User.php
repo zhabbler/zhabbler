@@ -34,7 +34,25 @@ class User
     
     private function output_user(Nette\Database\Row $user): array
     {
-        return ["id" => $user->userID, "nickname" => $user->nickname, "name" => $user->name, "biography" => $user->biography, "profileImage" => (empty($_SERVER['HTTPS']) ? 'http' : 'https') . "://$_SERVER[HTTP_HOST]".$user->profileImage, "profileCover" => (!empty($user->profileCover) ? (empty($_SERVER['HTTPS']) ? 'http' : 'https')."://$_SERVER[HTTP_HOST]".$user->profileCover : "")];
+        return [
+            "id" => $user->userID,
+            "nickname" => $user->nickname,
+            "name" => $user->name,
+            "biography" => $user->biography,
+            "profileImage" => (empty($_SERVER['HTTPS']) ? 'http' : 'https') . "://$_SERVER[HTTP_HOST]".$user->profileImage,
+            "profileCover" => (!empty($user->profileCover) ? (empty($_SERVER['HTTPS']) ? 'http' : 'https')."://$_SERVER[HTTP_HOST]".$user->profileCover : ""),
+            "followers_count" => $GLOBALS['db']->query("SELECT * FROM follows LEFT JOIN users ON userID = followBy WHERE followTo = ? AND reason = ''", $user->userID)->getRowCount(),
+            "personalization_config" => [
+                "background" => ($user->backgroundColor == '' ? '#ffffff' : $user->backgroundColor),
+                "accent" => ($user->accentColor == '' ? '#13b552' : $user->accentColor)
+            ],
+            "verifed" => $user->verifed == 1
+        ];
+    }
+
+    public function check_likes_hidden(string $nickname): array
+    {
+        return ["result" => $GLOBALS['db']->fetch("SELECT * FROM users WHERE nickname = ? AND activated = 1 AND reason = ''", $nickname)->hideLiked == 1];
     }
 
     public function get_user_by_nickname(string $nickname): array

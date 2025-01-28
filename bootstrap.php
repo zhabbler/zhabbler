@@ -40,7 +40,6 @@ autoload();
 
 require $_SERVER['DOCUMENT_ROOT']."/vendor/autoload.php";
 $GLOBALS['config'] = Nette\Neon\Neon::decodeFile($_SERVER['DOCUMENT_ROOT'].'/config.neon');
-
 if(!str_starts_with($_SERVER['REQUEST_URI'], "/developer/api/") && $GLOBALS['config']['application']['debug'] == 1){
     Tracy\Debugger::enable();
     Tracy\Debugger::$logDirectory = __DIR__ . '/log';

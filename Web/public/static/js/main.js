@@ -3,6 +3,7 @@ var locale = null;
 var user = null;
 $.post("/api/Localization/get_string", function(data){
     locale = data;
+    zhabbler.loadPreloaders();
 });
 $.post("/api/User/get_user_details", function(data){
     user = data;
@@ -19,11 +20,15 @@ $(document).ready(function(){
             }
             prevScrollpos = currentScrollPos;
         }
-    }
+    };
     $(document).on("click", ".popup", function(){
         if(!$(this).hasClass("popup_do_not_close")){
             $(".popup:first").remove();
         }
+    });
+    $(document).on("click", ".LoginBannerCloseBtn", function(){
+        $("#app").addClass("UIAlHid");
+        cookie.setCookie("hide_banner", "1", 99999);
     });
     $(document).on("click", ".popup_profile_close_btn", function(){
         $(".popup_profile").remove();
@@ -769,6 +774,9 @@ class Zhabbler{
         $.each($("preloader"), function(){
             $(this).replaceWith(`<script ${(typeof $(this).attr("src") === 'undefined' && $(this).attr("src") !== true ? `` : `src="${$(this).attr("src")}"`)}>${$(this).text()}</script>`);
         });
+        if(cookie.getCookie("hide_banner") != null){
+            $("#app").addClass("UIAlHid");
+        }
         $("#JS_Loader").remove();
     }
     addError(val){
@@ -1493,4 +1501,3 @@ const makeid = (length) => {
     }
     return result;
 }
-zhabbler.loadPreloaders();
