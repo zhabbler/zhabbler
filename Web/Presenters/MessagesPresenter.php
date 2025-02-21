@@ -27,7 +27,7 @@ final class MessagesPresenter
             $params += ["user" => $user, "conversations" => $conversations];
             $this->latte->render($_SERVER['DOCUMENT_ROOT']."/Web/views/messages.latte", $params);
         }else{
-            header("Location: /login");
+            header("Location: /login?returnTo=".$_SERVER['REQUEST_URI']);
             die;
         }
     }

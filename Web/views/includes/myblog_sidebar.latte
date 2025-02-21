@@ -1,0 +1,41 @@
+<section class="nav_options">
+    {include 'search_nav_options.latte'}
+    <div class="nav_options_myblog_profile">
+        <div>
+            <span>{$user->nickname}</span>
+        </div>
+        <a href="/profile/{$user->nickname}">
+            {$language['view_profile']}
+        </a>
+    </div>
+    <a class="nav_options_myblog_section{(!isset($section) ? ' nav_options_myblog_section_active' : '')}" href="/myblog">
+        <div>
+            <span>{$language['posts']}</span>
+        </div>
+        <div>
+            <span>{(new Web\Models\Posts())->get_posts_by_user_count($user->nickname)}</span>
+        </div>
+    </a>
+    <a class="nav_options_myblog_section{(isset($section) && $section == 'followers' ? ' nav_options_myblog_section_active' : '')}" href="/myblog/followers">
+        <div>
+            <span>{$language['followers_section']}</span>
+        </div>
+        <div>
+            <span>{(new Web\Models\Follow())->get_followers_count($user->nickname)}</span>
+        </div>
+    </a>
+    <a class="nav_options_myblog_section{(isset($section) && $section == 'drafts' ? ' nav_options_myblog_section_active' : '')}" href="/myblog/drafts">
+        <div>
+            <span>{$language['drafts']}</span>
+        </div>
+        <div>
+            <span>{(new Web\Models\Posts())->get_drafts_count($user->token)}</span>
+        </div>
+    </a>
+    <a class="nav_options_myblog_section" href="/settings/profile">
+        <div>
+            <span>{$language['profile_settings']}</span>
+        </div>
+    </a>
+    {include 'footer.latte'}
+</section>

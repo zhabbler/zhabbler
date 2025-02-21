@@ -1,4 +1,4 @@
-body, .tabs, .navbar_top, .mobile_new_nav, .mobile_new_nav_sidebar_b .navbar{
+body, .tabs, .navbar_top, .mobile_new_nav, .mobile_new_nav_sidebar_b .navbar, #JS_Loader{
     background: #000000!important;
 }
 .bubble-activity-tabs .bubble-activity-tab{color:#fff;}
@@ -222,4 +222,10 @@ hr{
 }
 .new_msgr_msgs_list_m_msg .new_msgr_msgs_list_m_msg_i{
     background-color: #444;
+}
+.followers_myblog{
+    background-color: #222!important;
+}
+.followers_myblog .following_person{
+    color: #fff!important;
 }

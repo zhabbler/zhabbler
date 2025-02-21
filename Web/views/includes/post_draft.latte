@@ -1,0 +1,89 @@
+<div class="post" id="draft{$post->draftID}" data-realid="{$post->draftID}">
+    <div class="postAuthor">
+        {var $uniqueidbx = uniqid()}
+        <div class="postAuthorBoxInfo" id="boxinfo_{$uniqueidbx}" onclick="goToPage('/profile/' + {$post->nickname});" style="background-color:{$post->backgroundColor|noescape};display: none;">
+            <div class="postAuthorBoxInfoTopBar">
+                <div><span>{$post->nickname}</span></div>
+            </div>
+            <div class="postAuthorBoxInfoCover"{!empty($post->profileCover) ? ' style="background-image: url('.$post->profileCover.')"' : ''|noescape}></div>
+            <div class="postAuthorBoxInfoPFP">
+                <img src="{$post->profileImage}" style="border-color:{$post->backgroundColor|noescape}">
+            </div>
+            <div class="postAuthorBoxInfoName" style="color:{((new Utilities\Strings())->get_closest_color((empty($post->backgroundColor) ? "#ffffff" : $post->backgroundColor)) > 130 ? '#000000' : '#ffffff')|noescape}">
+                <h2>{$post->name}</h2>
+            </div>
+            <div class="postAuthorBoxInfoBiography" style="color:{((new Utilities\Strings())->get_closest_color((empty($post->backgroundColor) ? "#ffffff" : $post->backgroundColor)) > 130 ? '#000000' : '#ffffff')|noescape}">
+                <span>{$post->biography}</span>
+            </div>
+        </div>
+        <div class="postBoxEventL" data-box="{$uniqueidbx}" style="display: flex;align-items: center;">
+            <a href="/profile/{$post->nickname}" class="postAuthorProfileImage">
+                <img src="{$post->profileImage}" alt="Image">
+                {if $post->draftRepliedTo != ""}
+                    <div class="postAuthorProfileImageReposted">
+                        <i class='bx bx-repost'></i>
+                    </div>
+                {/if}
+            </a>
+            <a href="/profile/{$post->nickname}" class="postAuthorPointsToAuthor">{$post->nickname}</a>
+        </div>
+        {if $post->verifed == 1}<i class='bx bxs-badge-check verifed_icon'></i>{/if}
+        {if $post->draftRepliedTo != ""}
+            <span class="postAuthorPointsToRepostGray">
+                {$language['reposted']}
+            </span>
+        {/if}
+        <div class="postAuthorMoreActions">
+            <div class="postAuthorMoreActionsBtn" id="DropdownListener" data-dropdown="#dropdown_{$post->draftID}">
+                <i class='bx bx-dots-horizontal-rounded'></i>
+            </div>
+            <div class="dropdown" id="dropdown_{$post->draftID}" style="display: none;">
+                <div class="dropdown_element">
+                    {(new Web\Models\Posts())->convert_date($post->draftAdded)}
+                </div>
+            </div>
+        </div>
+    </div>
+    {if $post->draftRepliedTo != ''}
+    {(new Web\Models\Posts())->get_repost($post->draftID, true)|noescape}
+    {/if}
+    {if $post->draftAnsweredTo != ""}
+        {var $question = (new Web\Models\Questions())->get_question($post->draftAnsweredTo)}
+        <div class="postQuestion">
+            <div class="postQuestionItself">
+                <div class="postQuestionItselfAuthor">
+                    <span>
+                        {$question->nickname} {$language['asked']}
+                    </span>
+                </div>
+                <div>
+                    <span>
+                        {nl2br($question->question)|noescape}
+                    </span>
+                </div>
+            </div>
+            <div class="postQuestionProfilePicture">
+                <img src="{$question->profileImage}">
+            </div>
+        </div>
+    {/if}
+    <div class="postContent" style="max-height: unset!important" id="realPostContent">
+        {(new Utilities\Strings())->check_srcs_of_media("", $post->draft)|noescape}
+    </div>
+    {if !empty($post->draftTags)}
+    <div class="postTags">
+        {(new Web\Models\Posts())->show_tags_html($user->token, $post->draftTags)|noescape}
+    </div>
+    {/if}
+    <div class="postActions">
+        <div class="postActionsItself">
+            <div class="postAction" id="LabelEventer" onclick="zhabbler.deleteDraft({$post->draftID});" data-label="{$language['delete']}">
+                <i class='bx bx-trash' ></i>
+            </div>
+            <div class="postAction" id="LabelEventer" onclick="zhabbler.editPost({$post->draftID}, true);" data-label="{$language['edit']}">
+                <i class='bx bx-pencil'></i>
+            </div>
+        </div>
+    </div>
+</div>
+<script>checkPostsAttachments();</script>

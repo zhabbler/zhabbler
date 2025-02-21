@@ -27,7 +27,7 @@ final class UsersPresenter
             $params += ["user" => $user, "users" => $users];
             $this->latte->render($_SERVER['DOCUMENT_ROOT']."/Web/views/admin/users.latte", $params);
         }else{
-            header("Location: /login");
+            header("Location: /login?returnTo=".$_SERVER['REQUEST_URI']);
             die;
         }
     }

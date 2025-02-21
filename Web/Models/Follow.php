@@ -52,6 +52,28 @@ class Follow
         return $GLOBALS['db']->query("SELECT * FROM follows LEFT JOIN users ON userID = followBy WHERE followTo = ? AND reason = ''", $user->userID)->getRowCount();
     }
 
+    public function get_my_followers_count(string $token): int
+    {
+        $user = (new User())->get_user_by_token($token);
+        return $GLOBALS['db']->query("SELECT * FROM follows LEFT JOIN users ON userID = followBy WHERE followTo = ? AND hideFollowing != 1 AND reason = ''", $user->userID)->getRowCount();
+    }
+
+    public function get_followers(string $token, int $lastID): void
+    {
+        header('Content-Type: application/json');
+        $user = (new User())->get_user_by_token($token);
+        $result = [];
+        if($lastID != 0){
+            $following = $GLOBALS['db']->fetchAll("SELECT * FROM follows LEFT JOIN users ON userID = followBy WHERE followTo = ? AND followID < ? AND reason = '' AND hideFollowing != 1 ORDER BY followID DESC LIMIT 7", $user->userID, $lastID);
+        }else{
+            $following = $GLOBALS['db']->fetchAll("SELECT * FROM follows LEFT JOIN users ON userID = followBy WHERE followTo = ? AND reason = '' AND hideFollowing != 1 ORDER BY followID DESC LIMIT 7", $user->userID);
+        }
+        foreach($following as $follow){
+            $result[] = ["followID" => $follow->followID, "profileImage" => $follow->profileImage, "name" => $follow->name, "nickname" => $follow->nickname];
+        }
+        die(json_encode($result));
+    }
+
     public function get_following(string $nickname, string $token, int $lastID): void
     {
         header('Content-Type: application/json');

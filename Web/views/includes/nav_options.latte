@@ -1,27 +1,5 @@
 <section class="nav_options">
-    <form method="get" action="/search" data-reload="3" class="nav_options_searchbar">
-        <input type="text" name="q" autocomplete="off" value="{(isset($_GET['q']) ? $_GET['q'] : '')|noescape}" placeholder="{$language['search_zhabbler']}">
-    </form>
-    {if isset($user) && (new Web\Models\Personalization())->get_personalization_config($user->userID)->personalizationNavbarStyle != 1}
-    <div class="nav_options_req_search" style="display:none;">
-        <div id="sforw" style="display: none;"></div>
-        <div id="sprev">
-            {if count((new Web\Models\Posts())->get_followed_tags($user->token)) > 0}
-            <div class="nav_options_req_search_tt">
-                <span>{$language['tags_u_followed']}</span>
-            </div>
-            {foreach (new Web\Models\Posts())->get_followed_tags($user->token) as $tag}
-            <a href="/tagged/{$tag->followedTag}" class="nav_options_req_search_recent_s">
-                <i class='bx bx-hash'></i>
-                <span>
-                    {$tag->followedTag}
-                </span>
-            </a>
-            {/foreach}
-            {/if}
-        </div>
-    </div>
-    {/if}
+    {include 'search_nav_options.latte'}
     {if isset($tagged)}
     <section class="nav_options_tagged">
         {if (new Web\Models\Posts())->get_popular_image_of_tag($tagged) != ''}
@@ -143,34 +121,5 @@
     </div>
     {/if}
     {/if}
-    <footer>
-        <div class="copl">
-            <span>
-                {$language['zhabbler']} (beta test) © {date("Y")}<br>
-            </span>
-        </div>
-        <div>
-            <a class="footer-elem" href="/help/about">
-                {$language['what_is_zhabbler']}
-            </a>
-            <a class="footer-elem" href="/help/rules">
-                {$language['rules']}
-            </a>
-            <a class="footer-elem" href="/help/privacy">
-                {$language['policy_privacy']}
-            </a>
-            <a class="footer-elem" href="/donate">
-                {$language['donate']}
-            </a>
-            <a class="footer-elem" href="https://zhabbler.github.io/docs">
-                API
-            </a>
-            <a class="footer-elem" href="https://github.com/zhabbler/zhabbler">
-                GitHub
-            </a>
-            <a class="footer-elem" href="javascript:void(zhabbler.chooseLanguage());">
-                {$language['info']['flag']} ({$language['info']['name']})
-            </a>
-        </div>
-    </footer>
+    {include 'footer.latte'}
 </section>

@@ -16,7 +16,7 @@ final class IndexPresenter
         $params += ["language" => $GLOBALS['language']];
         if(!isset($_COOKIE['zhabbler_session'])){
             if($GLOBALS['config']['application']['unlogged_posts_view'] != 1){
-                header("Location: /login");
+                header("Location: /login?returnTo=".$_SERVER['REQUEST_URI']);
                 die;
             }
             $this->latte->render($_SERVER['DOCUMENT_ROOT']."/Web/views/index.latte", $params);

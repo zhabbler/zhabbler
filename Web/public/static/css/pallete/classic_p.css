@@ -3,7 +3,7 @@ body, html{
     scrollbar-color: rgba(0, 0, 0, 0.4) rgba(0, 0, 0, 0.1);
     overscroll-behavior-y: contain;
 }
-body, .tabs, .navbar_top, .mobile_new_nav, .mobile_new_nav_sidebar_b .navbar{
+body, .tabs, .navbar_top, .mobile_new_nav, .mobile_new_nav_sidebar_b .navbar, #JS_Loader{
     background: #fff!important;
 }
 .navbar_logotype, .navbar_top_logotype{
@@ -159,10 +159,10 @@ body, .tabs, .navbar_top, .mobile_new_nav, .mobile_new_nav_sidebar_b .navbar{
 .mobile_nav .mobile_nav_element{
     color: rgba(0, 0, 0, .5);
 }
-.inbox_msg{
+.msg_sys_srv{
     background-color: rgba(0, 0, 0, .1);
 }
-.inbox_msg_empty_here{
+.msg_sys_srv_empty_here{
     color:rgba(0, 0, 0, .5)!important;
 }
 .profile_main_info_editable input:not(:read-only), .profile_main_info_editable textarea:not(:read-only){
@@ -188,4 +188,26 @@ body, .tabs, .navbar_top, .mobile_new_nav, .mobile_new_nav_sidebar_b .navbar{
 }
 .popup_profile_close_btn{
     color: #fff;
+}
+.mobile_new_nav .mobile_new_nav_element{
+    color:rgba(0, 0, 0, .5);
+}
+.nav_options_myblog_section{
+    color: rgba(0, 0, 0, .5)!important;
+}
+.nav_options_myblog_section.nav_options_myblog_section_active div:first-child{
+    color: #000!important;
+}
+.nav_options_myblog_section:hover{
+    background-color: rgba(0, 0, 0, .05)!important;
+}
+.nav_options_myblog_section:active{
+    color: #000!important;
+    background-color: rgba(0, 0, 0, .05)!important;
+}
+.followers_myblog{
+    background-color: #eee!important;
+}
+#JS_Loader .loader .loader_part{
+    background-color: #666!important;
 }

@@ -52,7 +52,7 @@
                 {$language['reposted']}
             </span>
         {/if}
-        {if !isset($post_edit)}
+        {if !isset($post_edit) || (isset($_POST['draft_edit']) && isset($_POST['draft_edit']))}
         <div class="postAuthorMoreActions">
             <div class="postAuthorMoreActionsBtn" id="DropdownListener" data-dropdown="#dropdown_edit_post_settings">
                 <i class='bx bxs-cog'></i>
@@ -254,9 +254,35 @@
         <button class="button button_gray" onclick="{(!isset($post_edit) ? 'closeEditor();' : '$(".popup:first").remove();')|noescape}" type="button">
             {$language['close']}
         </button>
-        <button class="button" style="margin-left:auto;" type="button" onclick="{(!isset($post_edit) ? 'publish("'.$repostedID.'", "'.$questionID.'")' : 'edit("'.$post_edit->zhabURLID.'")')|noescape};">
-            {$language['publish']}
-        </button>
+        <section class="btn_group mla">
+            <button class="button{(!isset($post_edit) || (isset($_POST['draft_edit']) && isset($_POST['draft_edit'])) ? ' btn_group_fir' : '')}" type="button" onclick="{(!isset($post_edit) ? 'publish("'.$repostedID.'", "'.$questionID.'")' : (isset($_POST['draft_edit']) ? 'edit_draft('.$post_edit->draftID.')' : 'edit("'.$post_edit->zhabURLID.'")'))|noescape};">
+                {(!isset($post_edit) ? $language['publish'] : (isset($_POST['draft_edit']) ? $language['save_as_draft'] : $language['publish']))}
+            </button>
+            {if !isset($post_edit)}
+            <div>
+                <button class="button btn_group_sec" type="button" id="DropdownListener" data-dropdown="#dropdown_post_write_etc">
+                    <i class='bx bxs-chevron-down'></i>
+                </button>
+                <div class="dropdown" id="dropdown_post_write_etc" onclick="save_draft({$repostedID}, {$questionID});" style="display: none;">
+                    <div class="dropdown_element">
+                        {$language['save_as_draft']}
+                    </div>
+                </div>
+            </div>
+            {/if}
+            {if isset($post_edit) && isset($_POST['draft_edit'])}
+            <div>
+                <button class="button btn_group_sec" type="button" id="DropdownListener" data-dropdown="#dropdown_post_write_etc">
+                    <i class='bx bxs-chevron-down'></i>
+                </button>
+                <div class="dropdown" id="dropdown_post_write_etc" onclick="zhabbler.publishDraft({$post_edit->draftID});" style="display: none;">
+                    <div class="dropdown_element">
+                        {$language['publish']}
+                    </div>
+                </div>
+            </div>
+            {/if}
+        </section>
     </div>
 </form>
 <script src="/static/js/text_editor.js"></script>

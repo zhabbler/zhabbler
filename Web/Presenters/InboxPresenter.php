@@ -25,7 +25,7 @@ final class InboxPresenter
             $params += ["user" => $user, "msgs" => $msgs];
             $this->latte->render($_SERVER['DOCUMENT_ROOT']."/Web/views/inbox.latte", $params);
         }else{
-            header("Location: /login");
+            header("Location: /login?returnTo=".$_SERVER['REQUEST_URI']);
             die;
         }
     }

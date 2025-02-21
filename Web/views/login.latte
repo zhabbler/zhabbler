@@ -23,7 +23,7 @@
         <div class="container">
             {include 'includes/navbar.latte'}
             <main class="main login_main">
-                <form method="post" data-reload="2" data-location="/dashboard" action="/api/Account/login">
+                <form method="post" data-reload="2" data-location="{$returnTo}" action="/api/Account/login">
                     <div class="logotype_font">
                         {$language['zhabbler']}
                     </div>

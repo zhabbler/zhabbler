@@ -13,7 +13,13 @@ class Personalization
 
 	public function get_personalization_config(int $userID): Nette\Database\Row
 	{
-		return $GLOBALS['db']->fetch("SELECT * FROM personalization WHERE personalizationTo = ?", $userID);	
+		$personalization_config = $GLOBALS['db']->fetch("SELECT * FROM personalization WHERE personalizationTo = ?", $userID);
+		if($personalization_config->personalizationPallete != "" && !file_exists($_SERVER['DOCUMENT_ROOT']."/Web/public/static/css/pallete/{$personalization_config->personalizationPallete}_p.css")){
+			$user = (new User())->get_user_by_id($userID);
+			$this->change_color_pallete($user->token, "");
+			header("Location: ".$_SERVER['REQUEST_URI']);
+		}
+		return $personalization_config;
 	}
 
 	public function change_navbar_style(string $token, int $which): void

@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 $Router = (new Utilities\Router());
 // Public APIs
 $Router->add("ANY", "/developer/api/{class}/{func}", "ZhabblerAPIPresenter");
@@ -36,6 +36,8 @@ $Router->add("GET", "/verification/{code}", "EmailVerificationPresenter");
 $Router->add("GET", "/inbox", "InboxPresenter");
 $Router->add("GET", "/messages", "MessagesPresenter");
 $Router->add("GET", "/donate", "DonatePresenter");
+$Router->add("GET", "/myblog", "MyBlogPresenter");
+$Router->add("GET", "/myblog/{section}", "MyBlogPresenter");
 $Router->add("GET", "/me", "", function(){
 	if(isset($_COOKIE['zhabbler_session']))
 		header("Location: /profile/".(new Web\Models\User())->get_user_by_token((new Web\Models\Sessions())->get_session($_COOKIE['zhabbler_session'])->sessionToken)->nickname);
@@ -62,7 +64,8 @@ $Router->add("POST", "/api/Account/register", "", function(){
 		(new Web\Models\User())->register($_POST['name'], $_POST['nickname'], $_POST['email'], $_POST['password']);
 });
 $Router->add("POST", "/api/Sessions/destroy", "", function(){
-	if(isset($_COOKIE['zhabbler_session']))(new Web\Models\Sessions())->destroy($_COOKIE['zhabbler_session']);
+	if(isset($_COOKIE['zhabbler_session']))
+		(new Web\Models\Sessions())->destroy($_COOKIE['zhabbler_session']);
 });
 $Router->add("POST", "/api/Account/login", "", function(){
 	if(!isset($_COOKIE['zhabbler_session']))
@@ -207,7 +210,7 @@ $Router->add("GET", "/api/Posts/get_posts_by_followings_count", "", function(){
 });
 $Router->add("POST", "/api/Posts/get_posts_by_tags", "", function(){
 	if(isset($_COOKIE['zhabbler_session']))
-		(new Web\Models\Posts())->get_posts_by_tags($_POST['last_id'], $GLOBALS['session']->sessionToken);
+		(new Web\Models\Posts())->get_posts_by_tags((int)$_POST['last_id'], $GLOBALS['session']->sessionToken);
 	die;
 });
 $Router->add("GET", "/api/Posts/get_posts_by_tags_count", "", function(){
@@ -280,7 +283,7 @@ $Router->add("POST", "/api/User/get_query_count", "", function(){
 });
 $Router->add("POST", "/api/Questions/ask_question", "", function(){
 	if(isset($_COOKIE['zhabbler_session']))
-		(new Web\Models\Questions())->ask_question($GLOBALS['session']->sessionToken, $_POST['question'], $_POST['to'], $_POST['anonymous']);
+		(new Web\Models\Questions())->ask_question($GLOBALS['session']->sessionToken, $_POST['question'], $_POST['to'], (int)$_POST['anonymous']);
 });
 $Router->add("GET", "/api/Posts/search_tags", "", function(){
 	if(isset($_COOKIE['zhabbler_session']))
@@ -310,6 +313,38 @@ $Router->add("POST", "/api/Account/password_reset_change", "", function(){
 $Router->add("POST", "/api/Posts/edit_post", "", function(){
 	if(isset($_COOKIE['zhabbler_session']))
 		(new Web\Models\Posts())->edit_post($GLOBALS['session']->sessionToken, $_POST['content'], $_POST['urlid'], $_POST['tags']);
+});
+$Router->add("POST", "/api/Posts/save_draft", "", function(){
+	if(isset($_COOKIE['zhabbler_session']))
+		(new Web\Models\Posts())->save_draft($GLOBALS['session']->sessionToken, $_POST['tags'], $_POST['content'], $_POST['repost'], $_POST['question']);
+});
+$Router->add("POST", "/api/Posts/get_drafts", "", function(){
+	if(isset($_COOKIE['zhabbler_session']))
+		(new Web\Models\Posts())->get_drafts((int)$_POST['last_id'], $GLOBALS['session']->sessionToken);
+});
+$Router->add("GET", "/api/Posts/get_drafts_count", "", function(){
+	if(isset($_COOKIE['zhabbler_session']))
+		echo (new Web\Models\Posts())->get_drafts_count($GLOBALS['session']->sessionToken);
+	die;
+});
+$Router->add("POST", "/api/Posts/delete_draft", "", function(){
+	if(isset($_COOKIE['zhabbler_session']))
+		(new Web\Models\Posts())->delete_draft($GLOBALS['session']->sessionToken, (int)$_POST['id']);
+});
+$Router->add("POST", "/api/Posts/edit_draft", "", function(){
+	if(isset($_COOKIE['zhabbler_session']))
+		(new Web\Models\Posts())->edit_draft($GLOBALS['session']->sessionToken, $_POST['content'], (int)$_POST['id'], $_POST['tags']);
+});
+$Router->add("POST", "/api/Posts/publish_draft", "", function(){
+	if(isset($_COOKIE['zhabbler_session']))
+		(new Web\Models\Posts())->publish_draft($GLOBALS['session']->sessionToken, (int)$_POST['draft_id'], $_POST['content'], $_POST['urlid'], (int)$_POST['contains'], (int)$_POST['who_comment'], (int)$_POST['who_repost'], $_POST['tags']);
+});
+$Router->add("POST", "/api/Follow/get_followers", "", function(){
+	(new Web\Models\Follow())->get_followers($GLOBALS['session']->sessionToken, (int)$_POST['last_id']);
+});
+$Router->add("POST", "/api/Follow/get_my_followers_count", "", function(){
+	echo((new Web\Models\Follow())->get_my_followers_count($GLOBALS['session']->sessionToken));
+	die;
 });
 
 // 404

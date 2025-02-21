@@ -38,7 +38,7 @@ final class SearchPresenter
             $user = (new User())->get_user_by_token($session->sessionToken);
             $params += ["user" => $user];
         }else{
-            header("Location: /login");
+            header("Location: /login?returnTo=".$_SERVER['REQUEST_URI']);
             die;
         }
         $this->latte->render($_SERVER['DOCUMENT_ROOT']."/Web/views/search.latte", $params);

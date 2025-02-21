@@ -158,6 +158,7 @@ const edit = (urlid, ignore_tags = false) => {
         if(data.error == null){
             zhabbler.addSuccess(`${locale['posted_to']} ${user.nickname}`);
             $(".popup").remove();
+            goToPage("/myblog");
         }else{
             zhabbler.addError(data.error);
             $(".popup:first").remove();
@@ -428,10 +429,86 @@ const publish = (repost, question, ignore_tags = false) => {
         if(data.error == null){
             zhabbler.addSuccess(`${locale['posted_to']} ${user.nickname}`);
             $(".popup").remove();
+            goToPage("/myblog");
         }else{
             zhabbler.addError(data.error);
             $(".popup:first").remove();
         }
+    });
+}
+const edit_draft = (id) => {
+    tags = get_all_tags();
+    if($("#pC_sS .postContent .photo-- .loader").length > 0){
+        zhabbler.addWarn(locale['err_photo_post']);
+        return false;
+    }
+    if($("#pC_sS .postContent .video-- .loader").length > 0){
+        zhabbler.addWarn(locale['err_video_post']);
+        return false;
+    }
+    if($("#pC_sS .postContent .audio-- .loader").length > 0){
+        zhabbler.addWarn(locale['err_audio_post']);
+        return false;
+    }
+    $("#app").prepend(`<div class="popup popup_do_not_close" style="z-index:102048!important;">
+        <div class="loader">
+            <div class="loader_part loader_part_1"></div>
+            <div class="loader_part loader_part_2"></div>
+            <div class="loader_part loader_part_3"></div>
+        </div>
+    </div>`);
+    $.post("/api/Posts/edit_draft", {content:$("#pC_sS .postContent").html(), id:id, tags:tags}, function(data){
+        if(data.error == null){
+            zhabbler.addSuccess(locale['sucessfully_saved_draft']);
+            $(".popup").remove();
+            goToPage("/myblog/drafts");
+        }else{
+            zhabbler.addError(data.error);
+            $(".popup:first").remove();
+        }
+    });
+}
+const save_draft = (repost = "", question = "") => {
+    $("#app").prepend(`<div class="popup popup_do_not_close" style="z-index:102048!important;">
+        <div class="loader">
+            <div class="loader_part loader_part_1"></div>
+            <div class="loader_part loader_part_2"></div>
+            <div class="loader_part loader_part_3"></div>
+        </div>
+    </div>`);
+    if($("#pC_sS .postContent .photo-- .loader").length > 0){
+        zhabbler.addWarn(locale['err_photo_post']);
+        return false;
+    }
+    if($("#pC_sS .postContent .video-- .loader").length > 0){
+        zhabbler.addWarn(locale['err_video_post']);
+        return false;
+    }
+    if($("#pC_sS .postContent .audio-- .loader").length > 0){
+        zhabbler.addWarn(locale['err_audio_post']);
+        return false;
+    }
+    $.post("/api/Posts/save_draft", {tags: get_all_tags(), content: $("#pC_sS .postContent").html(), repost: repost, question: question}, function(data){
+        $(".popup:first").remove();
+        if(data.error != null){
+            $("#app").prepend(`<div class="popup popup_choose_alert popup_do_not_close">
+                <div>
+                    <div>
+                        <h2>
+                            ${data.error}
+                        </h2>
+                    </div>
+                    <div style="display: flex;">
+                        <div class="button" onclick="$('.popup:first').remove()" style="margin:0 auto;">
+                            OK
+                        </div>
+                    </div>
+                </div>
+            </div>`);
+            return false;
+        }
+        zhabbler.addSuccess(locale['sucessfully_saved_draft']);
+        goToPage("/myblog/drafts");
     });
 }
 const closeEditor = () => {

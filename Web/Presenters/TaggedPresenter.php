@@ -24,7 +24,7 @@ final class TaggedPresenter
             $params['tagged'] = urldecode($params['tagged']);
             $this->latte->render($_SERVER['DOCUMENT_ROOT']."/Web/views/tagged.latte", $params);
         }else{
-            header("Location: /login");
+            header("Location: /login?returnTo=".$_SERVER['REQUEST_URI']);
             die;
         }
     }

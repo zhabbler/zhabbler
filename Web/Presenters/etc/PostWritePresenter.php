@@ -22,7 +22,18 @@ final class PostWritePresenter
             $session = (new Sessions())->get_session($_COOKIE['zhabbler_session']);
             $user = (new User())->get_user_by_token($session->sessionToken);
             if(isset($_POST['edit_post'])){
-                $post_edit = (new Posts())->get_post($_POST['edit_post']);
+                if(isset($_POST['draft_edit'])){
+                    $post_edit = (new Posts())->get_draft((int)$_POST['edit_post']);
+                    if($post_edit->draftBy != $user->userID){
+                        die("Forbidden");
+                    }else{
+                        $post_edit->zhabContent = $post_edit->draft;
+                        $post_edit->zhabBy = $post_edit->draftBy;
+                        $post_edit->zhabTags = $post_edit->draftTags;
+                    }
+                }else{
+                    $post_edit = (new Posts())->get_post($_POST['edit_post']);
+                }
                 $params += ["post_edit" => $post_edit];
             }else{
                 if(isset($_POST['repost']) && (new Posts())->check_post_existence($_POST['repost'])){
