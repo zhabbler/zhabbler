@@ -3,7 +3,7 @@ $(document).ready(function(){
         $("#Followers .loader").remove();
         $("#Followers").addClass("followers_myblog");
         $.each(data, function(i, data){
-            $("#Followers").append(`<div class="following_person" data-id="${data.userID}" onclick="goToPage('/profile/${data.nickname}');">
+            $("#Followers").append(`<div class="following_person" data-id="${data.followID}" onclick="goToPage('/profile/${data.nickname}');">
             <div class="following_person_pfp">
                 <img src="${data.profileImage}">
             </div>
@@ -32,7 +32,7 @@ $(document).ready(function(){
         $.post("/api/Follow/get_followers", {last_id:Number($("#Followers > .following_person:last").data("id"))}, function(data){
             $("#Followers .loader").remove();
             $.each(data, function(i, data){
-                $("#Followers").append(`<div class="following_person" data-id="${data.userID}">
+                $("#Followers").append(`<div class="following_person" data-id="${data.followID}">
                 <div class="following_person_pfp">
                     <img src="${data.profileImage}">
                 </div>
