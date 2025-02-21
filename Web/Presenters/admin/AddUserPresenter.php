@@ -29,7 +29,7 @@ final class AddUserPresenter
             $params += ["user" => $user];
             $this->latte->render($_SERVER['DOCUMENT_ROOT']."/Web/views/admin/add_user.latte", $params);
         }else{
-            header("Location: /login");
+            header("Location: /login?returnTo=".$_SERVER['REQUEST_URI']);
             die;
         }
     }

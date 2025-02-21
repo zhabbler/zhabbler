@@ -78,6 +78,28 @@ class Posts
         return ($profile->hideLiked != 1 ? $GLOBALS['db']->query("SELECT * FROM zhabs LEFT JOIN users ON userID = zhabBy LEFT JOIN likes ON likeTo = zhabURLID WHERE likeBy = ? AND reason = ''", $profile->userID)->getRowCount() : 0);
     }
 
+    public function get_drafts(int $lastID, string $token): void
+    {
+        $user = (new User())->get_user_by_token($token);
+        if($lastID != 0){
+            $posts = $GLOBALS['db']->fetchAll("SELECT * FROM drafts LEFT JOIN users ON userID = draftBy WHERE draftBy = ? AND draftID < ? ORDER BY draftID DESC LIMIT 7", $user->userID, $lastID);
+        }else{
+            $posts = $GLOBALS['db']->fetchAll("SELECT * FROM drafts LEFT JOIN users ON userID = draftBy WHERE draftBy = ? ORDER BY draftID DESC LIMIT 7", $user->userID);
+        }
+        $output = "";
+        foreach($posts as $post){
+            $post->draft = strip_tags($post->draft, ALLOWED_HTML_TAGS);
+            $output .= $this->latte->renderToString($_SERVER['DOCUMENT_ROOT']."/Web/views/includes/post_draft.latte", ["post" => $post, "user" => $user, "language" => $this->locale]);
+        }
+        die($output);
+    }
+
+    public function get_drafts_count(string $token): int
+    {
+        $user = (new User())->get_user_by_token($token);
+        return $GLOBALS['db']->query("SELECT * FROM drafts LEFT JOIN users ON userID = draftBy WHERE draftBy = ?", $user->userID)->getRowCount();
+    }
+
     public function get_liked_posts(int $lastID, string $nickname, string $token): void
     {
         $user = (new User())->get_user_by_token($token);
@@ -250,6 +272,11 @@ class Posts
         return $GLOBALS['db']->fetch("SELECT * FROM zhabs LEFT JOIN users ON userID = zhabBy WHERE zhabURLID = ? AND reason = ''", $id);
     }
 
+    public function get_draft(int $id): Nette\Database\Row
+    {
+        return $GLOBALS['db']->fetch("SELECT * FROM drafts LEFT JOIN users ON userID = draftBy WHERE draftID = ?", $id);
+    }
+
     public function check_post_existence(string $id): bool
     {
         return ($GLOBALS['db']->query("SELECT * FROM zhabs LEFT JOIN users ON userID = zhabBy WHERE zhabURLID = ? AND reason = ''", $id)->getRowCount() == 1 ? true : false);
@@ -303,8 +330,9 @@ class Posts
         return $GLOBALS['db']->query("SELECT * FROM zhabs LEFT JOIN users ON userID = zhabBy WHERE reason = ''")->getRowCount();
     }
 
-    public function convert_date(string $date): string
+    public function convert_date(mixed $date): string
     {
+        $date = (string)$date;
         $day = date_parse($date)['day'];
         $month = (int)date_parse($date)['month'];
         $year = date_parse($date)['year'];
@@ -407,6 +435,15 @@ class Posts
         }
         die(json_encode($comments));
     }
+    
+    public function delete_draft(string $token, int $id): void
+    {
+        $user = (new User())->get_user_by_token($token);
+        $draft = $this->get_draft($id);
+        if($draft->draftBy == $user->userID){
+            $GLOBALS['db']->query("DELETE FROM drafts WHERE draftID = ?", $id);
+        }
+    }
 
     public function get_reposts(string $id): void
     {
@@ -444,12 +481,18 @@ class Posts
         die(json_encode($likes));
     }
 
-    public function get_repost(string $id): string
+    public function get_repost(mixed $id, bool $draft = false): string
     {
-        $post = $this->get_post($id);
+        if($draft == false){
+            $post = $this->get_post($id);
+            $replied = $post->zhabRepliedTo;
+        }else{
+            $post = $this->get_draft($id);
+            $replied = $post->draftRepliedTo;
+        }
         $result = '';
-        if($this->check_post_existence($post->zhabRepliedTo)){
-            $reposted = $this->get_post($post->zhabRepliedTo);
+        if($this->check_post_existence($replied)){
+            $reposted = $this->get_post($replied);
             if($reposted->zhabRepliedTo != ''){
                 $result .= $this->get_repost($reposted->zhabURLID);
             }
@@ -461,7 +504,7 @@ class Posts
                 '.$reposted->nickname.'
             </a>
         </div>' : '').'
-        <div class="postContent" id="realPostContent" onclick="goToPage(`/zhab/'.$reposted->zhabURLID.'`);">
+        <div class="postContent postContentReposted" id="realPostContent" onclick="goToPage(`/zhab/'.$reposted->zhabURLID.'`);">
         '.strip_tags($reposted->zhabContent, ALLOWED_HTML_TAGS).'
         </div>
         <div class="postAuthor postAuthorReposted">
@@ -480,7 +523,7 @@ class Posts
         }
         return $result;
     }
-
+    
     public function like(string $token, string $id): void
     {
         header('Content-Type: application/json');
@@ -618,6 +661,96 @@ class Posts
             }
         }else{
             $result = ["error" => "Forbidden"];
+        }
+        die(json_encode($result));
+    }
+    
+    public function publish_draft(string $token, int $id, string $post_content, string $urlid = null, int $contains, int $who_comment, int $who_repost, string $tags): void
+    {
+        $user = (new User())->get_user_by_token($token);
+        $draft = $this->get_draft($id);
+        if($draft->draftBy == $user->userID){
+            $this->delete_draft($token, $id);
+            $this->add($post_content, (new Strings())->is_empty($urlid) ? null : $urlid, $contains, $who_comment, $who_repost, $draft->draftRepliedTo, $draft->draftAnsweredTo, $tags);
+        }
+    }
+
+    public function edit_draft(string $token, string $post_content, int $id, string $tags): void
+    {
+        header('Content-Type: application/json');
+        $user = (new User())->get_user_by_token($token);
+        $draft = $this->get_draft($id);
+    	$post_prepared = (new Strings())->prepare_post_text($post_content);
+    	$result = ["error" => null];
+        if($user->userID == $draft->draftBy){
+            if(!(new Strings())->is_empty(trim(html_entity_decode(preg_replace('/\s+/', '', strip_tags($post_content, ["img", "video", "iframe", "audio"]))), " \t\n\r\0\x0B\xC2\xA0")) && !(new Strings())->is_empty(strip_tags($post_prepared, ["img", "video", "iframe", "audio"]))){
+                if(!(new Strings())->is_empty(str_replace(",", "", $tags))){
+                    $tags_array = explode(",", $tags);
+                    $tags = "";
+                    foreach($tags_array as $key => $tag){
+                        $tag = preg_replace("/<[^>]*>?/", "", $tag);
+                        $tag = preg_replace("/[^a-zA-Z0-9\p{Cyrillic}]/u", "", $tag);
+                        if(!(new Strings())->is_empty($tag) && mb_strlen($tag) <= 32){
+                            $tags .= $tag;
+                            if($key + 1 != count($tags_array))
+                                $tags .= ",";
+                        }
+                    }
+                }
+                (new RateLimit())->increase_rate_limit($user->token);
+                $GLOBALS['db']->query("UPDATE drafts SET draft = ?, draftTags = ? WHERE draftID = ? AND draftBy = ?", $post_prepared, $tags, $id, $user->userID);
+            }else{
+                $result = ["error" => $this->locale['some_fields_are_empty']];
+            }
+        }else{
+            $result = ["error" => "Forbidden"];
+        }
+        die(json_encode($result));
+    }
+
+    public function save_draft(string $token, string $tags, string $post, string $repost = "", string $question = ""): void
+    {
+        header('Content-Type: application/json');
+        $user = (new User())->get_user_by_token($token);
+    	$post_prepared = (new Strings())->prepare_post_text($post);
+    	$result = ["error" => null];
+        if($user->activated != 1){
+            $result = ["error" => $this->locale['you_need_to_activate_account']];
+        }else{
+            if(!(new Strings())->is_empty(trim(html_entity_decode(preg_replace('/\s+/', '', strip_tags($post, ["img", "video", "iframe", "audio"]))), " \t\n\r\0\x0B\xC2\xA0")) && !(new Strings())->is_empty(strip_tags($post_prepared, ["img", "video", "iframe", "audio"]))){
+                if(!empty($repost) && $this->check_post_existence($repost)){
+                    $reposted = $this->get_post($repost);
+                }
+                if(isset($reposted) && $reposted->zhabWhoCanRepost == 1){
+                    $result = ["error" => "You cannot repost this post."];
+                }else if(isset($question_itself) && $question_itself->questionTo != $user->userID){
+                    $result = ["error" => "You cannot answer this question."];
+                }else{
+                    if(!(new Strings())->is_empty(str_replace(",", "", $tags))){
+                        $tags_array = explode(",", $tags);
+                        $tags = "";
+                        foreach($tags_array as $key => $tag){
+                            $tag = preg_replace("/<[^>]*>?/", "", $tag);
+                            $tag = preg_replace("/[^a-zA-Z0-9\p{Cyrillic}]/u", "", $tag);
+                            if(!(new Strings())->is_empty($tag) && mb_strlen($tag) <= 32){
+                                $tags .= $tag;
+                                if($key + 1 != count($tags_array))
+                                    $tags .= ",";
+                            }
+                        }
+                    }
+                    $GLOBALS['db']->query("INSERT INTO drafts", [
+                        "draft" => $post_prepared,
+                        "draftBy" => $user->userID,
+                        "draftAdded" => date("Y-m-d H:i:s"),
+                        "draftRepliedTo" => (!empty($repost) && $this->check_post_existence($repost) ? $repost : ""),
+                        "draftAnsweredTo" => (!empty($question) && $GLOBALS['db']->query("SELECT * FROM inbox WHERE inboxMessage = 'question_asked' AND inboxLinked = ?", $question)->getRowCount() > 0 && (new Questions())->check_question_existence($question) ? $question : ""),
+                        "draftTags" => $tags
+                    ]);
+                }
+            }else{
+                $result = ["error" => $this->locale['empty_post_content']];
+            }
         }
         die(json_encode($result));
     }

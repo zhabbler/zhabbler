@@ -23,7 +23,7 @@ final class DashboardPresenter
             $params += ["user" => $user];
             $this->latte->render($_SERVER['DOCUMENT_ROOT']."/Web/views/dashboard.latte", $params);
         }else{
-            header("Location: /login");
+            header("Location: /login?returnTo=".$_SERVER['REQUEST_URI']);
             die;
         }
     }

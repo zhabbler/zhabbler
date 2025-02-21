@@ -75,7 +75,6 @@
                             <div class="settings_section_content">
                                 <select name="color_pallete" class="input">
                                     <option value="none">{$language['true_green']}</option>
-                                    <option value="brat" {((new Web\Models\Personalization())->get_personalization_config($user->userID)->personalizationPallete == "brat" ? "selected" : "")}>brat (deprecated)</option>
                                     <option value="ghost" {((new Web\Models\Personalization())->get_personalization_config($user->userID)->personalizationPallete == "ghost" ? "selected" : "")}>{$language['ghost']}</option>
                                     <option value="classic" {((new Web\Models\Personalization())->get_personalization_config($user->userID)->personalizationPallete == "classic" ? "selected" : "")}>{$language['classic']}</option>
                                     <option value="black" {((new Web\Models\Personalization())->get_personalization_config($user->userID)->personalizationPallete == "black" ? "selected" : "")}>{$language['dark']}</option>

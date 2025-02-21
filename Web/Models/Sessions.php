@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 namespace Web\Models;
 use Utilities\Database;
 use Utilities\Strings;

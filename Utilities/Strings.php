@@ -95,7 +95,7 @@ class Strings
             }
         }
         $result_html = (!empty($html_content) ? preg_replace('~<(?:!DOCTYPE|/?(?:html|body))[^>]*>\s*~i', '', $dom->saveHTML($dom->documentElement)) : "");
-        if(count($not_exists) > 0){
+        if(count($not_exists) > 0 && $postID != ''){
             $GLOBALS['db']->query("UPDATE zhabs SET zhabContent = ? WHERE zhabURLID = ?", $result_html, $postID);
         }
         return $result_html;

@@ -1,0 +1,23 @@
+<form method="get" action="/search" data-reload="3" class="nav_options_searchbar">
+    <input type="text" name="q" autocomplete="off" value="{(isset($_GET['q']) ? $_GET['q'] : '')|noescape}" placeholder="{$language['search_zhabbler']}">
+</form>
+{if isset($user) && (new Web\Models\Personalization())->get_personalization_config($user->userID)->personalizationNavbarStyle != 1}
+<div class="nav_options_req_search" style="display:none;">
+    <div id="sforw" style="display: none;"></div>
+    <div id="sprev">
+        {if count((new Web\Models\Posts())->get_followed_tags($user->token)) > 0}
+        <div class="nav_options_req_search_tt">
+            <span>{$language['tags_u_followed']}</span>
+        </div>
+        {foreach (new Web\Models\Posts())->get_followed_tags($user->token) as $tag}
+        <a href="/tagged/{$tag->followedTag}" class="nav_options_req_search_recent_s">
+            <i class='bx bx-hash'></i>
+            <span>
+                {$tag->followedTag}
+            </span>
+        </a>
+        {/foreach}
+        {/if}
+    </div>
+</div>
+{/if}

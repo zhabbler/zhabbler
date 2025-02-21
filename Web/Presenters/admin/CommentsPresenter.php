@@ -32,7 +32,7 @@ final class CommentsPresenter
             $params += ["user" => $user, "comments" => $comments];
             $this->latte->render($_SERVER['DOCUMENT_ROOT']."/Web/views/admin/comments.latte", $params);
         }else{
-            header("Location: /login");
+            header("Location: /login?returnTo=".$_SERVER['REQUEST_URI']);
             die;
         }
     }

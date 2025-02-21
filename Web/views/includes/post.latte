@@ -102,14 +102,14 @@
             </div>
         </div>
     {/if}
-    <div class="postContent" id="realPostContent" style="{(isset($mini_type) ? 'max-height:200px;' : '')|noescape}">
+    <div class="postContent" id="realPostContent">
         {if $post->zhabContains == 1}
         <div class="postContentWarning" onclick="$(this).remove();">
             {$language['spoilers_warning_post']}
         </div>
         {/if}
         {(new Utilities\Strings())->check_srcs_of_media($post->zhabURLID, $post->zhabContent)|noescape}
-        <div class="postReadMore" onclick="zhabbler.showMore({$post->zhabURLID});">
+        <div class="postReadMore" style="display:none;" onclick="zhabbler.showMore({$post->zhabURLID});">
             {$language['show_more']}
         </div>
     </div>
@@ -162,11 +162,11 @@
             </div>
             {if isset($user)}
             {if isset($mini_type)}
-            <div class="postAction" id="LabelEventer" onclick="goToPage('/zhab/' + {$post->zhabURLID});" data-label="{$language['responds']}">
+            <div class="postAction" id="LabelEventer" onclick="goToPage('/zhab/' + {$post->zhabURLID});" data-label="{$language['replies']}">
                 <i class='bx bx-comment'></i>
             </div>
             {else}
-            <div class="postAction" id="LabelEventer" onclick="zhabbler.comments({$post->zhabURLID});" data-label="{$language['responds']}">
+            <div class="postAction" id="LabelEventer" onclick="zhabbler.comments({$post->zhabURLID});" data-label="{$language['replies']}">
                 <i class='bx bx-comment'></i>
             </div>
             {/if}
@@ -183,7 +183,7 @@
                 {/if}
             </div>
             {else}
-            <div class="postAction" id="LabelEventer" onclick="goToPage('/login');" data-label="{$language['responds']}">
+            <div class="postAction" id="LabelEventer" onclick="goToPage('/login');" data-label="{$language['replies']}">
                 <i class='bx bx-comment'></i>
             </div>
             {if $post->zhabWhoCanRepost != 1}

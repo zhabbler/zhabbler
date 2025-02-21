@@ -126,6 +126,7 @@ $(document).ready(function(){
     });
     $(document).on("click", "#DropdownListener", function(event){
         $($(this).data("dropdown")).fadeToggle(200);
+        $($(this).data("dropdown"))[0].scrollIntoView({ behavior: "smooth", block: "end", inline: "nearest" });
         event.stopPropagation();
     });
     $(document).on("click", ".navbar_element", function(){
@@ -508,6 +509,32 @@ class Zhabbler{
     removeSessions(){
         $.get("/api/Sessions/removeSessions", function(){
             goToPage("/login");
+        });
+    }
+    deleteDraft(id, popup = true){
+        if(popup == true){
+            $("#app").prepend(`<div class="popup popup_choose_alert popup_do_not_close">
+                <div>
+                    <div>
+                        <h1>
+                            ${locale['delete_draft']}
+                        </h1>
+                    </div>
+                    <div style="display: flex;">
+                        <div class="button button_gray" onclick="$('.popup:first').remove();" style="margin:0 auto;">
+                            ${locale['cancel']}
+                        </div>
+                        <div class="button" onclick="$('.popup:first').remove();zhabbler.deleteDraft('${id}', false);" style="margin:0 auto;">
+                            ${locale['delete']}
+                        </div>
+                    </div>
+                </div>
+            </div>`);
+            return false;
+        }
+        $.post("/api/Posts/delete_draft", {id:id}, function(){
+            $(`#draft${id}`).remove();
+            zhabbler.addSuccess(locale['draft_deleted']);
         });
     }
     deletePost(id, popup = true){
@@ -1079,7 +1106,34 @@ class Zhabbler{
             attachFile(file);
         }
     }
-    editPost(id){
+    publishDraft(id){
+        let tags = "";
+        $(".write_post_tag:not(.write_post_tag_add_input):not(.write_post_tag_add)").each(function(i){
+            if(i + 1 != $(".write_post_tag:not(.write_post_tag_add_input):not(.write_post_tag_add)").length){
+                tags += $(this).find("span").text() + ",";
+            }else{
+                tags += $(this).find("span").text();
+            }
+        });
+        $("#app").prepend(`<div class="popup popup_do_not_close">
+            <div class="loader">
+                <div class="loader_part loader_part_1"></div>
+                <div class="loader_part loader_part_2"></div>
+                <div class="loader_part loader_part_3"></div>
+            </div>
+        </div>`);
+        $.post("/api/Posts/publish_draft", {draft_id:id, content:$("#pC_sS .postContent").html(), urlid:$("input[name=post_id]").val(), contains:$("select[name=post_contains]").val(), who_comment:$("select[name=who_can_comment]").val(), who_repost:$("select[name=who_can_repost]").val(), tags:tags}, function(data){
+            if(data.error != null){
+                zhabbler.addError(data.error);
+                $(".popup:first").remove();
+                return false;
+            }
+            zhabbler.addSuccess(`${locale['posted_to']} ${user.nickname}`);
+            $(".popup").remove();
+            goToPage("/myblog");
+        });
+    }
+    editPost(id, draft = false){
         $("#app").prepend(`<div class="popup popup_do_not_close" id="postEditor">
             <div class="loader">
                 <div class="loader_part loader_part_1"></div>
@@ -1087,7 +1141,13 @@ class Zhabbler{
                 <div class="loader_part loader_part_3"></div>
             </div>
         </div>`);
-        $.post("/etc/post_write", {edit_post:id}, function(data){
+        let params = {};
+        if(draft == true){
+            params = {edit_post:id, draft_edit: true};
+        }else{
+            params = {edit_post:id};
+        }
+        $.post("/etc/post_write", params, function(data){
             $(".popup:first").html(data);
             $(".popup:first form #pC_sS .postContent").sortable({handle: ".ui__handle", axis: 'y'});
             $(".popup:first form #pC_sS .postContent *:not(img):not(video):not(audio):not(iframe)").attr("data-text", locale['go_ahead_put_smth']);
@@ -1463,6 +1523,16 @@ const checkPostsAttachments = () => {
         </div>
         <video data-play="${uniqueid}" class="zhabblerPlayerVideo" ontimeupdate="videotimeupdate($(this));" src="${$(this).attr("src")}"></video>
     </div>`);
+    });
+    $(".post").each(function(){
+        if($(this).find(".postContent:not(.postContentReposted)").prop('scrollHeight') > 2000){
+            $(this).find(".postReadMore").show();
+        }
+        $(this).find(".postContent.postContentReposted").each(function(){
+            if($(this).prop("scrollHeight") > 2000 && $(this).find(".postContentRepostedMore").length == 0){
+                $(this).prepend("<div class='postContentRepostedMore'></div>");
+            }
+        })
     });
 }
 async function copyPostURL(id) {

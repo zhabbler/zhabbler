@@ -40,7 +40,7 @@ final class BanUserPresenter
                 die;
             }
         }else{
-            header("Location: /login");
+            header("Location: /login?returnTo=".$_SERVER['REQUEST_URI']);
             die;
         }
     }

@@ -34,7 +34,7 @@ final class QuestionsPresenter
             $params += ["user" => $user, "questions" => $questions, "anon_questions" => $anon_questions];
             $this->latte->render($_SERVER['DOCUMENT_ROOT']."/Web/views/admin/questions.latte", $params);
         }else{
-            header("Location: /login");
+            header("Location: /login?returnTo=".$_SERVER['REQUEST_URI']);
             die;
         }
     }
