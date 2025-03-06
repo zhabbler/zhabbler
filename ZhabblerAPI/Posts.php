@@ -275,13 +275,15 @@ class Posts extends RateLimit
                             ]);
                         }
                     }
-                    $GLOBALS['db']->query("INSERT INTO notifications", [
-                        "notificationCausedBy" => 1,
-                        "notificationBy" => $user->id,
-                        "notificationTo" => $post->user['id'],
-                        "notificationLink" => "/zhab/".$post->post_id,
-                        "notificationAdded" => date("Y-m-d H:i:s")
-                    ]);
+                    if($user->userID != $post->postBy){
+                        $GLOBALS['db']->query("INSERT INTO notifications", [
+                            "notificationCausedBy" => 1,
+                            "notificationBy" => $user->id,
+                            "notificationTo" => $post->user['id'],
+                            "notificationLink" => "/zhab/".$post->post_id,
+                            "notificationAdded" => date("Y-m-d H:i:s")
+                        ]);
+                    }
                 }else{
                     $result = ["error" => "Empty comment!"];
                 }
