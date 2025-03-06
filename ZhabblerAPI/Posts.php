@@ -225,7 +225,7 @@ class Posts extends RateLimit
     {
         $user = (object)(new Sessions())->get_user_by_session($session);
         if(!isset($user->error)){    
-            $comments_rows = $GLOBALS['db']->fetchAll("SELECT * FROM comments LEFT JOIN users ON userID = commentBy WHERE commentTo = ?", $post_id);
+            $comments_rows = $GLOBALS['db']->fetchAll("SELECT * FROM comments LEFT JOIN users ON userID = commentBy WHERE commentTo = ? ORDER BY commentID DESC", $post_id);
             $comments = [];
             foreach($comments_rows as $comment){
                 $comments[] = ["id" => $comment->commentID, "user" => (new User())->get_user_by_nickname($comment->nickname), "comment" => $comment->commentContent, "post_id" => $comment->commentTo, "added" => (string)$comment->commentAdded];
