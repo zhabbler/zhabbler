@@ -62,9 +62,11 @@ date_default_timezone_set($GLOBALS['config']['application']['default_time_zone']
 $actual_link = (empty($_SERVER['HTTPS']) ? 'http' : 'https')."://$_SERVER[HTTP_HOST]/";
 $host = explode('.', $_SERVER['HTTP_HOST']);
 $subdomain = $host[0];
-if(count($host) == 3){
-    header("Location: ".BASE_URL."profile/".$subdomain);
-    die;
+if($GLOBALS['config']['application']['subdomain_support']){
+    if(count($host) == 3){
+        header("Location: ".BASE_URL."profile/".$subdomain);
+        die;
+    }
 }
 if($actual_link != BASE_URL){
     header("HTTP/1.0 404 Not Found");

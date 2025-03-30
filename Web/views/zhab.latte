@@ -10,7 +10,7 @@
     <meta property="og:url" content="{(empty($_SERVER['HTTPS']) ? 'http' : 'https') . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]"}">
     <meta property="og:image" content="{(empty($_SERVER['HTTPS']) ? 'http' : 'https') . "://$_SERVER[HTTP_HOST]".$post->profileImage}">
     <link rel="stylesheet" href="/static/css/main.css">
-    <link rel="stylesheet" href="/static/player/css/player.css">
+    <link rel="stylesheet" href="/static/playerrefresh/zhabblerrplayer.css">
     <link rel="stylesheet" href="/static/audioplayer/css/audioplayer.css">
     <link rel="shortcut icon" href="/static/images/icon.png" type="image/png">
     <link rel="stylesheet" href="/static/node_modules/boxicons/css/boxicons.min.css">
@@ -33,8 +33,8 @@
                 <div class="profile_main">
                     <div class="profile_main_itself">
                         <div class="profile_main_container">
-                            <div id="Post">
-                                {include 'includes/post.latte', post:$post}
+                            <div id="PostLo">
+                                <div class="loader loader_black" style="height:250px;"><div class="loader_part loader_part_1"></div><div class="loader_part loader_part_2"></div><div class="loader_part loader_part_3"></div></div>
                             </div>
                         </div>
                         {include 'includes/sidebar_profile.latte'}
@@ -43,8 +43,10 @@
             </main>
         </div>
         <preloader src="/static/js/new_messenger.js"></preloader>
-        <preloader src="/static/player/js/zhabblerplayer.js"></preloader>
+        <preloader src="/static/playerrefresh/player.js"></preloader>
         <preloader src="/static/audioplayer/js/audioplayer.js"></preloader>
+        <preloader>let post_id = "{$post->zhabURLID}";</preloader>
+        <preloader src="/static/js/zhab.js"></preloader>
     </div>
     <script src="/static/node_modules/jquery/dist/jquery.min.js"></script>
     <script src="/static/node_modules/jquery-ui/dist/jquery-ui.min.js"></script>

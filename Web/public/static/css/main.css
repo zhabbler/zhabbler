@@ -1048,11 +1048,11 @@ form .postContent .zhabblerAudioPlayer{
     margin: 0px!important;
     width: 100%!important;
 }
-.postContent .zhabblerPlayer{
+.postContent .ZhabblerRPlayer{
     width: 100%;
     /* height: 280px; */
 }
-.postContent img, .postContent .zhabblerPlayer{
+.postContent img, .postContent .ZhabblerRPlayer{
     width: calc(100% + 32px);
     height: auto;
     margin: 0 -16px;

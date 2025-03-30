@@ -1,0 +1,189 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+.ZhabblerRPlayer{
+    position: relative!important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+.ZhabblerRPlayer *{
+    font-family: "Inter", "Helvetica Neue Cyr","HelveticaNeueCyr","Helvetica Neue","HelveticaNeue",Helvetica,Arial,sans-serif;
+}
+.ZhabblerRPlayer video{
+    width: 100%;
+    height: 100%;
+    display: flex;
+    cursor: pointer;
+}
+.ZhabblerRPlayer .ZhabblerRPlayerStopped{
+    width: 100%;
+    height: 100%;
+    position: absolute!important;
+    z-index: 10;
+    background-color: rgba(0, 0, 0, .25);
+    cursor: pointer;
+}
+@keyframes ZhabblerRPlayerIconAnim {
+    from{
+        opacity: 1;
+        transform: scale(1);
+    }
+    to{
+        opacity: 0;
+        transform: scale(2);
+    }
+}
+.ZhabblerRPlayer .ZhabblerRPlayerIcon{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute!important;
+    z-index: 12;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    cursor: pointer;
+    margin: auto;
+}
+.ZhabblerRPlayer .ZhabblerRPlayerIcon.ZhabblerRPlayerIconPlay::before{
+    content: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="42" fill="white"><path fill-rule="evenodd" d="M4.5 5.653c0-1.427 1.529-2.33 2.779-1.643l11.54 6.347c1.295.712 1.295 2.573 0 3.286L7.28 19.99c-1.25.687-2.779-.217-2.779-1.643V5.653Z" clip-rule="evenodd" /></svg>');
+}
+.ZhabblerRPlayer .ZhabblerRPlayerIcon.ZhabblerRPlayerIconPause::before{
+    content: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="42" fill="white"><path fill-rule="evenodd" d="M6.75 5.25a.75.75 0 0 1 .75-.75H9a.75.75 0 0 1 .75.75v13.5a.75.75 0 0 1-.75.75H7.5a.75.75 0 0 1-.75-.75V5.25Zm7.5 0A.75.75 0 0 1 15 4.5h1.5a.75.75 0 0 1 .75.75v13.5a.75.75 0 0 1-.75.75H15a.75.75 0 0 1-.75-.75V5.25Z" clip-rule="evenodd" /></svg>');
+}
+.ZhabblerRPlayer:hover .ZhabblerRPlayerControls{
+    opacity: 1;
+}
+.ZhabblerRPlayer .ZhabblerRPlayerControls{
+    opacity: 0;
+    transition: opacity .2s;
+    display: flex;
+    height: 54px;
+    position: absolute!important;
+    bottom: 0;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 0 12px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    z-index: 24;
+}
+.ZhabblerRPlayer .ZhabblerRPlayerControls .ZhabblerRPlayerControlBtn{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    height: 26px;
+}
+.ZhabblerRPlayer .ZhabblerRPlayerControls .ZhabblerRPlayerControlBtn::before{
+    -webkit-filter: drop-shadow(0px 0px 4px rgba(0, 0, 0));
+    filter: drop-shadow(0px 0px 4px rgba(0, 0, 0));
+    display: flex;
+    align-items: center;
+    height: 26px;
+    line-height: 0;
+}
+.ZhabblerRPlayer .ZhabblerRPlayerControls .ZhabblerRPlayerControlBtn.ZhabblerRPlayerControlBtnPlay::before{
+    content: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="26" fill="white"><path fill-rule="evenodd" d="M4.5 5.653c0-1.427 1.529-2.33 2.779-1.643l11.54 6.347c1.295.712 1.295 2.573 0 3.286L7.28 19.99c-1.25.687-2.779-.217-2.779-1.643V5.653Z" clip-rule="evenodd" /></svg>');
+}
+.ZhabblerRPlayer .ZhabblerRPlayerControls .ZhabblerRPlayerControlBtn.ZhabblerRPlayerControlBtnPause::before{
+    content: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="26" fill="white"><path fill-rule="evenodd" d="M6.75 5.25a.75.75 0 0 1 .75-.75H9a.75.75 0 0 1 .75.75v13.5a.75.75 0 0 1-.75.75H7.5a.75.75 0 0 1-.75-.75V5.25Zm7.5 0A.75.75 0 0 1 15 4.5h1.5a.75.75 0 0 1 .75.75v13.5a.75.75 0 0 1-.75.75H15a.75.75 0 0 1-.75-.75V5.25Z" clip-rule="evenodd" /></svg>');
+}
+.ZhabblerRPlayer .ZhabblerRPlayerControls .ZhabblerRPlayerControlBtn.ZhabblerRPlayerControlBtnFullScreen::before{
+    content: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="26" viewBox="0 0 24 24" stroke-width="1.5" stroke="white"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3.75v4.5m0-4.5h4.5m-4.5 0L9 9M3.75 20.25v-4.5m0 4.5h4.5m-4.5 0L9 15M20.25 3.75h-4.5m4.5 0v4.5m0-4.5L15 9m5.25 11.25h-4.5m4.5 0v-4.5m0 4.5L15 15" /></svg>');
+}
+.ZhabblerRPlayer .ZhabblerRPlayerControls .ZhabblerRPlayerControlBtn.ZhabblerRPlayerControlBtnNoSound::before{
+    content: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="26" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="white"><path stroke-linecap="round" stroke-linejoin="round" d="M17.25 9.75 19.5 12m0 0 2.25 2.25M19.5 12l2.25-2.25M19.5 12l-2.25 2.25m-10.5-6 4.72-4.72a.75.75 0 0 1 1.28.53v15.88a.75.75 0 0 1-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.009 9.009 0 0 1 2.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75Z" /></svg>');
+}
+.ZhabblerRPlayer .ZhabblerRPlayerControls .ZhabblerRPlayerControlBtn.ZhabblerRPlayerControlBtnSound::before{
+    content: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="26" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="white"><path stroke-linecap="round" stroke-linejoin="round" d="M19.114 5.636a9 9 0 0 1 0 12.728M16.463 8.288a5.25 5.25 0 0 1 0 7.424M6.75 8.25l4.72-4.72a.75.75 0 0 1 1.28.53v15.88a.75.75 0 0 1-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.009 9.009 0 0 1 2.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75Z" /></svg>');
+}
+.ZhabblerRPlayer .ZhabblerRPlayerControls .ZhabblerRPlayerControlBar{
+    height: 4px;
+    width: 100%;
+    background-color: rgba(255, 255, 255, .5);
+    display: flex;
+    cursor: pointer;
+}
+.ZhabblerRPlayer .ZhabblerRPlayerControls .ZhabblerRPlayerControlBar .ZhabblerRPlayerControlBarActive{
+    height: 100%;
+    background-color: #fff;
+    display: flex;
+    align-items: center;
+    position: relative!important;
+}
+.ZhabblerRPlayer .ZhabblerRPlayerControls .ZhabblerRPlayerControlBar .ZhabblerRPlayerControlBarActive::after{
+    content: "";
+    position: absolute!important;
+    width: 10px;
+    height: 10px;
+    border-radius: 9999px;
+    background-color: #fff;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    margin: auto;
+    box-shadow: 0 0 6px rgb(0, 0, 0);
+    transition: transform .2s;
+}
+.ZhabblerRPlayer .ZhabblerRPlayerControls .ZhabblerRPlayerControlBar:hover .ZhabblerRPlayerControlBarActive::after{
+    transform: scale(1.25);
+}
+.ZhabblerRPlayer .ZhabblerRPlayerControls .ZhabblerRPlayerControlDuration{
+    color: #fff;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    text-shadow: 0 0 5px rgb(0, 0, 0);
+    min-width: 31px;
+}
+.ZhabblerRPlayer .ZhabblerRPlayerLoader{
+    position: absolute!important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    left: 0;
+    right: 0;
+    top: 0;
+    margin: auto;
+    bottom: 0;
+    z-index: 16;
+}
+.ZhabblerRPlayer .ZhabblerRPlayerLoader .loader{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 45px;
+    transform: scale(.75)!important;
+}
+.ZhabblerRPlayer .ZhabblerRPlayerLoader .loader_part{
+    opacity: .5;
+    background-color: #fff!important;
+    border-radius: 5px;
+    width: 20px;
+    height: 20px;
+    margin-left: 3px;
+    margin-right: 3px;
+    animation: .5s ease-in infinite alternate loader_part;
+    box-shadow: 0 0 8px rgba(0, 0, 0);
+}
+@keyframes loader_part {
+    0% {
+        opacity: .5;
+        transform: scaleY(1)
+    }
+    to {
+        opacity: 1;
+        transform: scaleY(1.4)
+    }
+}
+.ZhabblerRPlayer .ZhabblerRPlayerLoader .loader_part_1{
+    animation-delay: -200ms;
+}
+.ZhabblerRPlayer .ZhabblerRPlayerLoader .loader_part_2{
+    animation-delay: -100ms;
+}

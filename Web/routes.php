@@ -346,6 +346,9 @@ $Router->add("POST", "/api/Follow/get_my_followers_count", "", function(){
 	echo((new Web\Models\Follow())->get_my_followers_count($GLOBALS['session']->sessionToken));
 	die;
 });
+$Router->add("POST", "/api/Posts/get_post_by_id", "", function(){
+	(new Web\Models\Posts())->get_post_by_id((isset($_COOKIE['zhabbler_session']) ? $GLOBALS['session']->sessionToken : ""), $_POST['post_id']);
+});
 
 // 404
 $Router->add("ANY", "/404", "NotFoundPresenter");

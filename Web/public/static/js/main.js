@@ -1500,29 +1500,36 @@ const checkPostsAttachments = () => {
         ${($(this).data("cover") != '' ? `<div class="zhabblerAudioPlayerCover"><img src="${$(this).data("cover")}"></div>` : ``)}
     </div>`);
     });
-    $(".post .postContent video:not(.zhabblerPlayerVideo)").each(function(){
-        uniqueid = makeid(32);
-        $(this).replaceWith(`<div class="zhabblerPlayer" data-player="${uniqueid}">
-        <div class="zhabblerPlayerBigPlayBtn" data-play="${uniqueid}"></div>
-        <div class="zhabblerPlayerControls">
-            <div class="zhabblerPlayerControl zhabblerPlayerControlPlayPause" id="PlayBtn" data-play="${uniqueid}"></div>
-            <div class="zhabblerDurs">
-                <span id="active">
-                    0:00
-                </span>
+    $(".post .postContent video:not(.ZhabblerRPlayerVideo)").each(function(){
+        $(this).replaceWith(`<div class="ZhabblerRPlayer">
+        <div class="ZhabblerRPlayerLoader" style="display: none;">
+            <div class="loader">
+                <div class="loader_part loader_part_1"></div>
+                <div class="loader_part loader_part_2"></div>
+                <div class="loader_part loader_part_3"></div>
             </div>
-            <div class="zhabblerPlayerBar" data-play="${uniqueid}">
-                <div class="zhabblerPlayerBarActive"></div>
-            </div>
-            <div class="zhabblerDurs">
-                <span id="nonactive">
-                    0:00
-                </span> 
-            </div>
-            <div class="zhabblerPlayerControl" id="FullScreenBtn" data-play="${uniqueid}"></div>
         </div>
-        <video data-play="${uniqueid}" class="zhabblerPlayerVideo" ontimeupdate="videotimeupdate($(this));" src="${$(this).attr("src")}"></video>
+        <div class="ZhabblerRPlayerIcon ZhabblerRPlayerIconPlay"></div>
+        <video src="${$(this).attr("src")}" class="ZhabblerRPlayerVideo" ontimeupdate="videoTimeUpdate($(this))" playsinline muted></video>
+        <div class="ZhabblerRPlayerControls">
+            <button class="ZhabblerRPlayerControlBtn ZhabblerRPlayerControlBtnPlay"></button>
+            <div class="ZhabblerRPlayerControlBar">
+                <div class="ZhabblerRPlayerControlBarActive"></div>
+            </div>
+            <div class="ZhabblerRPlayerControlDuration">
+                0:00
+            </div>
+            <button class="ZhabblerRPlayerControlBtn ZhabblerRPlayerControlBtnFullScreen"></button>
+            <button class="ZhabblerRPlayerControlBtn ZhabblerRPlayerControlBtnNoSound"></button>
+        </div>
     </div>`);
+    });
+    $(".ZhabblerRPlayer").each(function(){
+        let uuid_player = uuidv4();
+        $(this).attr("data-player", uuid_player);
+        $(this).find('video').attr("data-player", uuid_player);
+        $(this).find('.ZhabblerRPlayerIcon').attr("data-player", uuid_player);
+        $(this).find('.ZhabblerRPlayerControls *:not(.ZhabblerRPlayerControlBarActive)').attr("data-player", uuid_player);
     });
     $(".post").each(function(){
         if($(this).find(".postContent:not(.postContentReposted)").prop('scrollHeight') > 2000){
