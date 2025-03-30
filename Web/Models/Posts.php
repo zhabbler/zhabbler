@@ -100,6 +100,16 @@ class Posts
         return $GLOBALS['db']->query("SELECT * FROM drafts LEFT JOIN users ON userID = draftBy WHERE draftBy = ?", $user->userID)->getRowCount();
     }
 
+    public function get_post_by_id(string $token, string $post_id): void
+    {
+        $user = (new User())->get_user_by_token($token);
+        $post = $this->get_post($post_id);
+        $output = "";
+        $post->zhabContent = strip_tags($post->zhabContent, ALLOWED_HTML_TAGS);
+        $output = $this->latte->renderToString($_SERVER['DOCUMENT_ROOT']."/Web/views/includes/post.latte", ["post" => $post, "user" => $user, "language" => $this->locale]);
+        die($output);
+    }
+
     public function get_liked_posts(int $lastID, string $nickname, string $token): void
     {
         $user = (new User())->get_user_by_token($token);

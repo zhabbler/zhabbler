@@ -1,12 +1,12 @@
 $(document).ready(function(){
     $.post("/api/Posts/get_posts_by_user", {last_id:0, nickname:nickname}, function(data){
-        $("#Posts .loader").remove();
-        $("#Posts").append(data);
+        $("#Posts:first .loader").remove();
+        $("#Posts:first").append(data);
     }).done(function(){
         $(".load_more_btn_profile").remove();
         $.post("/api/Posts/get_posts_by_user_count", {nickname: nickname}, function(data){
-            if($("#Posts .post").length < Number(data)){
-                $("#Posts").append(`<button class="button load_more_btn_profile" data-nickname="${nickname}">${locale['load_more']}</button>`);
+            if($("#Posts:first .post").length < Number(data)){
+                $("#Posts:first").append(`<button class="button load_more_btn_profile" data-nickname="${nickname}">${locale['load_more']}</button>`);
             }
         });
     });
@@ -14,14 +14,14 @@ $(document).ready(function(){
         var btn = $(this);
         btn.prop("disabled", true);
         btn.prepend('<div class="new_btn_loader"><div class="loader"><div class="loader_part loader_part_1"></div><div class="loader_part loader_part_2"></div><div class="loader_part loader_part_3"></div></div></div>');
-        $.post("/api/Posts/get_posts_by_user", {last_id:Number($("#Posts > .post:last").data("realid")), nickname:btn.data("nickname")}, function(data){
-            $("#Posts .loader").remove();
-            $("#Posts").append(data);
+        $.post("/api/Posts/get_posts_by_user", {last_id:Number($("#Posts:first > .post:last").data("realid")), nickname:btn.data("nickname")}, function(data){
+            $("#Posts:first .loader").remove();
+            $("#Posts:first").append(data);
         }).done(function(){
             $(".load_more_btn_profile").remove();
             $.post("/api/Posts/get_posts_by_user_count", {nickname: btn.data("nickname")}, function(data){
-                if($("#Posts .post").length < Number(data)){
-                    $("#Posts").append(`<button class="button load_more_btn_profile" data-nickname="${btn.data("nickname")}">${locale['load_more']}</button>`);
+                if($("#Posts:first .post").length < Number(data)){
+                    $("#Posts:first").append(`<button class="button load_more_btn_profile" data-nickname="${btn.data("nickname")}">${locale['load_more']}</button>`);
                 }
             });
         });
