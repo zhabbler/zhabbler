@@ -616,7 +616,7 @@ class Posts
     {
         if($this->check_tag_existence($tag) && $GLOBALS['db']->query("SELECT * FROM zhabs LEFT JOIN users ON userID = zhabBy WHERE FIND_IN_SET(?, zhabTags) AND zhabContains != 1 AND reason = '' ORDER BY zhabLikes DESC", $tag)->getRowCount() > 0){
             $post = $GLOBALS['db']->fetch("SELECT * FROM zhabs LEFT JOIN users ON userID = zhabBy WHERE FIND_IN_SET(?, zhabTags) AND zhabContains != 1 AND reason = '' ORDER BY zhabLikes DESC", $tag);
-            return (new Strings())->get_img_src($post->zhabContent);
+            return "/api/Files/compress_image?path=".(new Strings())->get_img_src($post->zhabContent)."&new_width=1280";
         }else{
             return "";
         }

@@ -615,7 +615,7 @@ class Zhabbler{
                 $.each(data, function(i, data){
                     query_results += `<div class="messages_bubble_person" onclick="messenger.openMessages('${data.nickname}');">
                         <div class="messages_bubble_person_profile_picture">
-                            <img src="${data.profileImage}" alt="Image">
+                            <img src="/api/Files/compress_image?path=${data.profileImage}&new_width=36" alt="Image">
                         </div>
                         <div class="messages_bubble_person_info">
                             <div>
@@ -674,7 +674,7 @@ class Zhabbler{
                 $(`#responds${id} #reposts_itself`).prepend(`<div class="repost_fr_rps_post">
                 <div class="repost_fr_rps_post_author">
                     <div class="repost_fr_rps_post_author_pfp">
-                        <img src="${data.profileImage}" alt="">
+                        <img src="/api/Files/compress_image?path=${data.profileImage}&new_width=28" alt="">
                     </div>
                     <div class="repost_fr_rps_post_author_data">
                         <i class='bx bx-repost'></i>
@@ -703,7 +703,7 @@ class Zhabbler{
                 $.each(data, function(i, data){
                     $(`#responds${id} #responds_itself`).prepend(`<div class="postRespondsRespond" id="comment${data.commentID}">
                     <div class="postRespondsRespondAvatar" onclick="goToPage('/profile/${data.nickname}');">
-                        <img src="${data.profileImage}">
+                        <img src="/api/Files/compress_image?path=${data.profileImage}&new_width=36">
                     </div>
                     <div class="postRespondsRespondItself">
                         <div>
@@ -767,7 +767,7 @@ class Zhabbler{
             $.each(data, function(i, data){
                 $(`#responds${id} #likesSection`).prepend(`<a href="/profile/${data.nickname}" class="user_row">
                 <div class="user_row_profile_picture">
-                    <img src="${data.profileImage}">
+                    <img src="/api/Files/compress_image?path=${data.profileImage}&new_width=36">
                 </div>
                 <div class="user_row_credentials">
                     <div>

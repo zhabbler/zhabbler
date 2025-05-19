@@ -7,7 +7,7 @@
             </div>
             <div class="postAuthorBoxInfoCover"{!empty($post->profileCover) ? ' style="background-image: url('.$post->profileCover.')"' : ''|noescape}></div>
             <div class="postAuthorBoxInfoPFP">
-                <img src="{$post->profileImage}" style="border-color:{$post->backgroundColor|noescape}">
+                <img src="/api/Files/compress_image?path={$post->profileImage}&new_width=72" style="border-color:{$post->backgroundColor|noescape}">
             </div>
             <div class="postAuthorBoxInfoName" style="color:{((new Utilities\Strings())->get_closest_color((empty($post->backgroundColor) ? "#ffffff" : $post->backgroundColor)) > 130 ? '#000000' : '#ffffff')|noescape}">
                 <h2>{$post->name}</h2>
@@ -18,7 +18,7 @@
         </div>
         <div class="postBoxEventL" data-box="{$uniqueidbx}" style="display: flex;align-items: center;">
             <a href="/profile/{$post->nickname}" class="postAuthorProfileImage">
-                <img src="{$post->profileImage}" alt="Image">
+                <img src="/api/Files/compress_image?path={$post->profileImage}&new_width=32" alt="Image">
                 {if $post->zhabRepliedTo != ""}
                     <div class="postAuthorProfileImageReposted">
                         <i class='bx bx-repost'></i>

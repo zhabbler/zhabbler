@@ -1,7 +1,7 @@
 <div class="new_msgr_msgs_conversation_info">
     <a href="/profile/{$profile->nickname}" class="new_msgr_msgs_conversation_info_linked">
         <div class="new_msgr_msgs_conversation_info_profile_picture">
-            <img src="{$profile->profileImage}" alt="Avatar">
+            <img src="/api/Files/compress_image?path={$profile->profileImage}&new_width=36" alt="Avatar">
         </div>
         <div class="new_msgr_msgs_conversation_info_nickname">
             <span>{$profile->nickname}</span>

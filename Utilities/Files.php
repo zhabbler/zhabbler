@@ -29,6 +29,41 @@ class Files
 		return $result;
 	}
 
+	public function compress_image(string $path, int $new_width): void
+	{
+		header("Content-Type: image/jpeg");
+		$directory_is = "uploads";
+		if(str_starts_with($path, '/uploads/')){
+			$path = str_replace('/uploads/', "", $path);
+		}else if(str_starts_with($path, BASE_URL.'uploads/')){
+			$path = str_replace(BASE_URL.'uploads/', "", $path);
+		}else if(str_starts_with($path, '/static/')){
+			$directory_is = "static";
+			$path = str_replace('/static/', "", $path);
+		}else if(str_starts_with($path, BASE_URL.'static/')){
+			$directory_is = "static";
+			$path = str_replace(BASE_URL.'static/', "", $path);
+		}
+
+		$rate = 100;
+
+		if (getimagesize($_SERVER['DOCUMENT_ROOT'].'/Web/public/'.$directory_is.'/'.$path)['mime'] == 'image/jpeg') 
+			$mask = imagecreatefromjpeg($_SERVER['DOCUMENT_ROOT'].'/Web/public/'.$directory_is.'/'.$path);
+		elseif (getimagesize($_SERVER['DOCUMENT_ROOT'].'/Web/public/'.$directory_is.'/'.$path)['mime'] == 'image/gif') 
+			$mask = imagecreatefromgif($_SERVER['DOCUMENT_ROOT'].'/Web/public/'.$directory_is.'/'.$path);
+		elseif (getimagesize($_SERVER['DOCUMENT_ROOT'].'/Web/public/'.$directory_is.'/'.$path)['mime'] == 'image/png') 
+			$mask = imagecreatefrompng($_SERVER['DOCUMENT_ROOT'].'/Web/public/'.$directory_is.'/'.$path);
+		else
+			die;
+
+		list($width, $height) = getimagesize($_SERVER['DOCUMENT_ROOT'].'/Web/public/'.$directory_is.'/'.$path);
+		$ratio = $width/$height;
+		$new_height = (int)round($new_width/$ratio);
+		$new_file = imagecreatetruecolor($new_width, $new_height);
+		imagecopyresampled($new_file, $mask, 0, 0, 0, 0, $new_width, $new_height, $width, $height);
+		imagejpeg($new_file,NULL,$rate);
+	}
+
 	public function upload_gif(string $token, array $file): void
 	{
 		header('Content-Type: application/json');

@@ -80,9 +80,9 @@
                         {/if}
                         <div class="profile_main_container">
                             <div class="profile_main_pics">
-                                <div class="profile_main_pics_cover"{!empty($profile->profileCover) ? ' style="background-image: url('.$profile->profileCover.')"' : ''|noescape}></div>
+                                <div class="profile_main_pics_cover"{!empty($profile->profileCover) ? ' style="background-image: url('.'/api/Files/compress_image?path='.$profile->profileCover.'&new_width=800'.')"' : ''|noescape}></div>
                                 <div class="profile_main_pics_pfp">
-                                    <img src="{$profile->profileImage}">
+                                    <img src="/api/Files/compress_image?path={$profile->profileImage}&new_width=100">
                                 </div>
                             </div>
                             <div class="profile_main_info">
