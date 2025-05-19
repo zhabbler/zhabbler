@@ -86,7 +86,7 @@
             {foreach (new Web\Models\User())->recommended_profiles($user->token) as $profile}
             <div class="nav_options_whoToFollow_profile" data-profile="{$profile->userID}">
                 <div class="nav_options_whoToFollow_profile_picture" onclick="goToPage('/profile/' + {$profile->nickname});">
-                    <img src="{$profile->profileImage}">
+                    <img src="/api/Files/compress_image?path={$profile->profileImage}&new_width=36">
                 </div>
                 <div class="nav_options_whoToFollow_profile_information" onclick="goToPage('/profile/' + {$profile->nickname});">
                     <div>

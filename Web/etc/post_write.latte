@@ -37,7 +37,7 @@
 <form class="post" id="PopupContainer">
     <div class="postAuthor">
         <a href="#" class="postAuthorProfileImage">
-            <img src="{$user->profileImage}" alt="Image">
+            <img src="/api/Files/compress_image?path={$user->profileImage}&new_width=32" alt="Image">
             {if isset($reposted)}
             <div class="postAuthorProfileImageReposted">
                 <i class='bx bx-repost'></i>

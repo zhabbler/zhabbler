@@ -5,7 +5,7 @@ $(document).ready(function(){
         $.each(data, function(i, data){
             $("#Followers").append(`<div class="following_person" data-id="${data.followID}" onclick="goToPage('/profile/${data.nickname}');">
             <div class="following_person_pfp">
-                <img src="${data.profileImage}">
+                <img src="/api/Files/compress_image?path=${data.profileImage}&new_width=36">
             </div>
             <div class="following_person_information">
                 <div>
@@ -34,7 +34,7 @@ $(document).ready(function(){
             $.each(data, function(i, data){
                 $("#Followers").append(`<div class="following_person" data-id="${data.followID}">
                 <div class="following_person_pfp">
-                    <img src="${data.profileImage}">
+                    <img src="/api/Files/compress_image?path=${data.profileImage}&new_width=36">
                 </div>
                 <div class="following_person_information">
                     <div>

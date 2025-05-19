@@ -41,7 +41,7 @@
     {foreach $conversations as $conversation}
     <div class="messages_bubble_person {((new Web\Models\Messages())->get_count_of_unreaded_msgs_of_user($user->token, $conversation['userID']) > 0 ? "messages_bubble_person_red" : "")}" onclick="messenger.openMessages({$conversation['nickname']});">
         <div class="messages_bubble_person_profile_picture">
-            <img src="{$conversation['profileImage']}" alt="Изображение">
+            <img src="/api/Files/compress_image?path={$conversation['profileImage']}&new_width=36" alt="Изображение">
         </div>
         <div class="messages_bubble_person_info">
             <div>
