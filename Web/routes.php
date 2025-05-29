@@ -349,9 +349,6 @@ $Router->add("POST", "/api/Follow/get_my_followers_count", "", function(){
 $Router->add("POST", "/api/Posts/get_post_by_id", "", function(){
 	(new Web\Models\Posts())->get_post_by_id((isset($_COOKIE['zhabbler_session']) ? $GLOBALS['session']->sessionToken : ""), $_POST['post_id']);
 });
-$Router->add("GET", "/api/Files/compress_image", "", function(){
-	(new Utilities\Files())->compress_image($_GET['path'], (int)$_GET['new_width']);
-});
 
 // 404
 $Router->add("ANY", "/404", "NotFoundPresenter");
