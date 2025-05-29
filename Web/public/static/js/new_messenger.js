@@ -285,7 +285,7 @@ class Messenger{
                         ${(item.nickname == user.nickname ? `<div class="new_msgr_msgs_list_m_msg_dlt_ms" onclick="messenger.deleteMessage(${item.id});"><i class='bx bx-trash'></i></div>` : '')}
                             <div class="new_msgr_msgs_list_m_msg_ioa">
                                 <div class="new_msgr_msgs_list_m_msg_i${(item.image != '' ? ' new_msgr_msgs_list_m_msg_i_image' : '')}">
-                                    ${(item.image != '' ? `<img src="${item.image}">` : `<span>${item.message}</span>`)}
+                                    ${(item.image != '' ? `<img src="${item.image}/w800-compressed.jpeg">` : `<span>${item.message}</span>`)}
                                 </div>
                                 <div class="new_msgr_msgs_list_m_msg_timestamp">
                                     ${item.added}

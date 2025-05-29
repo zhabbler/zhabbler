@@ -105,7 +105,7 @@ function getMessages(nickname){
     $.post("/api/Messages/get_messages", {to:nickname}, function(data){
         $(".main_messages_im_msgs").html('');
         $(data).each(function(i, item){
-            messagecontent = (item.image != '' ? `<img src="${item.image}">` : `<span>${item.message}</span>`);
+            messagecontent = (item.image != '' ? `<img src="${item.image}/w800-compressed.jpeg">` : `<span>${item.message}</span>`);
             if(item.nickname == user.nickname){
                 $(".main_messages_im_msgs").append(`<div class="main_messages_im_msg main_messages_im_msg_b_u" id="msg${item.id}">
                     <div class="main_messages_im_msg_btns">
