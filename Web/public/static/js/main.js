@@ -216,7 +216,7 @@ $(document).ready(function(){
                     for(let i=0;i<6;i++){
                         if(i+1 <= data.length){
                             result += `<a href="/profile/${data[i]["nickname"]}" class="nav_options_req_search_recent_s">
-                            <img src="${data[i]["profileImage"]}" class="nav_options_req_search_recent_s_avatar">
+                            <img src="${data[i]["profileImage"]}/w32-compressed.jpeg" class="nav_options_req_search_recent_s_avatar">
                             <div style="font-size:14px;">
                                 <div>
                                     <span>
@@ -615,7 +615,7 @@ class Zhabbler{
                 $.each(data, function(i, data){
                     query_results += `<div class="messages_bubble_person" onclick="messenger.openMessages('${data.nickname}');">
                         <div class="messages_bubble_person_profile_picture">
-                            <img src="/api/Files/compress_image?path=${data.profileImage}&new_width=36" alt="Image">
+                            <img src="${data.profileImage}/w36-compressed.jpeg" alt="Image">
                         </div>
                         <div class="messages_bubble_person_info">
                             <div>
@@ -674,7 +674,7 @@ class Zhabbler{
                 $(`#responds${id} #reposts_itself`).prepend(`<div class="repost_fr_rps_post">
                 <div class="repost_fr_rps_post_author">
                     <div class="repost_fr_rps_post_author_pfp">
-                        <img src="/api/Files/compress_image?path=${data.profileImage}&new_width=28" alt="">
+                        <img src="${data.profileImage}/w28-compressed.jpeg" alt="">
                     </div>
                     <div class="repost_fr_rps_post_author_data">
                         <i class='bx bx-repost'></i>
@@ -703,7 +703,7 @@ class Zhabbler{
                 $.each(data, function(i, data){
                     $(`#responds${id} #responds_itself`).prepend(`<div class="postRespondsRespond" id="comment${data.commentID}">
                     <div class="postRespondsRespondAvatar" onclick="goToPage('/profile/${data.nickname}');">
-                        <img src="/api/Files/compress_image?path=${data.profileImage}&new_width=36">
+                        <img src="${data.profileImage}/w36-compressed.jpeg">
                     </div>
                     <div class="postRespondsRespondItself">
                         <div>
@@ -767,7 +767,7 @@ class Zhabbler{
             $.each(data, function(i, data){
                 $(`#responds${id} #likesSection`).prepend(`<a href="/profile/${data.nickname}" class="user_row">
                 <div class="user_row_profile_picture">
-                    <img src="/api/Files/compress_image?path=${data.profileImage}&new_width=36">
+                    <img src="${data.profileImage}/w36-compressed.jpeg">
                 </div>
                 <div class="user_row_credentials">
                     <div>

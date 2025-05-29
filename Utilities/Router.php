@@ -1,10 +1,18 @@
 <?php declare(strict_types=1);
 namespace Utilities;
+use Utilities\Files;
 
 class Router
 {
     public function add(string $method, string $url, string $presenter, $function = NULL): void
     {
+        if((str_starts_with($_SERVER['REQUEST_URI'], "/uploads/") || str_starts_with($_SERVER['REQUEST_URI'], "/static/images/")) && preg_match('#/w(\d+)-compressed\.jpeg$#i', parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), $matches)){
+            header("HTTP/1.1 200 OK");
+            $url_parts = explode("/", $_SERVER['REQUEST_URI']);
+            $width = (int)$matches[1];
+            (new Files())->compress_image(str_replace("/w{$matches[1]}-compressed.jpeg", "", $_SERVER['REQUEST_URI']), $width);
+            die;
+        }
         if($url == '/404'){
             include $_SERVER['DOCUMENT_ROOT']."/Web/Presenters/$presenter.php";
             die;

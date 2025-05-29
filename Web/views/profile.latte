@@ -75,9 +75,9 @@
                         {/if}
                         <div class="profile_main_container">
                             <div class="profile_main_pics">
-                                <div class="profile_main_pics_cover"{!empty($profile->profileCover) ? ' style="background-image: url('.'/api/Files/compress_image?path='.$profile->profileCover.'&new_width=800'.')"' : ''|noescape}></div>
+                                <div class="profile_main_pics_cover"{!empty($profile->profileCover) ? ' style="background-image: url('.''.$profile->profileCover.'/w800-compressed.jpeg'.')"' : ''|noescape}></div>
                                 <div class="profile_main_pics_pfp">
-                                    <img src="/api/Files/compress_image?path={$profile->profileImage}&new_width=100">
+                                    <img src="{$profile->profileImage}/w100-compressed.jpeg">
                                 </div>
                             </div>
                             <div class="profile_main_info">

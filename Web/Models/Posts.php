@@ -102,11 +102,16 @@ class Posts
 
     public function get_post_by_id(string $token, string $post_id): void
     {
-        $user = (new User())->get_user_by_token($token);
+        $params = [];
+        if($token != ''){
+            $user = (new User())->get_user_by_token($token);
+            $params += ["user" => $user];
+        }
         $post = $this->get_post($post_id);
+        $params += ["post" => $post, "language" => $this->locale];
         $output = "";
         $post->zhabContent = strip_tags($post->zhabContent, ALLOWED_HTML_TAGS);
-        $output = $this->latte->renderToString($_SERVER['DOCUMENT_ROOT']."/Web/views/includes/post.latte", ["post" => $post, "user" => $user, "language" => $this->locale]);
+        $output = $this->latte->renderToString($_SERVER['DOCUMENT_ROOT']."/Web/views/includes/post.latte", $params);
         die($output);
     }
 
@@ -508,7 +513,7 @@ class Posts
             }
             $result .= ($reposted->zhabRepliedTo == '' || !$this->check_post_existence($reposted->zhabRepliedTo) ? '<div class="postAuthor postAuthorReposted">
             <a href="/profile/'.$reposted->nickname.'" class="postAuthorProfileImage">
-                <img src="'.$reposted->profileImage.'" alt="Image">
+                <img src="'.$reposted->profileImage.'/w32-compressed.jpeg" alt="Image">
             </a>
             <a href="/profile/'.$reposted->nickname.'" class="postAuthorPointsToAuthor">
                 '.$reposted->nickname.'
@@ -519,7 +524,7 @@ class Posts
         </div>
         <div class="postAuthor postAuthorReposted">
             <a href="/profile/'.$post->nickname.'" class="postAuthorProfileImage">
-                <img src="'.$post->profileImage.'" alt="Image">
+                <img src="'.$post->profileImage.'/w32-compressed.jpeg" alt="Image">
                 <div class="postAuthorProfileImageReposted">
                     <i class="bx bx-repost"></i>
                 </div>
@@ -616,7 +621,7 @@ class Posts
     {
         if($this->check_tag_existence($tag) && $GLOBALS['db']->query("SELECT * FROM zhabs LEFT JOIN users ON userID = zhabBy WHERE FIND_IN_SET(?, zhabTags) AND zhabContains != 1 AND reason = '' ORDER BY zhabLikes DESC", $tag)->getRowCount() > 0){
             $post = $GLOBALS['db']->fetch("SELECT * FROM zhabs LEFT JOIN users ON userID = zhabBy WHERE FIND_IN_SET(?, zhabTags) AND zhabContains != 1 AND reason = '' ORDER BY zhabLikes DESC", $tag);
-            return "/api/Files/compress_image?path=".(new Strings())->get_img_src($post->zhabContent)."&new_width=1280";
+            return (new Strings())->get_img_src($post->zhabContent);
         }else{
             return "";
         }

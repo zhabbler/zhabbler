@@ -7,7 +7,7 @@
         {foreach (new Web\Models\User())->random_profiles() as $profile}
         <div class="profile_main_rec_profiles_i_profile" onclick="goToPage('/profile/' + {$profile->nickname});">
             <div class="profile_main_rec_profiles_i_profile_pfp">
-                <img src="{$profile->profileImage}">
+                <img src="{$profile->profileImage}/w36-compressed.jpeg">
             </div>
             <div class="profile_main_rec_profiles_i_profile_info">
                 <div>
@@ -42,7 +42,7 @@
         {foreach (new Web\Models\User())->recommended_profiles($user->token) as $profile}
         <div class="profile_main_rec_profiles_i_profile" onclick="goToPage('/profile/' + {$profile->nickname});">
             <div class="profile_main_rec_profiles_i_profile_pfp">
-                <img src="{$profile->profileImage}">
+                <img src="{$profile->profileImage}/w36-compressed.jpeg">
             </div>
             <div class="profile_main_rec_profiles_i_profile_info">
                 <div>

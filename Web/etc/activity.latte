@@ -34,7 +34,7 @@
     <div class="notification_neb notification_neb_ab_{$notification->notificationCausedBy}" onclick="goToPage({$notification->notificationLink})">
         {if $notification->notificationCausedBy != 4}
         <div class="notification_neb_icon">
-            <img src="/api/Files/compress_image?path={$notification->profileImage}&new_width=36" class="notification_neb_icon_pfp">
+            <img src="{$notification->profileImage}/w36-compressed.jpeg" class="notification_neb_icon_pfp">
             <div class="notification_neb_icon_itself">
                 {if $notification->notificationCausedBy == 1}
                 <i class='bx bxs-message-alt-add'></i>

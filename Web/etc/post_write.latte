@@ -37,7 +37,7 @@
 <form class="post" id="PopupContainer">
     <div class="postAuthor">
         <a href="#" class="postAuthorProfileImage">
-            <img src="/api/Files/compress_image?path={$user->profileImage}&new_width=32" alt="Image">
+            <img src="{$user->profileImage}/w32-compressed.jpeg" alt="Image">
             {if isset($reposted)}
             <div class="postAuthorProfileImageReposted">
                 <i class='bx bx-repost'></i>
@@ -126,10 +126,10 @@
     {if isset($reposted)}
     <div>
         <div class="postAuthor postAuthorReposted">
-            <a href="/profile/{$reposted->nickname}" class="postAuthorProfileImage">
-                <img src="{$reposted->profileImage}" alt="Image">
+            <a href="#" class="postAuthorProfileImage">
+                <img src="{$reposted->profileImage}/w32-compressed.jpeg" alt="Image">
             </a>
-            <a href="/profile/{$reposted->nickname}" class="postAuthorPointsToAuthor">
+            <a href="#" class="postAuthorPointsToAuthor">
                 {$reposted->nickname}
             </a>
         </div>
@@ -138,7 +138,7 @@
         </div>
         <div class="postAuthor postAuthorReposted">
             <a href="/profile/{$user->nickname}" class="postAuthorProfileImage">
-                <img src="{$user->profileImage}" alt="Image">
+                <img src="{$user->profileImage}/w32-compressed.jpeg" alt="Image">
                 <div class="postAuthorProfileImageReposted">
                     <i class='bx bx-repost'></i>
                 </div>
@@ -164,7 +164,7 @@
             </div>
         </div>
         <div class="postQuestionProfilePicture">
-            <img src="{$question->profileImage}">
+            <img src="{$question->profileImage}/w40-compressed.jpeg">
         </div>
     </div>
     {/if}
