@@ -5,9 +5,9 @@
             <div class="postAuthorBoxInfoTopBar">
                 <div><span>{$post->nickname}</span></div>
             </div>
-            <div class="postAuthorBoxInfoCover"{!empty($post->profileCover) ? ' style="background-image: url('.$post->profileCover.')"' : ''|noescape}></div>
+            <div class="postAuthorBoxInfoCover"{!empty($post->profileCover) ? ' style="background-image: url('.$post->profileCover.'/w600-compressed.jpeg)"' : ''|noescape}></div>
             <div class="postAuthorBoxInfoPFP">
-                <img src="/api/Files/compress_image?path={$post->profileImage}&new_width=72" style="border-color:{$post->backgroundColor|noescape}">
+                <img src="{$post->profileImage}/w72-compressed.jpeg" style="border-color:{$post->backgroundColor|noescape}">
             </div>
             <div class="postAuthorBoxInfoName" style="color:{((new Utilities\Strings())->get_closest_color((empty($post->backgroundColor) ? "#ffffff" : $post->backgroundColor)) > 130 ? '#000000' : '#ffffff')|noescape}">
                 <h2>{$post->name}</h2>
@@ -18,7 +18,7 @@
         </div>
         <div class="postBoxEventL" data-box="{$uniqueidbx}" style="display: flex;align-items: center;">
             <a href="/profile/{$post->nickname}" class="postAuthorProfileImage">
-                <img src="/api/Files/compress_image?path={$post->profileImage}&new_width=32" alt="Image">
+                <img src="{$post->profileImage}/w32-compressed.jpeg" alt="Image">
                 {if $post->zhabRepliedTo != ""}
                     <div class="postAuthorProfileImageReposted">
                         <i class='bx bx-repost'></i>
@@ -98,7 +98,7 @@
                 </div>
             </div>
             <div class="postQuestionProfilePicture">
-                <img src="{$question->profileImage}">
+                <img src="{$question->profileImage}/w40-compressed.jpeg">
             </div>
         </div>
     {/if}
@@ -220,7 +220,7 @@
             {else}
             <div class="postRespondsRespond">
                 <div class="postRespondsRespondAvatar" onclick="goToPage('/me');">
-                    <img src="{$user->profileImage}">
+                    <img src="{$user->profileImage}/w36-compressed.jpeg">
                 </div>
                 <div class="postRespondsRespondTextarea">
                     <textarea name="comment" maxlength="128" data-for="{$post->zhabURLID}" placeholder="{$language['write_your_comment']}"></textarea>

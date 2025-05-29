@@ -55,7 +55,7 @@ class Strings
                             $gradient = ["linear-gradient(132deg, #3b1e89, #f793ff)", "linear-gradient(132deg, #1e8982, #93ffcd)", "linear-gradient(132deg, #891e1e, #ff9393)", "linear-gradient(132deg, #1e4b89, #93d2ff)"];
                             $img->setAttribute('style', "background: ".$gradient[rand(0,4)]);
                             if(pathinfo($attr->nodeValue)['extension'] != 'gif'){
-                                $img->setAttribute('src', BASE_URL.'api/Files/compress_image?path='.basename(parse_url($attr->nodeValue, PHP_URL_PATH)).'&new_width=800');
+                                $img->setAttribute('src', $attr->nodeValue."/w800-compressed.jpeg");
                             }
                         }
                     }

@@ -85,7 +85,7 @@ conn.onmessage = function(e) {
                             $.post('/api/User/get_user_by_nickname', {nickname:json_data.by}, function(data){
                                 $(".new_msgr_msgs_current").prepend(`<div class="new_msgr_avatar_whidn" data-nickname="${data.nickname}">
                                     <div class="new_msgr_avatar_whidn_unms">1</div>
-                                    <img src="/api/Files/compress_image?path=${data.profileImage}&new_width=48" alt="Avatar">
+                                    <img src="${data.profileImage}/w48-compressed.jpeg" alt="Avatar">
                                 </div>`)
                             });
                         }
@@ -160,7 +160,7 @@ class Messenger{
                 $(`.new_msgr_avatar_whidn[data-nickname="${nickname}"]`).remove();
             }
             $(".new_msgr_msgs_current").prepend(`<div style="display:none;" class="new_msgr_avatar_whidn" data-nickname="${data.nickname}">
-                <img src="/api/Files/compress_image?path=${data.profileImage}&new_width=48" alt="Avatar">
+                <img src="${data.profileImage}/w48-compressed.jpeg" alt="Avatar">
             </div>`);
         });
         $.post('/etc/im', {nickname:nickname}, function(data){

@@ -40,7 +40,7 @@ function getConvos(){
         $(data).each(function(i, item){
             $("#Messages").append(`<section class="main_messages_convo" onclick="openMessages('${item.nickname}');">
                 <div class="main_messages_convo_image">
-                    <img src="${item.profileImage}" alt="Profile picture">
+                    <img src="${item.profileImage}/w42-compressed.jpeg" alt="Profile picture">
                 </div>
                 <div class="main_messages_convo_info">
                     <div>
