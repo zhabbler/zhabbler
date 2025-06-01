@@ -7,6 +7,7 @@ Tumblr принадлежит Дэвиду Карпу и Automatic.
 
 ## Инстанции
 Список инстаций Жабблера которые работают на данный момент:
+* [zhbblr.com](https://zhbblr.com)
 * [zhabbler.zonerkin.xyz](https://zhabbler.zonerkin.xyz)
 
 ## Могу ли я создать свою собственную инстанцию?
