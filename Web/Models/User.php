@@ -415,6 +415,8 @@ class User
                     $result = ["error" => $this->locale['error_email_is_used']];
                 }else if(!preg_match("/^[a-zA-Z0-9]{3,}$/", $nickname)){
                     $result = ["error" => $this->locale['error_nickname_symbols']];
+                }else if($nickname == 'anonymous'){
+                    $result = ['error'=> "Forbidden username"];
                 }else{
                     $password = password_hash($password, PASSWORD_DEFAULT);
                     $token = (new Strings())->random_string(255);
