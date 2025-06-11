@@ -1,0 +1,12 @@
+<div class="mobile_new_nav_sidebar_b" style="display: none;">
+    {include 'navbar_itself.latte'}
+</div>
+<nav class="mobile_new_nav">
+    <div class="mobile_new_nav_element" onclick="zhabbler.expandNavbarMobile();">
+        <i class='bx bx-menu'></i>
+    </div>
+    <div class="mobile_new_nav_logotype" onclick="goToPage('/');">{$language['zhabbler']}</div>
+    <div class="mobile_new_nav_element mobile_new_nav_element_r" onclick="goToPage('/search');">
+        <i class='bx bx-search' ></i>
+    </div>
+</nav>

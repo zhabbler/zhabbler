@@ -12,38 +12,462 @@
     <link rel="apple-touch-icon" href="/static/images/icons/icon-512x512.png" />
     <meta name="apple-mobile-web-app-status-bar" content="#13b522" />
     <meta name="theme-color" content="#13b522" />
-    <title>Жабблер</title>
+    <title>{mb_ucfirst($language['zhabbler'])}</title>
 </head>
 <body>
     <div id="app">
+        <style n:syntax="off">
+            body{
+                overflow:hidden!important;
+            }
+            .navbar_top{
+                position:fixed!important;
+                top:0;
+                width:100vw;
+                box-sizing:border-box;
+                background:transparent;
+            }
+            .mobile_new_nav{
+                background:transparent!important;
+            }
+            .navbar_top .button{
+                background: rgba(255, 255, 255, .25);
+                color: #ffffff;
+            }
+        </style>
+        {include "../includes/mobile_nav.latte"}
+        {include "../includes/navbar_top_itself.latte"}
         <div class="popup popup_do_not_close" id="JS_Loader">
             <div class="loader loader_cpa"><div class="loader_part loader_part_1"></div><div class="loader_part loader_part_2"></div><div class="loader_part loader_part_3"></div></div>
         </div>
-        {include '../includes/navbar_top.latte'}
-        <div class="container">
-            {include '../includes/navbar.latte'}
-            <main class="main">
+        <div class="what_is_zhabbler_container">
+            <div class="what_is_zhabbler_container_menu">
+                <button class="what_is_zhabbler_container_menu_btn what_is_zhabbler_container_menu_btn_clicked" data-show="1"></button>
+                <button class="what_is_zhabbler_container_menu_btn" data-show="2"></button>
+                <button class="what_is_zhabbler_container_menu_btn" data-show="3"></button>
+                <button class="what_is_zhabbler_container_menu_btn" data-show="4"></button>
+            </div>
+            <section style="z-index:4;" class="what_is_zhabbler_container_section what_is_zhabbler_container_section_active what_is_zhabbler_container_section_1">
                 <div>
-                    <div id="Posts">
-                        <div class="post">
-                            <div class="postAuthor">
-                                <a href="#" class="postAuthorProfileImage">
-                                    <img src="/static/images/icon.png" alt="Image">
-                                </a>
-                                <a href="#" class="postAuthorPointsToAuthor">
-                                    zhabbler
-                                </a>
-                                <i class='bx bxs-badge-check verifed_icon'></i>
+                    <svg width="564" viewBox="0 0 1114 704" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path style="transform-origin:center center;animation: what_is_zhabbler_container_section_1_pHAnimH 1s;" d="M540.567 250.184L535.313 248.534L515.396 242.284V204.449H637.109V242.269L616.967 248.528L611.692 250.167V299.225H650.385L652.559 295.521L681.604 246.035C691.767 230.013 702.123 218.569 712.538 211.267C722.651 204.286 736.017 200.5 753.19 200.5C762.824 200.5 770.68 201.67 776.928 203.801L777.001 203.826L777.074 203.849C782.097 205.447 787.114 207.577 792.127 210.255L780.085 257.089L779.801 257.021C777.244 256.393 774.62 256.088 771.945 256.088C764.512 256.088 757.635 258.274 751.497 262.531C745.56 266.49 740.707 271.772 736.905 278.21L715.216 313.463L712.96 317.129L714.987 320.926L763.355 411.506L765.129 414.828L768.854 415.39L798.5 419.857V456.5H695.678L657.906 369.447L655.947 364.933H611.692V411.028L616.967 412.668L637.109 418.926V456.5H515.396V418.91L535.313 412.661L540.567 411.013V364.933H497.57L495.601 369.416L457.347 456.5H354.5V419.844L383.668 415.388L387.346 414.825L389.123 411.559L437.738 322.212L439.825 318.377L437.52 314.668L414.827 278.158H414.828C410.861 271.734 405.856 266.48 399.792 262.543C393.689 258.304 386.896 256.088 379.574 256.088C376.853 256.088 374.149 256.403 371.472 257.021L371.45 257.025L359.593 210.164C364.357 207.532 369.225 205.431 374.198 203.849L374.271 203.826L374.345 203.801C380.582 201.674 388.516 200.5 398.329 200.5C415.503 200.5 428.869 204.286 438.981 211.267C449.561 218.569 460.002 230.019 470.171 246.053L499.208 295.521L501.382 299.225H540.567V250.184Z" stroke="white" stroke-width="15"/>
+                        <path style="animation: what_is_zhabbler_container_section_1_pHAnimNi 1s 2.4s;" d="M1000.15 134.121C1004.16 134.121 1008.63 134.603 1013.53 135.517H1013.54C1018.93 136.459 1024.09 138.422 1029 141.351H1029C1034.36 144.521 1038.65 149.225 1041.96 155.204L1042.28 155.804C1045.55 162.053 1047 169.921 1047 179.06V258.357H1019.61V251.116C1016.61 253.716 1012.98 255.879 1008.82 257.659C1003.47 259.955 997.18 261 990.129 261C982.318 261 975.084 259.531 968.512 256.504L968.496 256.496L968.48 256.489C961.849 253.38 956.489 248.852 952.521 242.923L952.516 242.913L952.51 242.904C948.437 236.759 946.52 229.492 946.52 221.348C946.52 214.277 947.911 208.025 951.118 202.975L951.404 202.527C954.393 197.937 958.354 194.31 963.223 191.689C967.931 189.155 973.08 187.292 978.64 186.075L980.648 185.634C985.341 184.632 990.054 183.822 994.787 183.205L994.798 183.204L999.731 182.582C1004.42 182.001 1008.39 181.542 1011.64 181.207C1015.77 180.737 1018.06 180.019 1019.1 179.42L1019.13 179.406L1019.15 179.394C1019.27 179.329 1019.32 179.281 1019.34 179.259C1019.36 179.238 1019.38 179.211 1019.41 179.158C1019.47 179.05 1019.61 178.69 1019.61 177.885V177.298C1019.61 170.984 1017.9 166.765 1015.09 163.932L1015.08 163.921L1015.07 163.91C1012.42 161.204 1007.98 159.392 1000.74 159.392C993.35 159.392 988.147 160.957 984.598 163.537L984.259 163.79C979.989 167.069 977.286 170.344 975.799 173.536L973.877 177.66L969.59 176.135L953.086 170.262L948.062 168.474L950.169 163.575C953.384 156.101 957.783 150.028 963.482 145.599C968.95 141.338 974.956 138.334 981.477 136.638L982.654 136.335C988.539 134.866 994.374 134.121 1000.15 134.121ZM883.757 98L884.962 101.271L940.37 251.628L942.85 258.357H912.995L911.812 255.035L897.824 215.775H843.854L829.867 255.035L828.684 258.357H798.829L801.309 251.628L856.717 101.271L857.922 98H883.757ZM1019.61 204.31C1017.32 204.891 1014.78 205.411 1012.02 205.87L1011.99 205.875L1011.96 205.88C1008.73 206.375 1005.57 206.822 1002.48 207.219L1002.45 207.223L1002.41 207.227C999.429 207.568 997.027 207.858 995.199 208.098L995.194 208.099C990.967 208.648 987.062 209.534 983.47 210.742L983.452 210.749L983.435 210.755C980.236 211.804 977.859 213.319 976.112 215.2L976.113 215.201C974.825 216.592 973.908 218.731 973.908 222.229C973.908 226.793 975.485 229.705 978.413 231.741C981.908 234.084 986.586 235.436 992.781 235.436C999.016 235.436 1003.91 234.216 1007.69 232.056L1007.7 232.05L1007.71 232.045C1011.78 229.746 1014.67 226.888 1016.57 223.513L1016.58 223.493L1016.6 223.475C1018.63 219.94 1019.61 216.318 1019.61 212.537V204.31ZM853.171 189.624H888.508L870.839 140.03L853.171 189.624Z" stroke="white" stroke-opacity="0.5" stroke-width="10"/>
+                        <path style="animation: what_is_zhabbler_container_section_1_pHAnimF 1s 1s;" d="M284.223 72.1367C286.92 72.1367 289.889 72.4605 293.097 73.0576H293.098C293.109 73.0596 293.121 73.0614 293.133 73.0635C293.141 73.0649 293.148 73.0669 293.156 73.0684H293.155C296.816 73.7159 300.303 75.0494 303.599 77.0186H303.6C307.352 79.2396 310.308 82.5098 312.549 86.5703L312.773 86.9883C315.052 91.3394 316 96.6989 316 102.718V155.307H294.874V152.427C293.516 153.283 292.048 154.043 290.484 154.714C286.772 156.307 282.492 157 277.812 157C272.583 157 267.692 156.014 263.225 153.954L263.209 153.947L263.193 153.939C258.667 151.815 254.979 148.703 252.251 144.621L252.245 144.612L252.239 144.603C249.406 140.323 248.108 135.309 248.108 129.805C248.108 125.056 249.04 120.688 251.325 117.081L251.728 116.463C253.781 113.413 256.472 110.987 259.74 109.226C262.72 107.62 265.95 106.421 269.403 105.608L270.097 105.451C273.566 104.669 277.054 104.048 280.559 103.591L280.569 103.59L283.732 103.19C286.732 102.819 289.279 102.523 291.368 102.308C293.142 102.105 294.246 101.838 294.874 101.628V101.589C294.874 97.8779 293.879 95.6821 292.503 94.292L292.492 94.2803L292.481 94.2695C291.247 93.0073 288.955 91.917 284.6 91.917C280.253 91.917 277.386 92.811 275.516 94.0986L275.154 94.3613C272.584 96.338 271.073 98.223 270.275 99.9375L268.354 104.065L264.064 102.537L253.504 98.7754L248.485 96.9873L250.589 92.0918C252.674 87.2382 255.539 83.1858 259.289 80.1572L259.655 79.8672C263.113 77.1708 266.905 75.2106 271.013 74.0283L271.839 73.8018C275.991 72.6996 280.123 72.1367 284.223 72.1367ZM211.008 49L212.213 52.2725L247.664 148.58L250.141 155.307H227.188L226.004 151.983L217.48 128.032H185.491L176.968 151.983L175.785 155.307H152.831L155.308 148.58L190.76 52.2725L191.964 49H211.008ZM294.874 121.148C293.993 121.332 293.073 121.505 292.114 121.664L292.083 121.669L292.053 121.674C289.972 121.993 287.936 122.281 285.945 122.537L285.91 122.541L285.876 122.545C283.972 122.763 282.446 122.948 281.29 123.1L281.285 123.101C278.685 123.439 276.303 123.982 274.126 124.715L274.091 124.727C272.289 125.318 271.044 126.14 270.164 127.09C269.724 127.566 269.233 128.456 269.233 130.368C269.233 132.777 270.012 134.057 271.342 134.983C273.208 136.229 275.819 137.03 279.508 137.03C283.265 137.03 286.067 136.296 288.153 135.104L288.173 135.092C290.526 133.761 292.121 132.154 293.163 130.309L293.174 130.289L293.185 130.271C294.339 128.266 294.874 126.254 294.874 124.161V121.148ZM192.731 107.688H210.24L201.485 83.0889L192.731 107.688Z" stroke="white" stroke-opacity="0.5" stroke-width="10"/>
+                        <path style="animation: what_is_zhabbler_container_section_1_pHAnimSe 1s 2.8s;" d="M802.071 299.5V329.929H832.5V347.071H802.071V377.5H784.929V347.071H754.5V329.929H784.929V299.5H802.071Z" stroke="white" stroke-opacity="0.5" stroke-width="7"/>
+                        <path style="animation: what_is_zhabbler_container_section_1_pHAnimTe 1s 2.6s;" d="M790.857 138V155.143H808V164.857H790.857V182H781.143V164.857H764V155.143H781.143V138H790.857Z" stroke="white" stroke-opacity="0.5" stroke-width="4"/>
+                        <path style="animation: what_is_zhabbler_container_section_1_pHAnimSi 1s 1.6s;" d="M952.667 481.083H957.062C964.333 481.083 970.25 475.166 970.25 467.896V388.771C970.25 381.5 964.333 375.583 957.062 375.583H842.771C835.5 375.583 829.583 381.5 829.583 388.771V516.25L876.469 481.083H952.667ZM870.614 463.5L847.167 481.083V393.167H952.667V463.5H870.614Z" fill="white" fill-opacity="0.5"/>
+                        <path style="animation: what_is_zhabbler_container_section_1_pHAnimSi 1s 1.6s;" d="M992.229 428.333H987.833V481.092C987.833 490.763 979.982 498.614 970.338 498.667H882.333V503.062C882.333 510.333 888.25 516.25 895.521 516.25H958.531L1005.42 551.417V441.521C1005.42 434.25 999.5 428.333 992.229 428.333Z" fill="white" fill-opacity="0.5"/>
+                        <path style="animation: what_is_zhabbler_container_section_1_pHAnimEi 1s 2.2s;" d="M1050.83 375.221L1047.83 363.311L1046.78 359.119L1050.77 357.469L1053.7 356.258L1053.71 356.255L1053.71 356.252L1057.05 354.888L1057.22 354.814L1057.41 354.756C1057.57 354.705 1057.85 354.581 1058.4 354.259C1058.68 354.1 1058.96 353.929 1059.32 353.711C1059.62 353.525 1059.98 353.312 1060.36 353.095C1060.81 352.803 1061.25 352.551 1061.61 352.347C1062.1 352.077 1062.34 351.95 1062.71 351.737C1063.37 351.368 1063.68 351.137 1063.87 350.947L1063.93 350.894L1063.99 350.84C1064.85 350.048 1065.9 349.269 1066.46 348.828C1067.14 348.291 1067.53 347.935 1067.81 347.607C1068.57 346.653 1069.52 345.695 1069.95 345.236C1070.53 344.604 1070.78 344.263 1070.91 344L1071.04 343.751L1071.2 343.518C1071.54 343 1071.85 342.534 1072.12 342.103C1067.23 341.551 1062.51 339.912 1058.32 337.284C1053.08 333.999 1048.88 329.303 1046.21 323.736C1043.53 318.17 1042.5 311.962 1043.22 305.833C1043.95 299.704 1046.41 293.907 1050.3 289.113C1054.2 284.32 1059.38 280.725 1065.25 278.74C1071.11 276.756 1077.41 276.462 1083.43 277.893C1089.46 279.323 1094.95 282.419 1099.28 286.828C1102.42 290.022 1104.85 293.81 1106.45 297.949L1107.32 297.749L1108.12 303.089L1108.28 304.121L1108.28 304.136C1108.4 304.988 1108.6 306.359 1108.71 307.806L1108.71 307.807C1108.98 310.717 1109.1 314.587 1108.89 319.148L1108.89 319.197C1108.62 323.868 1107.92 329.37 1106.35 335.192L1106.34 335.227L1106.33 335.262C1105.51 338.126 1104.49 341.119 1103.22 344.079L1103.18 344.165L1103.14 344.25L1102.18 346.275C1101.19 348.344 1100.01 350.656 1098.47 352.826C1096.67 355.809 1094.44 358.349 1092.43 360.523C1091.21 362.02 1089.86 363.213 1088.68 364.178C1087.28 365.329 1086.48 365.904 1085.49 366.778L1085.43 366.829L1085.37 366.879C1083.98 368.034 1082.55 368.923 1081.31 369.645C1079.94 370.449 1079.08 370.893 1078.1 371.514L1078.1 371.513C1076.66 372.451 1075.24 373.08 1074.06 373.555C1072.63 374.125 1072.02 374.313 1071.11 374.717L1070.99 374.767L1070.88 374.812C1069.46 375.358 1066.97 376.49 1064.73 376.94C1063.22 377.319 1061.57 377.719 1060.58 377.966L1060.56 377.972L1060.53 377.978L1056.84 378.862L1052.04 380.015L1050.83 375.221ZM982.831 375.221L979.833 363.311L978.777 359.119L982.771 357.469L985.702 356.258L985.709 356.255L985.717 356.252L989.049 354.888L989.227 354.814L989.41 354.756C989.568 354.705 989.851 354.581 990.407 354.259C990.681 354.1 990.961 353.929 991.319 353.711C991.626 353.524 991.983 353.31 992.362 353.092C992.813 352.802 993.249 352.55 993.615 352.347C994.101 352.077 994.345 351.95 994.718 351.737C995.368 351.368 995.682 351.137 995.875 350.947L995.931 350.894L995.988 350.84C996.848 350.048 997.899 349.269 998.458 348.828C999.145 348.287 999.541 347.929 999.815 347.601C1000.57 346.648 1001.52 345.694 1001.95 345.236C1002.53 344.605 1002.78 344.263 1002.92 344L1003.04 343.751L1003.2 343.518C1003.54 343 1003.85 342.534 1004.12 342.103C999.234 341.551 994.514 339.912 990.323 337.284C985.083 333.999 980.881 329.303 978.208 323.736C975.534 318.17 974.5 311.962 975.226 305.833C975.952 299.704 978.408 293.907 982.307 289.113C986.205 284.32 991.386 280.724 997.248 278.74C1003.11 276.756 1009.41 276.462 1015.44 277.893C1021.46 279.323 1026.95 282.419 1031.29 286.828C1034.42 290.022 1036.86 293.81 1038.45 297.949L1039.32 297.749L1040.12 303.089L1040.28 304.121L1040.28 304.136C1040.4 304.965 1040.59 306.284 1040.7 307.687L1040.8 308.83C1041.01 311.601 1041.08 315.102 1040.89 319.148L1040.89 319.173L1040.89 319.197C1040.62 323.868 1039.92 329.37 1038.35 335.192L1038.34 335.227L1038.33 335.262C1037.51 338.126 1036.5 341.119 1035.22 344.079L1035.18 344.165L1035.14 344.25C1033.95 346.743 1032.54 349.913 1030.47 352.826C1028.67 355.81 1026.44 358.35 1024.43 360.525C1023.21 362.019 1021.86 363.21 1020.68 364.174C1019.29 365.321 1018.48 365.901 1017.49 366.772L1017.43 366.823L1017.37 366.872C1015.98 368.027 1014.55 368.917 1013.32 369.639C1011.94 370.443 1011.09 370.887 1010.1 371.507L1010.1 371.506C1008.66 372.449 1007.24 373.08 1006.06 373.553C1004.64 374.119 1004.01 374.312 1003.13 374.709L1003.01 374.764L1002.88 374.812C1001.47 375.358 998.971 376.491 996.732 376.941C995.224 377.32 993.567 377.72 992.582 377.966L992.559 377.972L992.536 377.978L988.846 378.862L984.037 380.015L982.831 375.221Z" stroke="white" stroke-opacity="0.5" stroke-width="10"/>
+                        <path style="animation: what_is_zhabbler_container_section_1_pHAnimT 1s 1.8s;" d="M80.8281 540.221L77.8301 528.311L76.7754 524.119L80.7695 522.469L83.6992 521.258L83.707 521.255L83.7139 521.252L87.0459 519.888L87.2246 519.814L87.4072 519.756C87.5655 519.705 87.848 519.581 88.4043 519.259C88.6784 519.1 88.9587 518.929 89.3174 518.711C89.6234 518.525 89.9788 518.312 90.3564 518.095C90.8081 517.803 91.2457 517.551 91.6133 517.347C92.0989 517.077 92.3416 516.95 92.7148 516.737C93.3651 516.368 93.6798 516.137 93.873 515.947L93.9287 515.894L93.9854 515.84C94.8454 515.048 95.8956 514.269 96.4551 513.828C97.1378 513.291 97.5341 512.935 97.8086 512.607C98.5678 511.653 99.5196 510.695 99.9453 510.236C100.532 509.604 100.779 509.263 100.914 509L101.041 508.751L101.196 508.518C101.539 508 101.845 507.534 102.12 507.103C97.2316 506.551 92.5123 504.912 88.3213 502.284C83.0809 498.999 78.8785 494.303 76.2051 488.736C73.5316 483.17 72.4977 476.962 73.2236 470.833C73.9497 464.704 76.4059 458.907 80.3047 454.113C84.2032 449.32 89.3837 445.725 95.2451 443.74C101.107 441.756 107.413 441.462 113.435 442.893C119.456 444.323 124.951 447.419 129.282 451.828C132.42 455.022 134.852 458.81 136.449 462.949L137.322 462.749L138.121 468.089L138.276 469.121L138.278 469.136C138.404 469.988 138.6 471.359 138.707 472.806L138.706 472.807C138.984 475.717 139.105 479.587 138.888 484.148L138.886 484.197C138.617 488.868 137.92 494.37 136.347 500.192L136.337 500.227L136.327 500.262C135.509 503.126 134.495 506.119 133.218 509.079L133.181 509.165L133.14 509.25L132.179 511.275C131.188 513.344 130.011 515.656 128.471 517.826C126.668 520.809 124.44 523.349 122.427 525.523C121.207 527.02 119.858 528.213 118.684 529.178C117.283 530.329 116.476 530.904 115.486 531.778L115.429 531.829L115.369 531.879C113.976 533.034 112.549 533.923 111.313 534.645C109.936 535.449 109.083 535.893 108.099 536.514L108.099 536.513C106.662 537.451 105.243 538.08 104.059 538.555C102.635 539.125 102.016 539.313 101.107 539.717L100.994 539.767L100.879 539.812C99.4642 540.358 96.972 541.49 94.7344 541.94C93.2246 542.319 91.5651 542.719 90.5791 542.966L90.5566 542.972L90.5332 542.978L86.8428 543.862L82.0352 545.015L80.8281 540.221ZM12.8311 540.221L9.83301 528.311L8.77735 524.119L12.7715 522.469L15.7021 521.258L15.709 521.255L15.7168 521.252L19.0488 519.888L19.2266 519.814L19.4102 519.756C19.5685 519.705 19.8511 519.581 20.4072 519.259C20.6812 519.1 20.961 518.929 21.3193 518.711C21.6264 518.524 21.9832 518.31 22.3623 518.092C22.8125 517.802 23.2487 517.55 23.6152 517.347C24.1008 517.077 24.3446 516.95 24.7178 516.737C25.3678 516.368 25.6818 516.137 25.875 515.947L25.9307 515.894L25.9883 515.84C26.8483 515.048 27.8986 514.269 28.458 513.828C29.1449 513.287 29.5408 512.929 29.8154 512.601C30.5738 511.648 31.5234 510.694 31.9482 510.236C32.5345 509.605 32.7814 509.263 32.916 509L33.0439 508.751L33.1982 508.518C33.5407 508 33.8474 507.534 34.1221 507.103C29.2335 506.551 24.5142 504.912 20.3232 502.284C15.0829 498.999 10.8814 494.303 8.20801 488.736C5.5345 483.17 4.49962 476.962 5.22559 470.833C5.9516 464.704 8.408 458.907 12.3066 454.113C16.2052 449.32 21.3864 445.724 27.2481 443.74C33.1095 441.756 39.415 441.462 45.4365 442.893C51.4582 444.323 56.9539 447.419 61.2852 451.828C64.4227 455.022 66.8559 458.81 68.4531 462.949L69.3242 462.749L70.124 468.089L70.2783 469.121L70.2803 469.136C70.4021 469.965 70.5905 471.284 70.6992 472.687L70.7988 473.83C71.0114 476.601 71.0833 480.102 70.8906 484.148L70.8887 484.173L70.8877 484.197C70.6191 488.868 69.9223 494.37 68.3486 500.192L68.3398 500.227L68.3301 500.262C67.5116 503.126 66.4966 506.119 65.2197 509.079L65.1826 509.165L65.1426 509.25C63.954 511.743 62.5414 514.913 60.4727 517.826C58.6691 520.81 56.4401 523.35 54.4268 525.525C53.2067 527.019 51.8576 528.21 50.6836 529.174C49.2863 530.321 48.4766 530.901 47.4893 531.772L47.4316 531.823L47.3721 531.872C45.9791 533.027 44.5517 533.917 43.3154 534.639C41.9386 535.443 41.0859 535.887 40.1016 536.507L40.1016 536.506C38.6619 537.449 37.2398 538.08 36.0576 538.553C34.6424 539.119 34.0121 539.312 33.127 539.709L33.0059 539.764L32.8818 539.812C31.4662 540.358 28.9713 541.491 26.7324 541.941C25.2239 542.32 23.5672 542.72 22.582 542.966L22.5586 542.972L22.5361 542.978L18.8457 543.862L14.0371 545.015L12.8311 540.221Z" stroke="white" stroke-opacity="0.5" stroke-width="10"/>
+                        <path style="animation: what_is_zhabbler_container_section_1_pHAnimEl 1s 1.4s;" d="M684.505 22.7974C672.759 11.9956 657.386 6.0005 641.43 6C632.985 6.00879 624.625 7.68793 616.831 10.9408C609.037 14.1936 601.963 18.9559 596.016 24.9537C570.652 50.43 570.663 90.278 596.038 115.647L675.073 194.696C676.905 197.919 680.441 200 684.505 200C686.173 199.984 687.815 199.576 689.298 198.811C690.78 198.045 692.063 196.942 693.042 195.59L772.972 115.647C798.346 90.2672 798.346 50.43 772.95 24.9105C767.006 18.9238 759.938 14.1712 752.152 10.9258C744.366 7.68049 736.015 6.00646 727.579 6C711.624 6.00261 696.251 11.9974 684.505 22.7974ZM757.708 40.1554C774.556 57.0929 774.567 83.5504 757.729 100.402L684.505 173.64L611.28 100.402C594.442 83.5504 594.453 57.0929 611.258 40.1985C619.451 32.0478 630.166 27.5627 641.43 27.5627C652.695 27.5627 663.366 32.0478 671.494 40.1769L676.884 45.5676C677.884 46.5697 679.072 47.3647 680.379 47.9071C681.687 48.4495 683.089 48.7287 684.505 48.7287C685.92 48.7287 687.322 48.4495 688.63 47.9071C689.938 47.3647 691.126 46.5697 692.126 45.5676L697.515 40.1769C713.814 23.9079 741.431 23.951 757.708 40.1554Z" fill="white" fill-opacity="0.5"/>
+                        <path style="animation: what_is_zhabbler_container_section_1_pHAnimFi 1s 2.4s;" d="M772.4 485C776.355 485 780.145 486.574 782.938 489.372C785.732 492.17 787.3 495.964 787.3 499.917V554.417H822.442L815.896 562.552L775.988 612.135L772.062 617.012L768.175 612.105L728.881 562.522L722.458 554.417H757.5V514.833H688.2V485H772.4ZM657.507 486.88L697.106 536.463L703.592 544.583H668.5V584.167H737.8V614H653.6C649.645 614 645.855 612.426 643.062 609.628C640.268 606.83 638.7 603.036 638.7 599.083V544.583H603.607L610.093 536.463L649.693 486.88L653.6 481.988L657.507 486.88Z" stroke="white" stroke-opacity="0.5" stroke-width="10"/>
+                        <path style="animation: what_is_zhabbler_container_section_1_pHAnimEl 1s 1.6s;" d="M512.6 11C516.668 11 520.572 12.6136 523.451 15.4883C526.331 18.3631 527.95 22.2639 527.95 26.333V83.333H564.464L557.89 91.4746L516.169 143.142L512.249 147.996L508.365 143.111L467.286 91.4453L460.837 83.333H497.25V41.667H424.8V11H512.6ZM392.302 12.873L433.702 64.54L440.214 72.667H403.75V114.333H476.2V145H388.4C384.332 145 380.428 143.386 377.549 140.512C374.669 137.637 373.05 133.736 373.05 129.667V72.667H336.586L343.098 64.54L384.498 12.873L388.4 8.00391L392.302 12.873Z" stroke="white" stroke-opacity="0.5" stroke-width="10"/>
+                        <path style="animation: what_is_zhabbler_container_section_1_pHAnimFo 1s 1.4s;" d="M262.5 505.667C241.452 505.667 223.667 523.452 223.667 544.5C223.667 565.548 241.452 583.333 262.5 583.333C283.548 583.333 301.333 565.548 301.333 544.5C301.333 523.452 283.548 505.667 262.5 505.667ZM262.5 563.917C252.161 563.917 243.083 554.839 243.083 544.5C243.083 534.161 252.161 525.083 262.5 525.083C272.839 525.083 281.917 534.161 281.917 544.5C281.917 554.839 272.839 563.917 262.5 563.917Z" fill="white" fill-opacity="0.5"/>
+                        <path style="animation: what_is_zhabbler_container_section_1_pHAnimFo 1s 1.4s;" d="M340.167 476.542H315.061L288.78 450.261C287.88 449.358 286.811 448.642 285.633 448.153C284.455 447.665 283.192 447.415 281.917 447.417H243.083C241.808 447.415 240.545 447.665 239.367 448.153C238.189 448.642 237.12 449.358 236.22 450.261L209.939 476.542H184.833C174.125 476.542 165.417 485.25 165.417 495.958V602.75C165.417 613.458 174.125 622.167 184.833 622.167H340.167C350.875 622.167 359.583 613.458 359.583 602.75V495.958C359.583 485.25 350.875 476.542 340.167 476.542ZM184.833 602.75V495.958H213.958C216.541 495.958 219.007 494.939 220.822 493.114L247.103 466.833H277.897L304.178 493.114C305.078 494.017 306.148 494.734 307.326 495.222C308.504 495.71 309.766 495.96 311.042 495.958H340.167L340.186 602.75H184.833Z" fill="white" fill-opacity="0.5"/>
+                        <path style="animation: what_is_zhabbler_container_section_1_pHAnimSe 1s 2.2s;" d="M936.9 282H872.1C867.633 282 864 285.633 864 290.1V363L885.599 346.8H936.9C941.367 346.8 945 343.167 945 338.7V290.1C945 285.633 941.367 282 936.9 282ZM936.9 338.7H882.901L872.1 346.8V290.1H936.9V338.7Z" fill="white" fill-opacity="0.5"/>
+                        <path style="animation: what_is_zhabbler_container_section_1_pHAnimFi 1s 2s;" d="M437 668.167H412.334C398.726 668.167 387.667 657.107 387.667 643.5V603.167C387.667 591.096 396.37 581.031 407.834 578.912V562.833C407.796 551.428 410.067 540.133 414.511 529.629C418.955 519.126 425.479 509.631 433.69 501.716L434.475 500.963C450.777 485.518 471.859 477.424 494.479 477.679L495.575 477.698L495.59 477.699H495.606C541.305 479.077 578.167 518.719 578.167 565.788V578.912C589.63 581.031 598.334 591.096 598.334 603.167V643.5C598.334 657.107 587.274 668.167 573.667 668.167H549V565.788C549 534.014 524.436 507.751 494.72 506.862L494.71 506.861C487.212 506.618 479.742 507.89 472.747 510.601C465.752 513.312 459.376 517.406 454.001 522.639L453.993 522.647L453.984 522.655C448.588 527.855 444.301 534.095 441.382 540.998C438.463 547.9 436.972 555.323 437 562.817V668.167Z" stroke="white" stroke-opacity="0.5" stroke-width="9"/>
+                        <path style="animation: what_is_zhabbler_container_section_1_pHAnimFi 1s 2s;" d="M539.5 586.5V668.5H526.5V586.5H539.5ZM459.5 586.5V668.5H446.5V586.5H459.5Z" stroke="white" stroke-opacity="0.5" stroke-width="7"/>
+                        <path style="animation: what_is_zhabbler_container_section_1_pHAnimS 1s 1.6s;" d="M292.5 286.25C292.5 272.738 281.512 261.75 268 261.75H250.433L220.813 212.395C218.63 208.775 215.551 205.779 211.874 203.696C208.196 201.612 204.043 200.512 199.817 200.5H133.25V225H199.817L221.867 261.75H121C107.488 261.75 96.5 272.738 96.5 286.25V396.5C96.5 410.012 107.488 421 121 421H268C281.512 421 292.5 410.012 292.5 396.5V359.75L341.5 384.25V298.5L292.5 323V286.25ZM268.025 396.5H121V286.25H268L268.012 335.25L268 347.5L268.012 347.512L268.025 396.5Z" fill="white" fill-opacity="0.5"/>
+                        <path style="animation: what_is_zhabbler_container_section_1_pHAnimS 1s 1.6s;" d="M145.5 347.5H219V372H145.5V347.5Z" fill="white" fill-opacity="0.5"/>
+                        <path style="animation: what_is_zhabbler_container_section_1_pHAnimS 1s 1.2s;" d="M309.071 180.5V210.929H339.5V228.071H309.071V258.5H291.929V228.071H261.5V210.929H291.929V180.5H309.071Z" stroke="white" stroke-opacity="0.5" stroke-width="7"/>
+                    </svg>
+                </div>
+                <div style="overflow:hidden;width:100%;max-width: 700px;display: flex;height: 250px;justify-content: center;flex-direction: column;gap: 20px;animation: what_is_zhabbler_container_section_1_pHAnimTxts .2s 2s backwards;">
+                    <h1 class="what_is_zhabbler_container_section_title" style="animation: what_is_zhabbler_container_section_1_pHAnimAny .5s 2.6s backwards;">
+                        {$language['about_zhabbler_1']}
+                    </h1>
+                    <div  style="animation: what_is_zhabbler_container_section_1_pHAnimAny .5s 2.8s backwards;">
+                        <span>
+                            {$language['about_zhabbler_1_info']}
+                        </span>
+                    </div>
+                </div>
+            </section>
+            <section style="z-index:3;display:none;" class="what_is_zhabbler_container_section what_is_zhabbler_container_section_2">
+                <div class="what_is_zhabbler_container_section_2_container">
+                    <div class="what_is_zhabbler_container_section_2_container_txt">
+                        <div>
+                            <h1 class="what_is_zhabbler_container_section_title" style="animation: what_is_zhabbler_container_section_1_pHAnimAny .5s 1.3s backwards;">
+                                {$language['about_zhabbler_2']}
+                            </h1>
+                        </div>
+                        <div style="animation: what_is_zhabbler_container_section_1_pHAnimAny .5s 1.4s backwards;">
+                            <span>{$language['about_zhabbler_2_info']}</span>
+                        </div>
+                    </div>
+                    <div class="what_is_zhabbler_container_section_2_container_posts">
+                        <div class="what_is_zhabbler_container_section_2_container_posts_i what_is_zhabbler_container_section_2_container_posts_i_1">
+                            <div class="what_is_zhabbler_container_section_2_container_posts_i_post">
+                                <div class="what_is_zhabbler_container_section_2_container_posts_i_post_author">
+                                    <img src="/static/images/posts_wiz/fish.jpeg">
+                                    <div>
+                                        <span>fish</span>
+                                    </div>
+                                </div>
+                                <div class="what_is_zhabbler_container_section_2_container_posts_i_post_container">
+                                    <img src="/static/images/posts_wiz/ele.jpeg">
+                                </div>
+                                <div class="what_is_zhabbler_container_section_2_container_posts_i_post_actions">
+                                    <i class='bx bx-share'></i>
+                                    <i class='bx bx-comment'></i>
+                                    <i class='bx bx-repost'></i>
+                                    <i class='bx bx-heart'></i>
+                                </div>
                             </div>
-                            <div class="postContent">
-                                {include '../../../docs/help/about.'.$language['info']['code'].'.html'}
+                            <div class="what_is_zhabbler_container_section_2_container_posts_i_post">
+                                <div class="what_is_zhabbler_container_section_2_container_posts_i_post_author">
+                                    <img src="/static/images/posts_wiz/nickname.jpeg">
+                                    <div>
+                                        <span>nickname</span>
+                                    </div>
+                                </div>
+                                <div class="what_is_zhabbler_container_section_2_container_posts_i_post_container">
+                                    <img src="/static/images/posts_wiz/se.jpeg">
+                                </div>
+                                <div class="what_is_zhabbler_container_section_2_container_posts_i_post_actions">
+                                    <i class='bx bx-share'></i>
+                                    <i class='bx bx-comment'></i>
+                                    <i class='bx bx-repost'></i>
+                                    <i class='bx bx-heart'></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="what_is_zhabbler_container_section_2_container_posts_i what_is_zhabbler_container_section_2_container_posts_i_2">
+                            <div class="what_is_zhabbler_container_section_2_container_posts_i">
+                                <div class="what_is_zhabbler_container_section_2_container_posts_i_post">
+                                    <div class="what_is_zhabbler_container_section_2_container_posts_i_post_author">
+                                        <img src="/static/images/posts_wiz/kiffaknife.jpeg">
+                                        <div>
+                                            <span>kiffaknife</span>
+                                        </div>
+                                    </div>
+                                    <div class="what_is_zhabbler_container_section_2_container_posts_i_post_container">
+                                        <img src="/static/images/posts_wiz/ten.jpeg">
+                                    </div>
+                                    <div class="what_is_zhabbler_container_section_2_container_posts_i_post_actions">
+                                        <i class='bx bx-share'></i>
+                                        <i class='bx bx-comment'></i>
+                                        <i class='bx bx-repost'></i>
+                                        <i class='bx bx-heart'></i>
+                                    </div>
+                                </div>
+                                <div class="what_is_zhabbler_container_section_2_container_posts_i_post">
+                                    <div class="what_is_zhabbler_container_section_2_container_posts_i_post_author">
+                                        <img src="/static/images/posts_wiz/flydelick.jpeg">
+                                        <div>
+                                            <span>flydelick</span>
+                                        </div>
+                                    </div>
+                                    <div class="what_is_zhabbler_container_section_2_container_posts_i_post_container">
+                                        <img src="/static/images/posts_wiz/nin.jpeg">
+                                    </div>
+                                    <div class="what_is_zhabbler_container_section_2_container_posts_i_post_actions">
+                                        <i class='bx bx-share'></i>
+                                        <i class='bx bx-comment'></i>
+                                        <i class='bx bx-repost'></i>
+                                        <i class='bx bx-heart'></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="what_is_zhabbler_container_section_2_container_posts_i what_is_zhabbler_container_section_2_container_posts_i_3">
+                            <div class="what_is_zhabbler_container_section_2_container_posts_i_post">
+                                <div class="what_is_zhabbler_container_section_2_container_posts_i_post_author">
+                                    <img src="/static/images/posts_wiz/MikitaAgatov.jpeg">
+                                    <div>
+                                        <span>MikitaAgatov</span>
+                                    </div>
+                                </div>
+                                <div class="what_is_zhabbler_container_section_2_container_posts_i_post_container">
+                                    <img src="/static/images/posts_wiz/th.jpeg">
+                                </div>
+                                <div class="what_is_zhabbler_container_section_2_container_posts_i_post_actions">
+                                    <i class='bx bx-share'></i>
+                                    <i class='bx bx-comment'></i>
+                                    <i class='bx bx-repost'></i>
+                                    <i class='bx bx-heart'></i>
+                                </div>
+                            </div>
+                            <div class="what_is_zhabbler_container_section_2_container_posts_i_post">
+                                <div class="what_is_zhabbler_container_section_2_container_posts_i_post_author">
+                                    <img src="/static/images/posts_wiz/hsd.jpeg">
+                                    <div>
+                                        <span>hsd</span>
+                                    </div>
+                                </div>
+                                <div class="what_is_zhabbler_container_section_2_container_posts_i_post_container">
+                                    <img src="/static/images/posts_wiz/fo.jpeg">
+                                </div>
+                                <div class="what_is_zhabbler_container_section_2_container_posts_i_post_actions">
+                                    <i class='bx bx-share'></i>
+                                    <i class='bx bx-comment'></i>
+                                    <i class='bx bx-repost'></i>
+                                    <i class='bx bx-heart'></i>
+                                </div>
+                            </div>
+                            <div class="what_is_zhabbler_container_section_2_container_posts_i_post">
+                                <div class="what_is_zhabbler_container_section_2_container_posts_i_post_author">
+                                    <img src="/static/images/posts_wiz/krispa.jpeg">
+                                    <div>
+                                        <span>krispa</span>
+                                    </div>
+                                </div>
+                                <div class="what_is_zhabbler_container_section_2_container_posts_i_post_container">
+                                    <img src="/static/images/posts_wiz/sev.jpeg">
+                                </div>
+                                <div class="what_is_zhabbler_container_section_2_container_posts_i_post_actions">
+                                    <i class='bx bx-share'></i>
+                                    <i class='bx bx-comment'></i>
+                                    <i class='bx bx-repost'></i>
+                                    <i class='bx bx-heart'></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="what_is_zhabbler_container_section_2_container_posts_i what_is_zhabbler_container_section_2_container_posts_i_4">
+                            <div class="what_is_zhabbler_container_section_2_container_posts_i">
+                                <div class="what_is_zhabbler_container_section_2_container_posts_i_post">
+                                    <div class="what_is_zhabbler_container_section_2_container_posts_i_post_author">
+                                        <img src="/static/images/posts_wiz/saursvepur.jpeg">
+                                        <div>
+                                            <span>saursvepur</span>
+                                        </div>
+                                    </div>
+                                    <div class="what_is_zhabbler_container_section_2_container_posts_i_post_container">
+                                        <img src="/static/images/posts_wiz/fif.jpeg">
+                                    </div>
+                                    <div class="what_is_zhabbler_container_section_2_container_posts_i_post_actions">
+                                        <i class='bx bx-share'></i>
+                                        <i class='bx bx-comment'></i>
+                                        <i class='bx bx-repost'></i>
+                                        <i class='bx bx-heart'></i>
+                                    </div>
+                                </div>
+                                <div class="what_is_zhabbler_container_section_2_container_posts_i_post">
+                                    <div class="what_is_zhabbler_container_section_2_container_posts_i_post_author">
+                                        <img src="/static/images/posts_wiz/mihoillo.jpeg">
+                                        <div>
+                                            <span>mihoillo</span>
+                                        </div>
+                                    </div>
+                                    <div class="what_is_zhabbler_container_section_2_container_posts_i_post_container">
+                                        <img src="/static/images/posts_wiz/six.jpeg">
+                                    </div>
+                                    <div class="what_is_zhabbler_container_section_2_container_posts_i_post_actions">
+                                        <i class='bx bx-share'></i>
+                                        <i class='bx bx-comment'></i>
+                                        <i class='bx bx-repost'></i>
+                                        <i class='bx bx-heart'></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="what_is_zhabbler_container_section_2_container_posts_i what_is_zhabbler_container_section_2_container_posts_i_5">
+                            <div class="what_is_zhabbler_container_section_2_container_posts_i">
+                                <div class="what_is_zhabbler_container_section_2_container_posts_i_post">
+                                    <div class="what_is_zhabbler_container_section_2_container_posts_i_post_author">
+                                        <img src="/static/images/posts_wiz/daniel.jpeg">
+                                        <div>
+                                            <span>daniel</span>
+                                        </div>
+                                    </div>
+                                    <div class="what_is_zhabbler_container_section_2_container_posts_i_post_container">
+                                        <img src="/static/images/posts_wiz/eig.jpeg">
+                                    </div>
+                                    <div class="what_is_zhabbler_container_section_2_container_posts_i_post_actions">
+                                        <i class='bx bx-share'></i>
+                                        <i class='bx bx-comment'></i>
+                                        <i class='bx bx-repost'></i>
+                                        <i class='bx bx-heart'></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="what_is_zhabbler_container_section_2_container_posts_i_post">
+                                <div class="what_is_zhabbler_container_section_2_container_posts_i_post_author">
+                                    <img src="/static/images/posts_wiz/flydelick.jpeg">
+                                    <div>
+                                        <span>flydelick</span>
+                                    </div>
+                                </div>
+                                <div class="what_is_zhabbler_container_section_2_container_posts_i_post_container">
+                                    <img src="/static/images/posts_wiz/fi.jpeg">
+                                </div>
+                                <div class="what_is_zhabbler_container_section_2_container_posts_i_post_actions">
+                                    <i class='bx bx-share'></i>
+                                    <i class='bx bx-comment'></i>
+                                    <i class='bx bx-repost'></i>
+                                    <i class='bx bx-heart'></i>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </main>
-            {include '../includes/nav_options.latte'}
+            </section>
+            <section style="z-index:2;display:none;" class="what_is_zhabbler_container_section what_is_zhabbler_container_section_3">
+                <div class="what_is_zhabbler_container_section_3_container">
+                    <div id="mSa">
+                        <div class="what_is_zhabbler_container_section_3_container_pseudo_post what_is_zhabbler_container_section_3_container_pseudo_post_write">
+                            <div class="what_is_zhabbler_container_section_3_container_pseudo_post_write_el">
+                                <div class="what_is_zhabbler_container_section_3_container_pseudo_post_write_el_icon">
+                                    Aa
+                                </div>
+                                <div>
+                                    {$language['text']}
+                                </div>
+                            </div>
+                            <div class="what_is_zhabbler_container_section_3_container_pseudo_post_write_el">
+                                <div class="what_is_zhabbler_container_section_3_container_pseudo_post_write_el_icon" style="color:#ff4930;">
+                                    <i class='bx bxs-camera'></i>
+                                </div>
+                                <div>
+                                    {$language['photo']}
+                                </div>
+                            </div>
+                            <div class="what_is_zhabbler_container_section_3_container_pseudo_post_write_el">
+                                <div class="what_is_zhabbler_container_section_3_container_pseudo_post_write_el_icon" style="color:#ff8a00;">
+                                    <i class='bx bxs-quote-alt-left'></i>
+                                </div>
+                                <div>
+                                    {$language['quote']}
+                                </div>
+                            </div>
+                            <div class="what_is_zhabbler_container_section_3_container_pseudo_post_write_el">
+                                <div class="what_is_zhabbler_container_section_3_container_pseudo_post_write_el_icon" style="color:#00b8ff;">
+                                    <i class='bx bxs-conversation'></i>
+                                </div>
+                                <div>
+                                    {$language['dialog']}
+                                </div>
+                            </div>
+                            <div class="what_is_zhabbler_container_section_3_container_pseudo_post_write_el">
+                                <div class="what_is_zhabbler_container_section_3_container_pseudo_post_write_el_icon" style="color:#7d61ff;">
+                                    <i class='bx bx-headphone'></i>
+                                </div>
+                                <div>
+                                    {$language['audio']}
+                                </div>
+                            </div>
+                            <div class="what_is_zhabbler_container_section_3_container_pseudo_post_write_el">
+                                <div class="what_is_zhabbler_container_section_3_container_pseudo_post_write_el_icon" style="color:#ff62ce;">
+                                    <i class='bx bxs-video-recording'></i>
+                                </div>
+                                <div>
+                                    {$language['video']}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="what_is_zhabbler_container_section_3_container_pseudo_post">
+                            <div class="what_is_zhabbler_container_section_3_container_pseudo_post_author">
+                                <img src="/static/images/avatars/2.png/w32-compressed.jpeg">
+                                <div>
+                                    <span>peter</span>
+                                </div>
+                            </div>
+                            <div class="what_is_zhabbler_container_section_3_container_pseudo_post_content">
+                                <img src="/static/images/wiz/shapes1.png">
+                            </div>
+                            <div class="what_is_zhabbler_container_section_3_container_pseudo_post_actions">
+                                <i class='bx bx-share'></i>
+                                <i class='bx bx-comment'></i>
+                                <i class='bx bx-repost'></i>
+                                <i class='bx bx-heart'></i>
+                            </div>
+                        </div>
+                        <div class="what_is_zhabbler_container_section_3_container_pseudo_post">
+                            <div class="what_is_zhabbler_container_section_3_container_pseudo_post_author">
+                                <img src="/static/images/avatars/3.png/w32-compressed.jpeg">
+                                <div>
+                                    <span>johndoe</span>
+                                </div>
+                            </div>
+                            <div class="what_is_zhabbler_container_section_3_container_pseudo_post_content">
+                                <img src="/static/images/wiz/shapes2.png">
+                            </div>
+                            <div class="what_is_zhabbler_container_section_3_container_pseudo_post_actions">
+                                <i class='bx bx-share'></i>
+                                <i class='bx bx-comment'></i>
+                                <i class='bx bx-repost'></i>
+                                <i class='bx bx-heart'></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="nmSa">
+                        <h1 class="what_is_zhabbler_container_section_title">
+                            {$language['about_zhabbler_3']}
+                        </h1>
+                        <div>
+                            <span>{$language['about_zhabbler_3_info']}</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section style="z-index:1;display:none;" class="what_is_zhabbler_container_section what_is_zhabbler_container_section_4">
+                <div class="what_is_zhabbler_container_section_4_post_types">
+                    <div class="what_is_zhabbler_container_section_4_post_types_row">
+                        <div class="what_is_zhabbler_container_section_4_post_type">
+                            <div class="what_is_zhabbler_container_section_4_post_type_icon">
+                                Aa
+                            </div>
+                            <div class="what_is_zhabbler_container_section_4_post_type_label">
+                                {$language['text']}
+                            </div>
+                        </div>
+                        <div class="what_is_zhabbler_container_section_4_post_type">
+                            <div class="what_is_zhabbler_container_section_4_post_type_icon">
+                                <i class='bx bxs-camera'></i>
+                            </div>
+                            <div class="what_is_zhabbler_container_section_4_post_type_label">
+                                {$language['photo']}
+                            </div>
+                        </div>
+                        <div class="what_is_zhabbler_container_section_4_post_type">
+                            <div class="what_is_zhabbler_container_section_4_post_type_icon">
+                                <i class='bx bxs-quote-alt-left'></i>
+                            </div>
+                            <div class="what_is_zhabbler_container_section_4_post_type_label">
+                                {$language['quote']}
+                            </div>
+                        </div>
+                        <div class="what_is_zhabbler_container_section_4_post_type">
+                            <div class="what_is_zhabbler_container_section_4_post_type_icon">
+                                <i class='bx bxs-conversation'></i>
+                            </div>
+                            <div class="what_is_zhabbler_container_section_4_post_type_label">
+                                {$language['dialog']}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="what_is_zhabbler_container_section_4_post_types_row">
+                        <div class="what_is_zhabbler_container_section_4_post_type">
+                            <div class="what_is_zhabbler_container_section_4_post_type_icon">
+                                <i class='bx bx-headphone'></i>
+                            </div>
+                            <div class="what_is_zhabbler_container_section_4_post_type_label">
+                                {$language['audio']}
+                            </div>
+                        </div>
+                        <div class="what_is_zhabbler_container_section_4_post_type">
+                            <div class="what_is_zhabbler_container_section_4_post_type_icon">
+                                <i class='bx bxs-video-recording'></i>
+                            </div>
+                            <div class="what_is_zhabbler_container_section_4_post_type_label">
+                                {$language['video']}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="what_is_zhabbler_container_section_4_txt">
+                    <h1 class="what_is_zhabbler_container_section_title">
+                        {$language['about_zhabbler_4']}
+                    </h1>
+                    <div>
+                        <span>
+                            {$language['about_zhabbler_4_info']}
+                        </span>
+                    </div>
+                </div>
+            </section>
         </div>
+        <preloader src="/static/js/what_is_zhabbler.js"></preloader>
         <preloader src="/static/js/new_messenger.js"></preloader>
         <preloader src="/static/playerrefresh/player.js"></preloader>
         <preloader src="/static/audioplayer/js/audioplayer.js"></preloader>

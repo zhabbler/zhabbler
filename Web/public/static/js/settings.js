@@ -22,7 +22,7 @@ class Settings{
                     <img src="${image}" id="zhabbler-cropper-image">
                 </div>
                 <div class="popup_container_2btns">
-                    <button class="button button_gray" onclick="$('.popup:first').remove()">
+                    <button class="button button_gray" onclick="$('.popup:first').remove();goToPage('/settings/profile');">
                         ${locale['cancel']}
                     </button>
                     <button class="button" id="ChangeAvatar">
@@ -31,7 +31,7 @@ class Settings{
                 </div>
             </div>
         </div>`);
-        const cropper = new Cropper(document.getElementById('zhabbler-cropper-image'), {
+        let cropper = new Cropper(document.getElementById('zhabbler-cropper-image'), {
             aspectRatio: 1/1,
             zoomable: true,
             minCropBoxWidth: 150,
@@ -90,7 +90,7 @@ class Settings{
                     <img src="${image}" id="zhabbler-cropper-image">
                 </div>
                 <div class="popup_container_2btns">
-                    <button class="button button_gray" onclick="$('.popup:first').remove()">
+                    <button class="button button_gray" onclick="$('.popup:first').remove();goToPage('/settings/profile');">
                         ${locale['cancel']}
                     </button>
                     <button class="button" id="ChangeCover">
@@ -99,7 +99,7 @@ class Settings{
                 </div>
             </div>
         </div>`);
-        const cropper = new Cropper(document.getElementById('zhabbler-cropper-image'), {
+        let cropper = new Cropper(document.getElementById('zhabbler-cropper-image'), {
             aspectRatio: 29/15,
             zoomable: true,
             minCropBoxWidth: 150,
