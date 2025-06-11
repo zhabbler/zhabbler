@@ -14,3 +14,15 @@ eo:
 	name: "Esperanto"
 	flag: "EO"
 	code: "eo"
+jp:
+	name: "日本語"
+	flag: "🇯🇵"
+	code: "jp"
+es:
+	name: "Español"
+	flag: "🇪🇸"
+	code: "es"
+pl:
+	name: "Polski"
+	flag: "🇵🇱"
+	code: "pl"
